@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { CARDS, CARDS_BY_ID, getRandomCardIdsFromPool } from "../cards";
 import { CARD_IDENTITIES, createUniqueCardId, getDefinitionIdByUniqueId } from "../cardIdentity";
 import { PACKS } from "../../data/packs";
-import { useGameStore } from "../../useGameStore";
+import { getMarketCardPrice, useGameStore } from "../../useGameStore";
 import { loadCardDefinitions } from "../data/cards";
 import { resolveCardEffects } from "../engine/EffectResolver";
 import { createInitialMatchState } from "../engine/MatchEngine";
@@ -28,6 +28,31 @@ function instance(id: string, ownerId: PlayerId, suffix = ""): CardInstance {
 
 describe("16 alpha card artworks: full game wiring", () => {
   afterEach(() => useGameStore.getState().resetProgress());
+
+  it("honors the approved Omega, Ice Boulders, Origin Shard rarities in shop, packs, and matches", () => {
+    const approved = [
+      { id: "omega", rarity: "common", cost: 1, price: 10 },
+      { id: "ice_boulders", rarity: "rare", cost: 2, price: 35 },
+      { id: "origin_shard", rarity: "rare", cost: 2, price: 35 },
+    ] as const;
+
+    useGameStore.setState({ premium: 500, ownedCards: [], cardSerials: {} });
+    for (const { id, rarity, cost, price } of approved) {
+      const definition = CARDS_BY_ID[id];
+      expect(definition.rarity).toBe(rarity);
+      expect(definition.cost).toBe(cost);
+      expect(CARD_IDENTITIES[id].rarity).toBe(rarity === "common" ? "обычная" : "редкая");
+      expect(gameDefinitions.get(id)?.rarity).toBe(rarity);
+      expect(gameDefinitions.get(id)?.cost).toBe(cost);
+      expect(getMarketCardPrice(definition.rarity)).toBe(price);
+      const result = useGameStore.getState().purchaseMarketCard(id);
+      if (!result.ok) throw new Error("Cannot purchase " + id + ": " + result.reason);
+      expect(result.price).toBe(price);
+      expect(result.card.rarity).toBe(rarity);
+      expect(result.card.cost).toBe(cost);
+    }
+  });
+
 
   it("registers all 16 new cards with existing images, consistent rarities and round-trip serial IDs", () => {
     expect(CARDS).toHaveLength(64);
