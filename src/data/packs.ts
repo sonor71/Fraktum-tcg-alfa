@@ -45,7 +45,7 @@ export const PACKS: PackMeta[] = [
     artSrc: "/packs/electric pack.png",
     fallbackArtSrc: "/packs/normal.png",
     price: 100,
-    cardPool: ["thunderbolts", "electroshocker", "spherical_lightning", "energy_sword", "thunderer", "seventy_one", "felix", "crystal_of_time"],
+    cardPool: ["thunderbolts", "Stun_Gun", "spherical_lightning", "energy_sword", "thunderer", "seventy_one", "felix", "crystal_of_time"],
   },
   {
     id: "flame",
@@ -105,7 +105,7 @@ export const PACKS: PackMeta[] = [
       "unrequited_love",
       "armor_of_chaos",
       "titan_eye",
-      "electroshocker",
+      "Stun_Gun",
       "elite_knight",
       "hero_silhouette",
       "healing",
