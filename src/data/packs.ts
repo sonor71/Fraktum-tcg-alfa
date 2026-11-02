@@ -27,7 +27,7 @@ export const PACKS: PackMeta[] = [
     artSrc: "/packs/glacier pack.png",
     fallbackArtSrc: "/packs/normal.png",
     price: 100,
-    cardPool: ["ice", "titan_eye", "shield_hope", "double_speed", "wood_vines", "tree_of_life", "crystal_of_time"],
+    cardPool: ["ice", "titan_eye", "shield_hope", "double_speed", "wood_vines", "tree_of_life", "crystal_of_time", "ice_boulders", "dawnless_winter"],
   },
   {
     id: "void",
@@ -36,7 +36,7 @@ export const PACKS: PackMeta[] = [
     artSrc: "/packs/abyss pack.png",
     fallbackArtSrc: "/packs/normal.png",
     price: 120,
-    cardPool: ["warlock", "fifteen_sixteen", "reverse_heart", "shadow_sword", "hyper_night", "reverse", "psychological_disorder", "unrequited_love", "seal_of_forgotten_souls", "brian"],
+    cardPool: ["warlock", "fifteen_sixteen", "reverse_heart", "shadow_sword", "hyper_night", "reverse", "psychological_disorder", "unrequited_love", "seal_of_forgotten_souls", "brian", "shadow_assassin", "black_archive"],
   },
   {
     id: "electric",
@@ -45,7 +45,7 @@ export const PACKS: PackMeta[] = [
     artSrc: "/packs/electric pack.png",
     fallbackArtSrc: "/packs/normal.png",
     price: 100,
-    cardPool: ["thunderbolts", "Stun_Gun", "spherical_lightning", "energy_sword", "thunderer", "seventy_one", "felix", "crystal_of_time"],
+    cardPool: ["thunderbolts", "Stun_Gun", "spherical_lightning", "energy_sword", "thunderer", "seventy_one", "felix", "crystal_of_time", "static_pilgrim", "ten_thousand_volts"],
   },
   {
     id: "flame",
@@ -111,7 +111,23 @@ export const PACKS: PackMeta[] = [
       "healing",
       "prime",
       "clean_sheet",
-      "tsunami"
+      "tsunami",
+      "ice_boulders",
+      "omega",
+      "origin_shard",
+      "oreon",
+      "spear_tribesman",
+      "conjurer",
+      "revolver",
+      "shadow_assassin",
+      "static_pilgrim",
+      "ten_thousand_volts",
+      "king_peleus",
+      "betrayal",
+      "velvet_tide",
+      "primordial_tree",
+      "black_archive",
+      "dawnless_winter"
 ],
   },
 ];

@@ -6,7 +6,7 @@ import { getWillCostByRarity } from "../rarityWillCost";
 function toEngineCardDefinition(card: CatalogCardDefinition): CardDefinition {
   const bonusEffects = card.type === "bonus" ? [{ op: "bonus", percent: 10 }] : undefined;
   const hasBoardHp = Math.max(0, Math.floor(Number(card.health ?? 0))) > 0;
-  const resolvesWithoutBoardSlot = new Set(["healing", "tsunami", "clean_sheet", "hero_silhouette"]).has(card.id);
+  const resolvesWithoutBoardSlot = new Set(["healing", "tsunami", "clean_sheet", "hero_silhouette", "ice_boulders", "ten_thousand_volts", "black_archive", "dawnless_winter"]).has(card.id);
 
   const willCost = getWillCostByRarity(card.rarity);
 

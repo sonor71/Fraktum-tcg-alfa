@@ -386,6 +386,16 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "clean_sheet": return [{ op: "discardSelectedFriendlyHandAndDraw", amount: 2 }];
     case "hero_silhouette": return [{ op: "heroSilhouette", amount: 3 }];
     case "prime": return [{ op: "primeAura" }];
+    case "ice_boulders": return [{ op: "alphaIceBoulders", amount: 2 }];
+    case "spear_tribesman": return [{ op: "alphaSpearBleed", amount: 2 }];
+    case "revolver": return [{ op: "alphaRevolverVolley" }];
+    case "static_pilgrim": return [{ op: "alphaLightningDiscount" }];
+    case "ten_thousand_volts": return [{ op: "alphaTenThousandVolts" }];
+    case "king_peleus": return [{ op: "alphaKingPeleus" }];
+    case "velvet_tide": return [{ op: "alphaVelvetTide" }];
+    case "primordial_tree": return [{ op: "alphaPrimordialTree" }];
+    case "black_archive": return [{ op: "alphaBlackArchive" }];
+    case "dawnless_winter": return [{ op: "alphaDawnlessWinter" }];
     default:
       break;
   }
@@ -975,6 +985,109 @@ function applyEffect(
   const op = readOp(effect);
   const sourceName = getCardTitle(sourceCard);
   const amount = readAmount(effect, getPrintedAttack(sourceCard) || 1);
+
+  // Alpha gameplay. These implementations are deliberately isolated until all numbers
+  // and target-selection UX are agreed in the design spreadsheet.
+  if (op === "alphaiceboulders") {
+    const enemyId = otherPlayer(playerId);
+    const enemySlots = state.board[slotsKey(enemyId)];
+    const targeted = getSlotFromTarget(target, enemyId);
+    const candidates = enemySlots.map((card, index) => card ? index : -1).filter((index) => index >= 0);
+    const chosen = [...(targeted !== undefined && candidates.includes(targeted) ? [targeted] : []), ...candidates.filter((i) => i !== targeted)].slice(0, 2);
+    let next = state;
+    for (const index of chosen) next = damageSlot(next, enemyId, index, 2, sourceName);
+    const first = chosen[0];
+    if (first !== undefined) {
+      const slots = [...next.board[slotsKey(enemyId)]];
+      const card = slots[first];
+      if (card && card.currentHealth > 0) {
+        slots[first] = { ...card, statuses: [...new Set([...(card.statuses ?? []), "alpha_frozen"])] };
+        next = { ...next, board: { ...next.board, [slotsKey(enemyId)]: slots } };
+      }
+    }
+    return log(next, `${sourceName}: hit ${chosen.length} enemy cards; first survivor frozen until its next turn.`);
+  }
+  if (op === "alphaspearbleed") {
+    const damaged = damageFrontSlotOrHero(state, playerId, playedSlotIndex, 2, sourceName);
+    return addTimedEffect(damaged, otherPlayer(playerId), {
+      id: "alpha_bleed_next_turn", source: sourceName, amount: 1,
+    }, `${sourceName}: small bleeding for 1 damage next turn.`);
+  }
+  if (op === "alpharevolvervolley") {
+    const roll = rollDie(state.rngSeed, 6);
+    let next = { ...state, rngSeed: roll.seed };
+    for (let i = 0; i < roll.value; i += 1) {
+      next = damageFrontSlotOrHero(next, playerId, playedSlotIndex, 1, sourceName);
+    }
+    return log(next, `${sourceName}: fired ${roll.value} shots.`);
+  }
+  if (op === "alphalightningdiscount") {
+    return addTimedEffect(state, playerId, {
+      id: "alpha_next_lightning_discount", source: sourceName, amount: 1,
+    }, `${sourceName}: next lightning card costs 1 less Will.`);
+  }
+  if (op === "alphatenthousandvolts") {
+    const enemyId = otherPlayer(playerId);
+    const slots = state.board[slotsKey(enemyId)];
+    const chosen = getSlotFromTarget(target, enemyId);
+    const targetIndex = chosen !== undefined && slots[chosen]
+      ? chosen : slots.findIndex((card) => Boolean(card));
+    let next = targetIndex < 0
+      ? damageHero(state, enemyId, 2, playerId, sourceName)
+      : damageSlot(state, enemyId, targetIndex, 2, sourceName);
+    if (targetIndex >= 0) for (const neighbor of [targetIndex - 1, targetIndex + 1]) {
+      if (neighbor >= 0 && neighbor < slots.length && slots[neighbor]) next = damageSlot(next, enemyId, neighbor, 1, sourceName);
+    }
+    if ((state.lastRoll ?? 0) >= 15) next = modifyWill(next, enemyId, -1, sourceName);
+    return next;
+  }
+  if (op === "alphakingpeleus") {
+    return addTimedEffect(state, playerId, {
+      id: "alpha_king_peleus_sacrifice",
+      source: sourceName,
+      cardInstanceId: sourceCard.instanceId,
+      activatesAtPersonalTurn: (state[playerId].personalTurnsTaken ?? 0) + 2,
+    }, `${sourceName}: will sacrifice in two own turns to block the next attack.`);
+  }
+  if (op === "alphavelvettide") {
+    return addTimedEffect(state, otherPlayer(playerId), {
+      id: "alpha_will_suppression", source: sourceName, turnsLeft: 2,
+    }, `${sourceName}: opponent regenerates 1 fewer Will on two turns (alpha rule).`);
+  }
+  if (op === "alphaprimordialtree") {
+    return addTimedEffect(state, playerId, {
+      id: "alpha_primordial_tree_will", source: sourceName, turnsLeft: 3,
+    }, `${sourceName}: +1 extra Will at the start of the next three own turns.`);
+  }
+  if (op === "alphablackarchive") {
+    const top = state[playerId].deck.slice(0, 4);
+    let next = log(state, `${sourceName} examined top ${top.length} cards: ${top.map(getCardTitle).join(", ") || "empty"}.`);
+    next = revealRandomEnemyCard(next, playerId, sourceName);
+    const side = next[playerId];
+    if (side.deck.length === 0) return next;
+    const chosen = side.deck[0];
+    const discarded = side.deck.length > 1 ? side.deck[1] : undefined;
+    next = updateSide(next, playerId, {
+      deck: side.deck.slice(discarded ? 2 : 1),
+      hand: [...side.hand, chosen],
+      discard: discarded ? [...side.discard, discarded] : side.discard,
+    });
+    return log(next, `${sourceName}: alpha auto-selected ${getCardTitle(chosen)}; ${discarded ? `discarded ${getCardTitle(discarded)}` : "no card to discard"}.`);
+  }
+  if (op === "alphadawnlesswinter") {
+    const enemyId = otherPlayer(playerId);
+    const slots = [...state.board[slotsKey(enemyId)]];
+    const targeted = getSlotFromTarget(target, enemyId);
+    const index = targeted !== undefined && slots[targeted] ? targeted : slots.findIndex(Boolean);
+    if (index < 0) return log(state, `${sourceName}: no enemy permanent to freeze.`);
+    const card = slots[index]!;
+    if ((card.statuses ?? []).includes("alpha_frozen")) {
+      slots[index] = { ...card, currentHealth: 0 };
+      return log({ ...state, board: { ...state.board, [slotsKey(enemyId)]: slots } }, `${sourceName}: destroyed the frozen ${getCardTitle(card)}.`);
+    }
+    slots[index] = { ...card, statuses: [...(card.statuses ?? []), "alpha_frozen"] };
+    return log({ ...state, board: { ...state.board, [slotsKey(enemyId)]: slots } }, `${sourceName}: froze ${getCardTitle(card)} until its next turn.`);
+  }
 
   if (op.includes("damageoppositecardonly")) {
     const enemyId = otherPlayer(playerId);

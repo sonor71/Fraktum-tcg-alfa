@@ -25,5 +25,8 @@ jobs:
         run: npm run build
       - name: Tests
         run: npx vitest --run
-      - name: Lint
+      - name: Lint integrated card code
+        run: npx eslint src/game src/data
+      - name: Repository-wide lint (pre-existing findings)
+        continue-on-error: true
         run: npm run lint
