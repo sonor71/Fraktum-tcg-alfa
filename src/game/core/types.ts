@@ -1,0 +1,48 @@
+﻿export type MatchPhase = "mulligan" | "turnStart" | "draw" | "roll" | "roulette" | "fieldCombat" | "main" | "turnEnd" | "enemy" | "betweenBattles" | "ended";
+export type PlayerId = "player" | "enemy";
+export type CardType = "character" | "event" | "attack" | "effect" | "tactic" | "upgrade" | "bonus";
+export type FateRouletteStage = "awaitingSpin" | "spinning" | "result";
+export type FateRouletteEvent = "MERGED_DECKS" | "WORLD_WITHOUT_WILL" | "BLIND_TOP" | "HIDDEN_HAND" | "EMPTY_OUTCOME";
+export type FateRouletteState = { id: string; ownerId: PlayerId; triggerRoll: 15 | 16; stage: FateRouletteStage; event?: FateRouletteEvent; resultIndex?: number; spinNonce?: number; extraRotations?: number; resultRevealedAt?: number; confirmAvailableAt?: number };
+export type CardRarity = "common" | "rare" | "epic" | "legendary" | "mythic" | "chromatic" | "exotic" | "divine" | "forgotten" | "archaic";
+export type EffectTarget = "selfHero" | "enemyHero" | "frontEnemyCard" | "randomEnemy" | "opponentDeck" | "self" | "enemy";
+export type CardEffect = { op: string; target?: EffectTarget; value?: number; key?: string; percent?: number };
+export type ScalableField = "damage" | "healing" | "armor" | "cardHp";
+export type CardElement = "fire" | "ice" | "lightning" | "water" | "void" | "neutral";
+export type CardDefinition = { id: string; title: string; ruTitle?: string; type: CardType; rarity: CardRarity; cost: number; willCost?: number; attack: number; health: number; hp?: number; armor?: number; element?: CardElement; description: string; image: string; effectKey?: string; effects?: CardEffect[]; collection?: string; requiresBoardSlot?: boolean; leavesAtTurnEnd?: boolean; scalableByElementBonus?: boolean; scalableFields?: ScalableField[]; canAttack?: boolean; canCounterAttack?: boolean; reflectDamage?: number; piercing?: boolean; duration?: number; } ;
+export type CardInstance = { instanceId: string; baseId: string; definition: CardDefinition; currentAttack: number; currentHealth: number; currentArmor?: number; serial?: string; foil?: boolean; ownerId: PlayerId; originalOwnerId?: PlayerId; controllerId?: PlayerId; slotIndex?: number; enteredFieldOnTurn?: number; canAttackFromTurn?: number; playedOnOwnerPersonalTurn?: number; ownerPersonalTurnPlayed?: number; attackReadyFromOwnerPersonalTurn?: number; duration?: number; statuses?: string[]; revealed?: boolean; temporaryCost?: number; copiedFromInstanceId?: string; temporaryUntilRoundEnd?: boolean; playedRound?: number };
+export type ActiveEffect = { id: string; sourceId: string; label: string; value?: number; turns?: number };
+export type PendingEffect = { sourceId: string; effect: CardEffect; playerId: PlayerId };
+export type TargetRef =
+  | { type: "hero"; playerId: PlayerId }
+  | { type: "slot"; playerId: PlayerId; slotIndex?: number }
+  | { type: "hand"; playerId: PlayerId; cardInstanceId: string };
+export type PlayerState = { id: PlayerId; hero: CardInstance; hp: number; maxHp: number; shield: number; will: number; maxWill: number; willRegenPerRound?: number; personalTurnsTaken?: number; deck: CardInstance[]; hand: CardInstance[]; discard: CardInstance[]; exile?: CardInstance[]; bonusCards: CardInstance[]; effects: ActiveEffect[]; lastTurnLostHp: number };
+export type EngineEvent = { id: number; type: string; message: string; payload?: Record<string, unknown> };
+export type AwakeningChoice = "freeCard" | "passive";
+export type MatchTurnState = { playerId: PlayerId; d20Limit: number | "unlimited"; playsUsed: number; cardsPlayed: number; destroyedOwnCard: boolean; freeCards: boolean; willCostMultiplier?: 1 | 2; discardPlayAvailable?: boolean; enemyDeckPlayCardId?: string; awakeningChoice?: AwakeningChoice; awakeningPassiveAvailable?: boolean; skipDamageApplied: boolean; rouletteResolvedThisTurn?: boolean; timerSeconds: number; playedCosts: Array<{ playerId: PlayerId; cardTitle: string; cost: number }> };
+export type MatchState = { engineEventSequence?: number; structuredEngineEvents?: EngineEvent[]; id: string; phase: MatchPhase; turn: number; activePlayerId: PlayerId; player: PlayerState; enemy: PlayerState; board: { playerSlots: Array<CardInstance | null>; enemySlots: Array<CardInstance | null> }; stack: PendingEffect[]; log: string[]; rngSeed: number; onlineShuffleSeeds?: { player: number; enemy: number }; winner?: "player" | "enemy" | "draw"; lastRoll?: number; initiativeRolls?: Array<{ player: number; enemy: number }>; battleNumber?: number; seriesScore?: Record<PlayerId, number>; caduceusUsed?: boolean; rouletteUsedThisBattle?: boolean; activeRouletteEvent?: string; rouletteOwnerId?: PlayerId; rouletteExpiresBeforeOwnerPersonalTurn?: number; rouletteState?: FateRouletteState; currentTurn?: MatchTurnState; sharedDeck?: CardInstance[]; battleResult?: PlayerId | "draw"; battleEndReason?: string; primeProtectionUsed?: Partial<Record<PlayerId, string>>; } ;
+export type MatchWillStats = {
+  maxWill?: number;
+  regenPerRound?: number;
+  willRegen?: number;
+};
+
+export type StartMatchPayload = {
+  seed?: number;
+  playerShuffleSeed?: number;
+  enemyShuffleSeed?: number;
+  gameplaySeed?: number;
+  playerDeck?: CardDefinition[];
+  enemyDeck?: CardDefinition[];
+  playerHero?: CardDefinition;
+  enemyHero?: CardDefinition;
+  playerBonusCards?: CardDefinition[];
+  enemyBonusCards?: CardDefinition[];
+  playerWillStats?: MatchWillStats;
+  enemyWillStats?: MatchWillStats;
+  playerWillConfig?: MatchWillStats;
+  enemyWillConfig?: MatchWillStats;
+  startingPlayerId?: PlayerId;
+  deckError?: string;
+};

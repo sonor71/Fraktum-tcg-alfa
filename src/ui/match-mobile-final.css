@@ -1,0 +1,628 @@
+/* FRAKTUM mobile match — iPhone landscape
+   Keep the important game information visible while fitting everything on one screen.
+   This file is loaded last and intentionally overrides legacy match.css rules. */
+
+@media (orientation: landscape) and (max-width: 1100px) and (max-height: 600px) {
+  :root {
+    --card-board-w: 46px !important;
+    --card-board-h: 64px !important;
+    --card-hand-w: 56px !important;
+    --card-hand-h: 78px !important;
+  }
+
+  .matchPage {
+    padding:
+      max(2px, env(safe-area-inset-top))
+      max(2px, env(safe-area-inset-right))
+      max(2px, env(safe-area-inset-bottom))
+      max(2px, env(safe-area-inset-left));
+  }
+
+  .matchArenaShell {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Small back button. */
+  .matchHeader {
+    top: calc(env(safe-area-inset-top) + 4px) !important;
+    left: calc(env(safe-area-inset-left) + 4px) !important;
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .matchHeader > div {
+    display: none !important;
+  }
+
+  .matchBackButton {
+    width: 30px !important;
+    min-width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    box-shadow: none !important;
+  }
+
+  /* Turn / phase only. Character stats live beside the battlefield. */
+  .matchMobileHud {
+    position: absolute !important;
+    z-index: 24 !important;
+    top: 4px !important;
+    left: 50% !important;
+    right: auto !important;
+    width: 128px !important;
+    height: 31px !important;
+    transform: translateX(-50%) !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .matchMobileHudSide {
+    display: none !important;
+  }
+
+  .matchMobileHudCenter {
+    min-width: 0 !important;
+    display: grid !important;
+    align-content: center !important;
+    gap: 1px !important;
+    padding: 2px 6px !important;
+    border-radius: 7px !important;
+    box-shadow: none !important;
+  }
+
+  .matchMobileHudCenter span,
+  .matchMobileHudCenter small {
+    font-size: 6px !important;
+    line-height: 1 !important;
+    letter-spacing: .05em !important;
+  }
+
+  .matchMobileHudCenter b {
+    font-size: 8px !important;
+    line-height: 1 !important;
+  }
+
+  /* Compact hero panels return on both sides. */
+  .matchSideColumn {
+    display: block !important;
+    position: absolute !important;
+    z-index: 12 !important;
+    top: 46px !important;
+    width: 88px !important;
+    height: 138px !important;
+  }
+
+  .matchPlayerZone {
+    left: 8px !important;
+  }
+
+  .matchEnemyZone {
+    right: 8px !important;
+  }
+
+  .matchSideColumn::before {
+    display: none !important;
+  }
+
+  .matchHeroPanel,
+  .matchHeroPanel.is-left,
+  .matchHeroPanel.is-right {
+    --hero-pad: 4px !important;
+    --bonus-rail-w: 0px !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 4px !important;
+    display: grid !important;
+    grid-template-rows: 22px minmax(0, 1fr) !important;
+    gap: 3px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+  }
+
+  .matchHeroCorners,
+  .matchShieldPip,
+  .matchHeroStatRow,
+  .matchBonusWrap {
+    display: none !important;
+  }
+
+  .matchHeroIdentity {
+    min-height: 0 !important;
+    display: block !important;
+  }
+
+  .matchHeroIdentityText {
+    display: grid !important;
+    gap: 0 !important;
+    text-align: center !important;
+  }
+
+  .matchHeroRank,
+  .matchHeroIdentity small {
+    display: none !important;
+  }
+
+  .matchHeroIdentity h2 {
+    margin: 0 !important;
+    font-size: 9px !important;
+    line-height: 1 !important;
+  }
+
+  .matchHeroCombat {
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: 54px 17px !important;
+    gap: 5px !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .matchHeroPortrait {
+    width: 54px !important;
+    min-width: 54px !important;
+    max-width: 54px !important;
+    height: 82px !important;
+    min-height: 82px !important;
+    max-height: 82px !important;
+    aspect-ratio: auto !important;
+    padding: 2px !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+  }
+
+  .matchHeroPortrait img {
+    border-radius: 6px !important;
+  }
+
+  .matchHeroPortrait::after,
+  .matchHeroPortraitGlow,
+  .matchHeroNameplate {
+    display: none !important;
+  }
+
+  .matchHeroMeters {
+    width: 17px !important;
+    min-width: 17px !important;
+    height: 82px !important;
+    min-height: 82px !important;
+    display: grid !important;
+    grid-template-columns: 11px 4px !important;
+    gap: 2px !important;
+  }
+
+  .matchHeroMeterGroup {
+    gap: 2px !important;
+  }
+
+  .matchHeroMeterValue {
+    font-size: 5px !important;
+    line-height: 1 !important;
+  }
+
+  .matchHeroMeters .matchStatusTrack {
+    border-radius: 999px !important;
+  }
+
+  /* Battlefield. */
+  .matchFieldZone {
+    position: absolute !important;
+    left: 50% !important;
+    top: 42px !important;
+    width: 520px !important;
+    height: 205px !important;
+    transform: translateX(-50%) !important;
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+  }
+
+  .matchFieldZone > .matchWillStrip {
+    display: none !important;
+  }
+
+  .matchBoardPanel {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 5px !important;
+    display: grid !important;
+    grid-template-rows: 86px 9px 86px !important;
+    align-content: center !important;
+    gap: 4px !important;
+    border-radius: 10px !important;
+  }
+
+  .matchBoardPanel::before {
+    inset: 3px !important;
+    border-radius: 8px !important;
+  }
+
+  .matchBoardRow {
+    width: 100% !important;
+    height: 86px !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, 72px) !important;
+    grid-auto-rows: 86px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 7px !important;
+  }
+
+  .matchBoardSlot {
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+    height: 86px !important;
+    min-height: 86px !important;
+    max-height: 86px !important;
+    border-radius: 7px !important;
+  }
+
+  .matchBoardDivider {
+    width: 390px !important;
+    min-height: 9px !important;
+    height: 9px !important;
+    margin: 0 auto !important;
+    gap: 5px !important;
+  }
+
+  .matchBoardDivider b {
+    font-size: 5px !important;
+    letter-spacing: .14em !important;
+  }
+
+  .matchSlotRune {
+    font-size: 14px !important;
+  }
+
+  .matchSlotNumber {
+    width: 15px !important;
+    height: 15px !important;
+    right: 3px !important;
+    bottom: 3px !important;
+    font-size: 6px !important;
+  }
+
+  .matchSlotHint {
+    top: 3px !important;
+    left: 3px !important;
+    padding: 1px 3px !important;
+    font-size: 4px !important;
+  }
+
+  .matchSlotCardShell {
+    width: 100% !important;
+    height: 100% !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .matchSlotCardShell .matchCardView.is-board,
+  .matchCardView.is-board,
+  .matchCardView.is-board .matchCardImage {
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    object-fit: contain !important;
+  }
+
+  .matchCardBadge {
+    min-width: 14px !important;
+    height: 14px !important;
+    padding: 0 3px !important;
+    font-size: 6px !important;
+  }
+
+  .matchSlotStateTag {
+    bottom: 1px !important;
+    padding: 1px 3px !important;
+    font-size: 5px !important;
+  }
+
+  /* Player Will bar returns directly above the hand. */
+  .matchPlayerWillZone {
+    display: block !important;
+    position: absolute !important;
+    z-index: 16 !important;
+    left: 50% !important;
+    bottom: 103px !important;
+    width: 360px !important;
+    height: 20px !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .matchPlayerWillZone .matchWillStrip {
+    width: 100% !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    padding: 2px 6px !important;
+    display: grid !important;
+    grid-template-columns: 42px minmax(0, 1fr) 26px !important;
+    gap: 5px !important;
+    border-radius: 7px !important;
+    box-shadow: none !important;
+  }
+
+  .matchPlayerWillZone .matchWillLabel {
+    font-size: 6px !important;
+    letter-spacing: .07em !important;
+  }
+
+  .matchPlayerWillZone .matchWillTrack {
+    height: 8px !important;
+  }
+
+  .matchPlayerWillZone .matchWillStrip b {
+    font-size: 7px !important;
+  }
+
+  /* Hand — larger than the previous pass. Six cards fit without clipping. */
+  .matchPlayerHandZone {
+    position: absolute !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: 2px !important;
+    width: 430px !important;
+    height: 96px !important;
+    transform: translateX(-50%) !important;
+    overflow: hidden !important;
+    border-top: 1px solid rgba(215,163,72,.24) !important;
+    background: linear-gradient(180deg, rgba(9,6,13,.10), rgba(22,10,30,.62)) !important;
+  }
+
+  .matchPlayerHandZone::before {
+    display: none !important;
+  }
+
+  .playerHandFan {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 4px 6px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .playerHandFan::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .playerHandCard {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    flex: 0 0 56px !important;
+    width: 56px !important;
+    min-width: 56px !important;
+    max-width: 56px !important;
+    height: 78px !important;
+    min-height: 78px !important;
+    max-height: 78px !important;
+    margin: 0 !important;
+    transform: none !important;
+    touch-action: pan-x !important;
+  }
+
+  .playerHandCard .matchCardView,
+  .playerHandCard .matchCardImage {
+    width: 56px !important;
+    min-width: 56px !important;
+    max-width: 56px !important;
+    height: 78px !important;
+    min-height: 78px !important;
+    max-height: 78px !important;
+  }
+
+  .playerHandCard.is-selected .matchCardView {
+    outline: 2px solid #ffd978 !important;
+    outline-offset: -2px !important;
+    box-shadow: 0 0 12px rgba(255,194,69,.40) !important;
+  }
+
+  /* D20 returns as a visible compact die. */
+  .matchD20Zone {
+    display: grid !important;
+    position: absolute !important;
+    z-index: 18 !important;
+    left: 11px !important;
+    bottom: 7px !important;
+    width: 74px !important;
+    height: 74px !important;
+    padding: 0 !important;
+    place-items: center !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .matchD20,
+  .matchD20.fraktumD20 {
+    display: grid !important;
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+    height: 68px !important;
+    min-height: 68px !important;
+    max-height: 68px !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+  }
+
+  .fraktumD20CanvasWrap {
+    display: block !important;
+    inset: 5px 5px 20px !important;
+    border-radius: 8px !important;
+  }
+
+  .fraktumD20ReadoutPlate {
+    display: grid !important;
+    bottom: 3px !important;
+    min-width: 38px !important;
+    padding: 2px 5px 3px !important;
+    border-radius: 8px !important;
+  }
+
+  .fraktumD20ReadoutLabel {
+    font-size: 5px !important;
+    letter-spacing: .08em !important;
+  }
+
+  .fraktumD20Readout {
+    font-size: 13px !important;
+  }
+
+  .matchD20Label,
+  .matchD20Hint {
+    display: none !important;
+  }
+
+  /* Primary action. */
+  .matchPlayerActionZone {
+    display: grid !important;
+    position: absolute !important;
+    z-index: 18 !important;
+    right: 11px !important;
+    bottom: 15px !important;
+    width: 82px !important;
+    height: 48px !important;
+    align-items: center !important;
+  }
+
+  .matchPlayerActionZone .matchActionRow {
+    width: 82px !important;
+    display: grid !important;
+  }
+
+  .matchPlayerActionZone .is-end-turn {
+    display: block !important;
+    width: 82px !important;
+    min-width: 82px !important;
+    max-width: 82px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    padding: 3px 5px !important;
+    border-radius: 9px !important;
+    font-size: 7px !important;
+    box-shadow: none !important;
+  }
+
+  /* Secondary desktop-only surfaces stay out of the phone match. */
+  .matchArenaTopbar,
+  .matchOpponentProfile,
+  .matchEnemyArc,
+  .matchLogZone,
+  .matchEnemyPiles,
+  .matchPlayerPiles,
+  .matchActionStatus,
+  .matchPlayerActionZone .is-restart,
+  .matchPlayerActionZone .is-danger,
+  .matchDebugToggle,
+  .matchDebugConsole {
+    display: none !important;
+  }
+
+  .matchRouletteNotice {
+    top: 37px !important;
+    min-width: 150px !important;
+    padding: 2px 7px !important;
+  }
+}
+
+/* Exact iPhone 14 Pro / similar Safari landscape tuning. */
+@media (orientation: landscape) and (min-width: 760px) and (max-width: 900px) and (max-height: 430px) {
+  .matchSideColumn {
+    top: 44px !important;
+    width: 84px !important;
+    height: 132px !important;
+  }
+
+  .matchHeroPortrait {
+    width: 50px !important;
+    min-width: 50px !important;
+    max-width: 50px !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+  }
+
+  .matchHeroCombat {
+    grid-template-columns: 50px 16px !important;
+  }
+
+  .matchHeroMeters {
+    width: 16px !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    grid-template-columns: 10px 4px !important;
+  }
+
+  .matchFieldZone {
+    top: 40px !important;
+    width: 500px !important;
+    height: 198px !important;
+  }
+
+  .matchBoardPanel {
+    grid-template-rows: 82px 8px 82px !important;
+  }
+
+  .matchBoardRow {
+    height: 82px !important;
+    grid-template-columns: repeat(5, 69px) !important;
+    grid-auto-rows: 82px !important;
+    gap: 6px !important;
+  }
+
+  .matchBoardSlot {
+    width: 69px !important;
+    min-width: 69px !important;
+    max-width: 69px !important;
+    height: 82px !important;
+    min-height: 82px !important;
+    max-height: 82px !important;
+  }
+
+  .matchPlayerWillZone {
+    bottom: 101px !important;
+    width: 350px !important;
+  }
+
+  .matchPlayerHandZone {
+    width: 420px !important;
+    height: 94px !important;
+  }
+
+  .playerHandCard,
+  .playerHandCard .matchCardView,
+  .playerHandCard .matchCardImage {
+    width: 54px !important;
+    min-width: 54px !important;
+    max-width: 54px !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+  }
+
+  .playerHandCard {
+    flex-basis: 54px !important;
+  }
+}
