@@ -421,13 +421,73 @@ export const CARD_IDENTITIES: Record<string, CardIdentity> = {
   },
 
 Stun_Gun: {
-    definitionId: "Stun Gun",
+    definitionId: "Stun_Gun",
     ruName: "Электрошокер",
     enName: "Stun Gun",
     image: "/cards/Stun Gun.png",
     rarity: "легендарная",
     code: "SGU",
     number: 50,
+  },
+
+  elite_knight: {
+    definitionId: "elite_knight",
+    ruName: "Элитный рыцарь",
+    enName: "Elite Knight",
+    image: "/cards/fraktum-new/elite_knight.png",
+    rarity: "эпическая",
+    code: "EKN",
+    number: 51,
+  },
+
+  hero_silhouette: {
+    definitionId: "hero_silhouette",
+    ruName: "Силуэт героя",
+    enName: "Hero Silhouette",
+    image: "/cards/fraktum-new/hero_silhouette.png",
+    rarity: "легендарная",
+    code: "HSL",
+    number: 52,
+  },
+
+  healing: {
+    definitionId: "healing",
+    ruName: "Исцеление",
+    enName: "Healing",
+    image: "/cards/fraktum-new/healing.png",
+    rarity: "обычная",
+    code: "HLG",
+    number: 53,
+  },
+
+  prime: {
+    definitionId: "prime",
+    ruName: "Прайм",
+    enName: "Prime",
+    image: "/cards/fraktum-new/prime.png",
+    rarity: "легендарная",
+    code: "PRM",
+    number: 54,
+  },
+
+  clean_sheet: {
+    definitionId: "clean_sheet",
+    ruName: "Чистый лист",
+    enName: "Clean Sheet",
+    image: "/cards/fraktum-new/clean_sheet.png",
+    rarity: "легендарная",
+    code: "CLS",
+    number: 55,
+  },
+
+  tsunami: {
+    definitionId: "tsunami",
+    ruName: "Цунами",
+    enName: "Tsunami",
+    image: "/cards/fraktum-new/tsunami.png",
+    rarity: "мифическая",
+    code: "TSU",
+    number: 56,
   },
 
 };
