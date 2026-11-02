@@ -124,13 +124,19 @@ export function cardRequiresBoardSlot(card: CardInstance) {
   return true;
 }
 
+export function isLightningCard(card: CardInstance) {
+  return card.definition.element === "lightning"
+    || ["thunderbolts", "thunderer", "spherical_lightning", "Stun_Gun", "energy_sword", "felix", "ten_thousand_volts"].includes(card.definition.id);
+}
+
 export function getEffectiveCardCost(state: MatchState, playerId: PlayerId, card: CardInstance) {
   const printedCost = getCardCost(card);
   const turn = state.currentTurn;
   const freeByTurn = turn?.playerId === playerId && turn.freeCards;
   const freeByWorldWithoutWill = state.activeRouletteEvent === "WORLD_WITHOUT_WILL";
   const multiplier = turn?.playerId === playerId ? turn.willCostMultiplier ?? 1 : 1;
-  return freeByTurn || freeByWorldWithoutWill ? 0 : printedCost * multiplier;
+  const discount = isLightningCard(card) && state[playerId].effects.some((effect) => effect.id === "alpha_next_lightning_discount") ? 1 : 0;
+  return freeByTurn || freeByWorldWithoutWill ? 0 : Math.max(0, printedCost * multiplier - discount);
 }
 
 export function canPlayCardWithCurrentResources(state: MatchState, playerId: PlayerId, card: CardInstance) {

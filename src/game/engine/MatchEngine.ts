@@ -23,6 +23,7 @@ import {
   getCardCost,
   getCardCurrentHp,
   getEffectiveCardCost,
+  isLightningCard,
   getCardTitle,
   getRequestedOrFreeSlotIndex,
   isCardBoardPermanent,
@@ -378,6 +379,43 @@ function triggerTurnStartEffects(state: MatchState, playerId: PlayerId): MatchSt
       continue;
     }
 
+    if (id === "alpha_primordial_tree_will") {
+      const remaining = Math.max(0, safeInteger(effect.turnsLeft, 0));
+      if (remaining > 0) {
+        const side = next[playerId];
+        const will = Math.min(side.maxWill, side.will + 1);
+        next = { ...next, [playerId]: { ...side, will } };
+        next = log(next, `${source}: +1 extra Will for Primordial Tree.`);
+      }
+      const rest = getSideEffects(next, playerId).filter((candidate) => candidate !== effect);
+      if (remaining > 1) rest.push({ ...effect, turnsLeft: remaining - 1 });
+      next = setSideEffects(next, playerId, rest);
+      continue;
+    }
+
+    if (id === "alpha_bleed_next_turn") {
+      next = dealDirectHeroDamage(next, playerId, effectAmount(effect, 1), source);
+      next = setSideEffects(next, playerId, getSideEffects(next, playerId).filter((candidate) => candidate !== effect));
+      continue;
+    }
+
+    if (id === "alpha_king_peleus_sacrifice") {
+      const activatesAt = safeInteger(effect.activatesAtPersonalTurn, Number.MAX_SAFE_INTEGER);
+      if ((next[playerId].personalTurnsTaken ?? 0) < activatesAt) continue;
+      const key = slotsKey(playerId);
+      const slots = [...next.board[key]];
+      const index = slots.findIndex((card) => card?.instanceId === effect.cardInstanceId);
+      next = setSideEffects(next, playerId, getSideEffects(next, playerId).filter((candidate) => candidate !== effect));
+      if (index >= 0 && slots[index]) {
+        const sacrificed = slots[index]!;
+        slots[index] = null;
+        next = { ...next, board: { ...next.board, [key]: slots }, [playerId]: { ...next[playerId], discard: [...next[playerId].discard, sacrificed] } };
+        next = setSideEffects(next, playerId, [...getSideEffects(next, playerId), { id: "alpha_block_next_attack", source }]);
+        next = log(next, `${source} sacrificed to block the next incoming attack.`);
+      }
+      continue;
+    }
+
     if (id === "psychological_disorder") {
       const roll = rollDie(next.rngSeed, 2);
       const discardCount = roll.value;
@@ -390,6 +428,19 @@ function triggerTurnStartEffects(state: MatchState, playerId: PlayerId): MatchSt
     }
   }
 
+  const key = slotsKey(playerId);
+  const slots = next.board[key];
+  if (slots.some((card) => card?.statuses?.includes("alpha_frozen"))) {
+    next = {
+      ...next,
+      board: {
+        ...next.board,
+        [key]: slots.map((card) => card?.statuses?.includes("alpha_frozen")
+          ? { ...card, statuses: card.statuses?.filter((status) => status !== "alpha_frozen") }
+          : card),
+      },
+    };
+  }
   return next;
 }
 
@@ -962,6 +1013,11 @@ export function playCard(
       : `${getCardTitle(card)} is temporary and will move to discard at end of this turn.`,
   );
 
+  if (isLightningCard(playedCard) && getSideEffects(next, playerId).some((effect) => effect.id === "alpha_next_lightning_discount")) {
+    const effects = getSideEffects(next, playerId);
+    const discount = effects.find((effect) => effect.id === "alpha_next_lightning_discount");
+    next = setSideEffects(next, playerId, effects.filter((effect) => effect !== discount));
+  }
   next = resolveCardEffects(next, playerId, playedCard, target, requiresSlot ? slotIndex : undefined);
   next = applyCardPlayedTriggers(next, playerId);
   next = moveDestroyedCardsToDiscard(next);

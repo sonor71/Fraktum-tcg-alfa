@@ -21,5 +21,17 @@ export function regenerateWillForTurn(state: MatchState, playerId: PlayerId): Ma
   const side = state[playerId];
   if ((side.personalTurnsTaken ?? 0) <= 0) return state;
   const regen = getWillRegen(side);
-  return { ...state, [playerId]: { ...side, will: Math.min(side.maxWill, Math.max(0, side.will) + regen) } };
+  const activeEffects = side.effects as unknown as Array<{ id: string; turnsLeft?: number }>;
+  const suppression = activeEffects.some((effect) => effect.id === "alpha_will_suppression" && (effect.turnsLeft ?? 0) > 0);
+  const effectiveRegen = Math.max(0, regen - (suppression ? 1 : 0));
+  const nextEffects = activeEffects.flatMap((effect) =>
+    effect.id === "alpha_will_suppression"
+      ? (effect.turnsLeft ?? 0) > 1 ? [{ ...effect, turnsLeft: (effect.turnsLeft ?? 0) - 1 }] : []
+      : [effect]
+  );
+  return { ...state, [playerId]: {
+    ...side,
+    will: Math.min(side.maxWill, Math.max(0, side.will) + effectiveRegen),
+    effects: nextEffects as typeof side.effects,
+  } };
 }
