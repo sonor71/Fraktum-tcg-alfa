@@ -473,24 +473,7 @@ function tryBlockCardPlayWithEffects(state: MatchState, playerId: PlayerId) {
   return { state: next, blocked: false };
 }
 
-function applyCardPlayedTriggers(state: MatchState, playerId: PlayerId): MatchState {
-  const effects = getSideEffects(state, playerId);
-  let nextEffects = effects;
-  let next = state;
 
-  nextEffects = nextEffects.map((effect) => {
-    if (normalizeEffectId(effect.id) !== "every_second_card_self_damage") return effect;
-
-    const cardCount = Math.max(0, safeInteger(effect.cardCount, 0)) + 1;
-    if (cardCount % 2 === 0) {
-      next = dealDirectHeroDamage(next, playerId, 1, String(effect.source ?? "Seal of Forgotten Souls"));
-    }
-
-    return { ...effect, cardCount };
-  });
-
-  return setSideEffects(next, playerId, nextEffects);
-}
 
 
 
@@ -1019,7 +1002,6 @@ export function playCard(
     next = setSideEffects(next, playerId, effects.filter((effect) => effect !== discount));
   }
   next = resolveCardEffects(next, playerId, playedCard, target, requiresSlot ? slotIndex : undefined);
-  next = applyCardPlayedTriggers(next, playerId);
   next = moveDestroyedCardsToDiscard(next);
 
   return checkWinCondition(next);

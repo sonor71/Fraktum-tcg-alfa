@@ -786,16 +786,20 @@ export default function MatchPage() {
       travelTimers.current.push(timer);
     }
 
-    const revealEvents = getTacticalRevealEvents(state).filter((event) => !seenTacticalRevealIds.current.has(event.id));
-    if (revealEvents.length > 0) {
-      revealEvents.forEach((event) => seenTacticalRevealIds.current.add(event.id));
+    const unseenRevealEvents = getTacticalRevealEvents(state).filter((event) => !seenTacticalRevealIds.current.has(event.id));
+    if (unseenRevealEvents.length > 0) {
+      unseenRevealEvents.forEach((event) => seenTacticalRevealIds.current.add(event.id));
+      // An enemy Oracle must not reveal our hand to us through the same overlay.
+      // Only the player who cast Oracle can choose and view a hidden card.
+      const revealEvents = unseenRevealEvents.filter((event) => event.kind !== "oracle-pick" || event.viewer === "player");
       const eventIds = new Set(revealEvents.map((event) => event.id));
+      if (revealEvents.length === 0) return;
       setTacticalRevealEvents((currentEvents) => [...currentEvents, ...revealEvents].slice(-8));
 
       const timer = window.setTimeout(() => {
         setTacticalRevealEvents((currentEvents) => currentEvents.filter((event) => !eventIds.has(event.id)));
         tacticalRevealTimers.current = tacticalRevealTimers.current.filter((candidate) => candidate !== timer);
-      }, TACTICAL_REVEAL_TTL_MS);
+      }, revealEvents.some((event) => event.kind === "oracle-pick") ? 16000 : TACTICAL_REVEAL_TTL_MS);
 
       tacticalRevealTimers.current.push(timer);
     }

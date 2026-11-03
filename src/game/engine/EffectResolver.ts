@@ -33,7 +33,7 @@ type TacticalRevealCard = {
 
 type TacticalRevealEvent = {
   id: string;
-  kind: "peek-hand" | "peek-card" | "steal-cast" | "reverse";
+  kind: "peek-hand" | "peek-card" | "steal-cast" | "reverse" | "oracle-pick";
   viewer: PlayerId;
   owner: PlayerId;
   source: string;
@@ -254,6 +254,7 @@ function isEffectHostileToOpponent(effect: RawEffect) {
     op.includes("strike") ||
     op.includes("discard") ||
     op.includes("peek") ||
+    op.includes("oraclechooseenemycard") ||
     op.includes("knowledge") ||
     op.includes("skip") ||
     op.includes("freeze") ||
@@ -365,7 +366,7 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "tree_of_life": return [{ op: "restoreLastTurnLostHp", amount: 999 }];
     case "caduceus": return [{ op: "forceDrawMatch" }];
     case "book_knowledge": return [{ op: "knowledge" }];
-    case "oracle": return [{ op: "peekHand", target: "enemy", amount: 99 }];
+    case "oracle": return [{ op: "oracleChooseEnemyCard" }];
     case "reverse_heart": return [{ op: "swapHeroHp" }];
     case "double_speed": return [{ op: "doubleSpeed" }];
     case "reverse": return [{ op: "reverseIncoming" }];
@@ -374,7 +375,7 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "hyper_night": return [{ op: "skipTurnChanceOrDiscard", chance: 30, target: "enemy", amount: 2 }];
     case "shield_hope": return [{ op: "shield", amount: Math.max(3, getCardBoardMaxHp(card) || 3), target: "self" }];
     case "legendary_messenger": return [{ op: "increaseNextCardPower", amount: 2 }, { op: "peekDeck", amount: 1, target: "self" }];
-    case "seal_of_forgotten_souls": return [{ op: "everySecondEnemyCardSelfDamage" }];
+    case "seal_of_forgotten_souls": return [{ op: "sealFieldDamage" }];
     case "psychological_disorder": return [{ op: "psychologicalDisorder", target: "enemy" }];
     case "unrequited_love": return [{ op: "unrequitedLove" }];
     case "armor_of_chaos": return [{ op: "blockSmallDamage", amount: 3, target: "self" }];
@@ -985,6 +986,33 @@ function applyEffect(
   const op = readOp(effect);
   const sourceName = getCardTitle(sourceCard);
   const amount = readAmount(effect, getPrintedAttack(sourceCard) || 1);
+
+  if (op === "oraclechooseenemycard") {
+    const owner = otherPlayer(playerId);
+    const hand = state[owner].hand;
+    if (hand.length === 0) return log(state, `${sourceName}: the opponent has no cards in hand to reveal.`);
+    const next = appendRevealEvent(state, {
+      kind: "oracle-pick",
+      viewer: playerId,
+      owner,
+      source: sourceName,
+      title: `${sourceName}: choose one hidden enemy card`,
+      cards: hand.map(makeRevealCard),
+    });
+    // Do not include hidden enemy card names in the shared match log.
+    return log(next, `${sourceName}: ${playerLabel(playerId)} may reveal one chosen card from the opponent's hand.`);
+  }
+
+  if (op === "sealfielddamage") {
+    // Seal is a temporary card in a field slot at the moment its effect resolves.
+    const friendlyCount = state.board[slotsKey(playerId)].filter(Boolean).length;
+    const enemyId = otherPlayer(playerId);
+    const enemyCount = state.board[slotsKey(enemyId)].filter(Boolean).length;
+    const amount = friendlyCount + enemyCount;
+    if (amount === 0) return log(state, `${sourceName}: no occupied slots, no damage.`);
+    const damaged = damageHero(state, enemyId, amount, playerId, sourceName);
+    return log(damaged, `${sourceName}: ${friendlyCount} friendly + ${enemyCount} enemy occupied slots = ${amount} damage (before defenses).`);
+  }
 
   // Alpha gameplay. These implementations are deliberately isolated until all numbers
   // and target-selection UX are agreed in the design spreadsheet.
