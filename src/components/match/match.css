@@ -4484,3 +4484,73 @@ button { -webkit-tap-highlight-color: transparent; }
 @media (max-height:560px) and (orientation:landscape) { .matchContextBanner { top:5px; width:min(58%,520px) }.matchHeader,.matchLogZone,.matchEnemyPiles .matchPileText,.matchPlayerPiles .matchPileText { display:none }.fateRoulettePanel { width:min(94vw,900px); min-height:92vh; grid-template-columns:minmax(240px,1fr) minmax(250px,.8fr); padding:12px; gap:10px }.fateRouletteWheel { width:min(52vh,330px) }.fateRouletteHeader h2 { font-size:clamp(24px,7vh,42px) }.fateRouletteResult { padding:12px }.playerHandFan { overflow-x:auto; overflow-y:visible; touch-action:pan-x }.tutorialTooltip { font-size:12px; padding:10px } }
 .matchD20HelpButton { position:absolute; right:-4px; top:-4px; z-index:4; width:28px; height:28px; border:1px solid #d7a348; border-radius:50%; color:#ffe0a0; background:#171025; font-weight:900; cursor:pointer }.matchD20Help { position:fixed; z-index:300; left:50%; top:50%; translate:-50% -50%; width:min(330px,90vw); padding:16px; border:1px solid #8b6bc0; border-radius:16px; color:#f6edff; background:#0a0d20; box-shadow:0 25px 90px #000 }.matchD20Help header { display:flex; justify-content:space-between; align-items:center }.matchD20Help header button { border:0;color:#fff;background:transparent;font-size:24px }.matchD20Help dl { display:grid; grid-template-columns:72px 1fr; gap:8px;margin-bottom:0 }.matchD20Help dt { color:#e6bd68;font-weight:900 }.matchD20Help dd { margin:0 }
 .matchSpecialSourceAction { position:absolute; z-index:24; left:50%; bottom:clamp(122px,19cqh,205px); translate:-50% 0; max-width:70%; padding:9px 14px; border:1px solid #d7a348; border-radius:999px; color:#fff0bd; background:rgba(39,20,57,.94); font-size:clamp(9px,.8cqw,13px); font-weight:900; cursor:pointer; box-shadow:0 0 22px rgba(139,85,255,.25) }
+
+
+/* Oracle: interactive pick-one reveal. Other opponent cards remain face down. */
+.matchTacticalRevealLayer.is-oracle-pick {
+  pointer-events: none;
+}
+.matchTacticalRevealLayer.is-oracle-pick .matchTacticalRevealPanel {
+  width: min(760px, 94%);
+  pointer-events: auto;
+}
+.matchTacticalRevealCards.oracleChoices {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.matchTacticalRevealCard.oracleOption {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  min-width: 68px;
+}
+.matchTacticalRevealCard.oracleOption:focus-visible {
+  outline: 2px solid #ffe0a0;
+  outline-offset: 5px;
+}
+.matchTacticalRevealCard.oracleOption:disabled {
+  cursor: default;
+}
+.matchTacticalRevealCard.oracleOption:not(:disabled):hover {
+  filter: drop-shadow(0 0 12px rgba(255, 224, 160, .5));
+}
+.matchTacticalRevealCard.oracleOption .matchTacticalRevealCardInner {
+  animation: none;
+  transform: rotateY(0deg);
+}
+.matchTacticalRevealCard.oracleOption.is-picked .matchTacticalRevealCardInner {
+  animation: matchRevealFlip .56s cubic-bezier(.2,.8,.2,1) both;
+}
+.matchTacticalRevealCard.oracleOption:not(.is-picked) .matchTacticalRevealCardFront {
+  display: none;
+}
+.matchTacticalRevealCard.oracleOption .matchTacticalRevealCardBack img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+.oracleRevealClose {
+  display: block;
+  margin: 14px auto 0;
+  padding: 9px 22px;
+  border: 1px solid rgba(255, 224, 160, .5);
+  border-radius: 10px;
+  color: #ffe0a0;
+  background: rgba(24, 14, 32, .92);
+  cursor: pointer;
+}
+.oracleRevealClose:focus-visible {
+  outline: 2px solid #ffe0a0;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .matchTacticalRevealCard.oracleOption.is-picked .matchTacticalRevealCardInner {
+    animation: none;
+    transform: rotateY(180deg);
+  }
+}
