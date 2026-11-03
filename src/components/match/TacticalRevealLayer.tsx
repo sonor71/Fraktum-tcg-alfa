@@ -86,7 +86,7 @@ export function TacticalRevealLayer({ events }: { events: TacticalRevealEvent[] 
   if (events.length === 0) return null;
 
   const latest = events[events.length - 1];
-  if (latest.kind === "oracle-pick") return <OraclePickReveal key={latest.id} event={latest} />;
+  if (latest.kind === "oracle-pick") return latest.viewer === "player" ? <OraclePickReveal key={latest.id} event={latest} /> : null;
 
   const shownCards = latest.cards.slice(0, latest.kind === "peek-hand" ? 8 : 1);
 
