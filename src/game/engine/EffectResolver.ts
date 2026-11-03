@@ -1004,8 +1004,9 @@ function applyEffect(
   }
 
   if (op === "sealfielddamage") {
-    // Seal is a temporary card in a field slot at the moment its effect resolves.
-    const friendlyCount = state.board[slotsKey(playerId)].filter(Boolean).length;
+    // Count other cards already on the field: the newly played Seal does not add 1 damage.
+    const friendlyCount = state.board[slotsKey(playerId)]
+      .filter((card) => card && card.instanceId !== sourceCard.instanceId).length;
     const enemyId = otherPlayer(playerId);
     const enemyCount = state.board[slotsKey(enemyId)].filter(Boolean).length;
     const amount = friendlyCount + enemyCount;

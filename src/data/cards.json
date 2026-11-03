@@ -512,7 +512,7 @@
     "cost": 4,
     "attack": 0,
     "health": 0,
-    "description": "При розыгрыше наносит герою противника 1 урон за каждую карту на обоих полях (включая Печать). Разовый эффект.",
+    "description": "При розыгрыше наносит герою противника 1 урон за каждую другую карту на обоих полях. Саму Печать не учитывает. Разовый эффект.",
     "image": "/cards/Seal of the Forgotten Souls.png",
     "effectKey": "seal_deal_damage_per_occupied_slot",
     "collection": "Fraktum Relics"
