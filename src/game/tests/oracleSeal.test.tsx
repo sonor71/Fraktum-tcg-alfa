@@ -104,7 +104,7 @@ describe("Seal of the Forgotten Souls: one-time field damage", () => {
 
   it("does not count an unplaced virtual Seal as an extra occupied slot", () => {
     const state = readyWithSeal();
-    expect(state.board.playerSlots.filter(Boolean)).toHaveLength(2);
+    expect(state.board.playerSlots.filter(Boolean)).toHaveLength(3);
     // A virtual cast outside the board counts the same 3 friendly and 4 enemy cards.
     const result = resolveCardEffects(state, "player", instance("seal_of_forgotten_souls", "player", "virtual"));
     expect(state.enemy.hp - result.enemy.hp).toBe(7);
