@@ -1004,9 +1004,9 @@ function applyEffect(
   }
 
   if (op === "sealfielddamage") {
-    // Count other cards already on the field: the newly played Seal does not add 1 damage.
-    const friendlyCount = state.board[slotsKey(playerId)]
-      .filter((card) => card && card.instanceId !== sourceCard.instanceId).length;
+    // Count every physically occupied slot on both sides, including Seal itself
+    // when the played Seal occupies a slot. Never count hand or deck cards.
+    const friendlyCount = state.board[slotsKey(playerId)].filter(Boolean).length;
     const enemyId = otherPlayer(playerId);
     const enemyCount = state.board[slotsKey(enemyId)].filter(Boolean).length;
     const amount = friendlyCount + enemyCount;

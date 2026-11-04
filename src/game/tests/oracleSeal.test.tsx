@@ -62,10 +62,10 @@ describe("Seal of the Forgotten Souls: one-time field damage", () => {
   it("uses its mythic Will price and the correct description", () => {
     expect(CARDS_BY_ID.seal_of_forgotten_souls.rarity).toBe("mythic");
     expect(CARDS_BY_ID.seal_of_forgotten_souls.cost).toBe(4);
-    expect(CARDS_BY_ID.seal_of_forgotten_souls.description).toContain("Саму Печать не учитывает");
+    expect(CARDS_BY_ID.seal_of_forgotten_souls.description).toContain("включая саму Печать");
   });
 
-  it("counts 3 existing friendly cards and 4 enemy cards for exactly 7 damage (excluding Seal)", () => {
+  it("counts 3 existing friendly cards, the played Seal and 4 enemy cards for exactly 8 damage", () => {
     const before = readyWithSeal();
     const played = playCard(before, "player", before.player.hand[0].instanceId, {
       type: "slot", playerId: "player", slotIndex: 3,
@@ -74,10 +74,28 @@ describe("Seal of the Forgotten Souls: one-time field damage", () => {
     expect(played.player.will).toBe(1);
     expect(played.board.playerSlots.filter(Boolean)).toHaveLength(4);
     expect(played.board.enemySlots.filter(Boolean)).toHaveLength(4);
-    expect(before.enemy.hp - played.enemy.hp).toBe(7);
+    expect(before.enemy.hp - played.enemy.hp).toBe(8);
     expect(played.player.hp).toBe(before.player.hp);
     expect(played.enemy.effects.some((effect) => effect.id === "every_second_card_self_damage")).toBe(false);
-    expect(played.log.some((entry) => entry.includes("3 friendly + 4 enemy occupied slots = 7"))).toBe(true);
+    expect(played.log.some((entry) => entry.includes("4 friendly + 4 enemy occupied slots = 8"))).toBe(true);
+  });
+
+  it("deals 5 damage when 2 friendly occupied slots including Seal face 3 enemy cards", () => {
+    const original = readyWithSeal();
+    const before: MatchState = {
+      ...original,
+      board: {
+        playerSlots: [original.board.playerSlots[0], null, null, null, null],
+        enemySlots: [...original.board.enemySlots.slice(0, 3), null, null],
+      },
+    };
+    const played = playCard(before, "player", before.player.hand[0].instanceId, {
+      type: "slot", playerId: "player", slotIndex: 1,
+    });
+    expect(played.board.playerSlots.filter(Boolean)).toHaveLength(2);
+    expect(played.board.enemySlots.filter(Boolean)).toHaveLength(3);
+    expect(before.enemy.hp - played.enemy.hp).toBe(5);
+    expect(played.log.some((entry) => entry.includes("2 friendly + 3 enemy occupied slots = 5"))).toBe(true);
   });
 
   it("respects a shield and does not additionally hurt the opponent on later card plays", () => {
@@ -86,7 +104,7 @@ describe("Seal of the Forgotten Souls: one-time field damage", () => {
       type: "slot", playerId: "player", slotIndex: 3,
     });
     expect(played.enemy.shield).toBe(0);
-    expect(before.enemy.hp - played.enemy.hp).toBe(5);
+    expect(before.enemy.hp - played.enemy.hp).toBe(6);
 
     const filler = instance("oreon", "enemy", "after-seal");
     const next = {
@@ -105,7 +123,7 @@ describe("Seal of the Forgotten Souls: one-time field damage", () => {
   it("does not count an unplaced virtual Seal as an extra occupied slot", () => {
     const state = readyWithSeal();
     expect(state.board.playerSlots.filter(Boolean)).toHaveLength(3);
-    // A virtual cast outside the board counts the same 3 friendly and 4 enemy cards.
+    // A virtual cast outside the board counts only the physical 3 + 4 cards, not the unplaced Seal.
     const result = resolveCardEffects(state, "player", instance("seal_of_forgotten_souls", "player", "virtual"));
     expect(state.enemy.hp - result.enemy.hp).toBe(7);
   });
