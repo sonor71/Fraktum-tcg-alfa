@@ -84,8 +84,15 @@ describe("2-minute battle timer with 71 and 2X", () => {
     expect(expired.log.some(x => x.includes("[BATTLE_CLOCK_EXPIRED]"))).toBe(true);
     const again = dispatch(expired, { type: "EXPIRE_BATTLE_CLOCK", battleNumber: 1 });
     expect(again.seriesScore?.player).toBe(1);
-    const next = dispatch(expired, { type: "START_NEXT_BATTLE", battleNumber: 1 });
-    expect(next.battleNumber, `Unexpected state: ${next.log.slice(-6).join(" | ")}`).toBe(2);
+    // The short card-only scenario above intentionally replaces the seven-card
+    // opening hand. Use a complete unmodified deck when testing next-battle reset.
+    const complete = createInitialMatchState({ seed: 491, startingPlayerId: "player" });
+    const completeExpired = dispatch({
+      ...complete, battleClockExtraSeconds: 71, battleClockSpeed: 4,
+      player: { ...complete.player, hp: 17 }, enemy: { ...complete.enemy, hp: 12 },
+    }, { type: "EXPIRE_BATTLE_CLOCK", battleNumber: 1 });
+    const next = dispatch(completeExpired, { type: "START_NEXT_BATTLE", battleNumber: 1 });
+    expect(next.battleNumber).toBe(2);
     expect(next.battleClockExtraSeconds).toBe(0);
     expect(next.battleClockSpeed).toBe(1);
     expect(dispatch(next, { type: "EXPIRE_BATTLE_CLOCK", battleNumber: 1 }).battleResult).toBeUndefined();
