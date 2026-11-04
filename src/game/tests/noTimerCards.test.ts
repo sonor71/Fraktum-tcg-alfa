@@ -85,7 +85,7 @@ describe("2-minute battle timer with 71 and 2X", () => {
     const again = dispatch(expired, { type: "EXPIRE_BATTLE_CLOCK", battleNumber: 1 });
     expect(again.seriesScore?.player).toBe(1);
     const next = dispatch(expired, { type: "START_NEXT_BATTLE", battleNumber: 1 });
-    expect(next.battleNumber).toBe(2);
+    expect(next.battleNumber, `Unexpected state: ${next.log.slice(-6).join(" | ")}`).toBe(2);
     expect(next.battleClockExtraSeconds).toBe(0);
     expect(next.battleClockSpeed).toBe(1);
     expect(dispatch(next, { type: "EXPIRE_BATTLE_CLOCK", battleNumber: 1 }).battleResult).toBeUndefined();
