@@ -996,7 +996,7 @@ function applyEffect(
     const chosen = getSlotFromTarget(target, enemyId);
     const first = chosen !== undefined && slots[chosen] && getCardCurrentHp(slots[chosen]) > 0
       ? chosen
-      : slots.findIndex((card) => Boolean(card) && getCardCurrentHp(card) > 0);
+      : slots.findIndex((card) => card !== null && getCardCurrentHp(card) > 0);
     if (first < 0) return damageHero(state, enemyId, 1, playerId, sourceName);
     let next = damageSlot(state, enemyId, first, 2, sourceName);
     const remaining = next.board[key];
