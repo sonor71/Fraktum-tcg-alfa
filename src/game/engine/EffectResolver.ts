@@ -356,7 +356,7 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "fire": return [{ op: "damageFront", amount: 2 }, { op: "damageHero", amount: 1, target: "enemyHero" }];
     case "ice": return [{ op: "damageFront", amount: 2 }, { op: "damageHero", amount: 1, target: "enemyHero" }];
     case "hand_of_god": return [{ op: "playRevealedOracleCard" }];
-    case "seventy_one": return [{ op: "seventyOneEmergency" }];
+    case "seventy_one": return [{ op: "addBattleTime", amount: 71 }];
     case "time_of_reckoning": return [{ op: "halveEnemyWill" }, { op: "damageEnemyHeroPercent", amount: 25 }];
     case "dragon_eye": return [{ op: "revealRandomEnemyCard", amount: 1, target: "enemy" }];
     case "wood_vines": return [{ op: "freezeFront" }];
@@ -365,7 +365,7 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "book_knowledge": return [{ op: "knowledge" }];
     case "oracle": return [{ op: "oracleChooseEnemyCard" }];
     case "reverse_heart": return [{ op: "swapHeroHp" }];
-    case "double_speed": return [{ op: "doubleXTwoHits" }];
+    case "double_speed": return [{ op: "doubleBattleClockSpeed" }];
     case "reverse": return [{ op: "reverseIncoming" }];
     case "fifteen_sixteen": return [{ op: "roulette" }];
     case "amulet_of_old_sage": return [{ op: "drawFromDiscardOrDeck", amount: 1 }];
@@ -978,35 +978,14 @@ function applyEffect(
   const sourceName = getCardTitle(sourceCard);
   const amount = readAmount(effect, getPrintedAttack(sourceCard) || 1);
 
-  if (op === "seventyoneemergency") {
-    // Epic "71": a strong, situational comeback instead of a timer-only note.
-    if (state[playerId].hp <= 7) {
-      return healHero(state, playerId, 7, sourceName);
-    }
-    const shielded = addShield(state, playerId, 1, sourceName);
-    return shielded[playerId].hand.length < 7
-      ? drawCardsForSide(shielded, playerId, 1, sourceName)
-      : log(shielded, `${sourceName}: the hand is full; no extra card.`);
+  if (op === "addbattletime") {
+    const added = Math.min(71, Math.max(0, 600 - 120 - (state.battleClockExtraSeconds ?? 0)));
+    return log({ ...state, battleClockExtraSeconds: (state.battleClockExtraSeconds ?? 0) + added }, `${sourceName}: battle clock +${added} seconds for both players.`);
   }
-  if (op === "doublextwohits") {
-    // Two 2-damage hits to enemy cards; no hero overflow after a kill.
-    const enemyId = otherPlayer(playerId);
-    const key = slotsKey(enemyId);
-    const slots = state.board[key];
-    const chosen = getSlotFromTarget(target, enemyId);
-    const first = chosen !== undefined && slots[chosen] && getCardCurrentHp(slots[chosen]) > 0
-      ? chosen
-      : slots.findIndex((card) => card !== null && getCardCurrentHp(card) > 0);
-    if (first < 0) return damageHero(state, enemyId, 1, playerId, sourceName);
-    let next = damageSlot(state, enemyId, first, 2, sourceName);
-    const remaining = next.board[key];
-    const other = remaining.findIndex((card, index) => index !== first && card && getCardCurrentHp(card) > 0);
-    if (other >= 0) {
-      next = damageSlot(next, enemyId, other, 2, sourceName);
-    } else if (remaining[first] && getCardCurrentHp(remaining[first]) > 0) {
-      next = damageSlot(next, enemyId, first, 2, sourceName);
-    }
-    return log(next, `${sourceName}: dealt two 2-damage strikes (no overflow to heroes).`);
+  if (op === "doublebattleclockspeed") {
+    const previous = Math.max(1, state.battleClockSpeed ?? 1);
+    const nextSpeed = Math.min(8, previous * 2);
+    return log({ ...state, battleClockSpeed: nextSpeed }, `${sourceName}: battle countdown now runs at ×${nextSpeed} speed (was ×${previous}).`);
   }
 
   if (op === "oraclechooseenemycard") {

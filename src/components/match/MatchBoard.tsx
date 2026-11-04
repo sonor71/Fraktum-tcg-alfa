@@ -39,6 +39,9 @@ type MatchBoardProps = {
   onReturnToMenu: () => void;
   reward?: MatchRewardResult | null;
   aiThinking?: boolean;
+  battleSecondsRemaining?: number;
+  battleClockSpeed?: number;
+  clockPaused?: boolean;
   logEntries?: string[];
   fxEvents?: MatchFxEvent[];
   cardTravelEvents?: CardTravelEvent[];
@@ -174,6 +177,9 @@ export function MatchBoard({
   onReturnToMenu,
   reward = null,
   aiThinking = false,
+  battleSecondsRemaining,
+  battleClockSpeed = 1,
+  clockPaused = false,
   logEntries,
   fxEvents = [],
   cardTravelEvents = [],
@@ -276,7 +282,17 @@ export function MatchBoard({
           <strong>{getInitiativeLabel(state, aiThinking)}</strong>
         </div>
 
-        <div className={`matchPhaseBadge is-${state.phase}`}>{readablePhase}</div>
+        <div className="matchClockAndPhase">
+          <div className={`matchPhaseBadge is-${state.phase}`}>{readablePhase}</div>
+          {typeof battleSecondsRemaining === "number" ? (
+            <div className={`matchBattleClock${battleSecondsRemaining <= 20 ? " is-critical" : ""}`} role="timer" aria-label="Время до конца боя" data-testid="battle-clock">
+              <span>ВРЕМЯ БОЯ</span>
+              <strong>{String(Math.floor(battleSecondsRemaining / 60)).padStart(2, "0")}:{String(battleSecondsRemaining % 60).padStart(2, "0")}</strong>
+              {battleClockSpeed > 1 ? <small>×{battleClockSpeed}</small> : null}
+              {clockPaused ? <small>ПАУЗА</small> : null}
+            </div>
+          ) : null}
+        </div>
 
         <div className="matchTurnBlock is-right">
           <span>Last D20</span>
@@ -299,7 +315,7 @@ export function MatchBoard({
         <div className="matchMobileHudCenter">
           <span>БОЙ {battleNumber}/3 · СЧЁТ {seriesScore.player}:{seriesScore.enemy}</span>
           <b>{state.activePlayerId === "player" ? "ТВОЙ ХОД" : "ХОД СОПЕРНИКА"}</b>
-          <small>ХОД {state.turn} · {readablePhase} · D20 {state.lastRoll ?? "—"}</small>
+          <small>ХОД {state.turn} · {readablePhase} · D20 {state.lastRoll ?? "—"}{typeof battleSecondsRemaining === "number" ? ` · ВРЕМЯ ${Math.floor(battleSecondsRemaining / 60)}:${String(battleSecondsRemaining % 60).padStart(2, "0")}${battleClockSpeed > 1 ? ` ×${battleClockSpeed}` : ""}` : ""}</small>
         </div>
         <div className="matchMobileHudSide is-player">
           <span>{playerName}</span>
