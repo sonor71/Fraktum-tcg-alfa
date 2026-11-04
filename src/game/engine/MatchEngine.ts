@@ -560,6 +560,8 @@ export function createInitialMatchState(payload: StartMatchPayload = {}): MatchS
       `${playerLabel(firstPlayerId)} starts in roll phase.`,
     ],
     rngSeed: seed,
+    battleClockExtraSeconds: 0,
+    battleClockSpeed: 1,
     onlineShuffleSeeds: hasExplicitOnlineSeeds
       ? {
           player: Number(payload.playerShuffleSeed),
@@ -683,6 +685,9 @@ export function dispatch(state: MatchState, action: GameAction): MatchState {
         return startNextBattle(log(state, "START_NEXT_BATTLE_REQUESTED"), state.seriesScore ?? { player: 0, enemy: 0 }, "BATTLE_STATE_RESET");
       case "AI_TURN":
         return runSimpleAI(state);
+      case "EXPIRE_BATTLE_CLOCK":
+        if (state.phase === "betweenBattles" || state.battleResult || state.battleNumber !== action.battleNumber) return state;
+        return finishByHpComparison(log(state, `[BATTLE_CLOCK_EXPIRED] Battle ${state.battleNumber}: time expired; remaining HP player=${state.player.hp}, enemy=${state.enemy.hp}.`), "Battle clock expired.");
       case "CONCEDE":
         return log(
           { ...state, phase: "ended", winner: otherPlayer(action.playerId) },

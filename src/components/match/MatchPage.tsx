@@ -8,6 +8,7 @@ import { createInitialMatchState, dispatch } from "../../game/engine/MatchEngine
 import { planNextAiAction } from "../../game/ai/SimpleAI";
 import { canPlayerMakeAnyMove, cardRequiresBoardSlot, getEffectiveCardCost, getPreferredFreeSlotIndex } from "../../game/engine/TurnManager";
 import { MatchBoard } from "./MatchBoard";
+import { useBattleClock } from "./useBattleClock";
 import { MatchDebugConsole } from "./debug/MatchDebugConsole";
 import { useMatchDebugRecorder } from "./debug/useMatchDebugRecorder";
 import { createMatchDebugStateSummary, sanitizeDebugValue } from "./debug/matchDebugUtils";
@@ -607,6 +608,17 @@ export default function MatchPage() {
   );
 
   const stateRef = useRef(state);
+  const handleClockExpired = useCallback((battleNumber: number) => {
+    const current = stateRef.current;
+    if (current.battleNumber === battleNumber && !current.winner && current.phase !== "betweenBattles" && current.phase !== "ended") {
+      send({ type: "EXPIRE_BATTLE_CLOCK", battleNumber });
+    }
+  }, []);
+  // Online countdown needs a server-authoritative start/deadline; do not decide online results on one client.
+  const battleClockEnabled = !isOnlineMode;
+  const battleClockPaused = state.phase === "roulette" || state.phase === "betweenBattles" || state.phase === "ended" || tutorialStepIndex >= 0;
+  const battleClock = useBattleClock(state, battleClockEnabled && !battleClockPaused, handleClockExpired);
+
   const previousFxState = useRef<MatchStateSnapshot | null>(null);
   const previousAutoFlowState = useRef<MatchStateSnapshot | null>(null);
   const seenTacticalRevealIds = useRef<Set<string>>(new Set());
@@ -1821,6 +1833,9 @@ export default function MatchPage() {
         onReturnToMenu={handleReturnToMenu}
         reward={matchReward}
         aiThinking={aiThinking}
+        battleSecondsRemaining={battleClockEnabled ? battleClock.secondsRemaining : undefined}
+        battleClockSpeed={state.battleClockSpeed ?? 1}
+        clockPaused={battleClockPaused}
         fxEvents={fxEvents}
         cardTravelEvents={cardTravelEvents}
         tacticalRevealEvents={tacticalRevealEvents}

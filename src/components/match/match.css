@@ -4554,3 +4554,15 @@ button { -webkit-tap-highlight-color: transparent; }
     transform: rotateY(180deg);
   }
 }
+
+/* Two-minute battle clock. Cards 71 / 2X modify shared time and acceleration. */
+.matchClockAndPhase { display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center; }
+.matchBattleClock { min-width:116px; padding:5px 12px; display:flex; justify-content:center; align-items:center; gap:7px; border:1px solid rgba(215,163,72,.48); border-radius:10px; background:rgba(14,8,25,.91); color:#f1dfb8; font-variant-numeric:tabular-nums; box-shadow:0 3px 18px rgba(0,0,0,.25); }
+.matchBattleClock span { font-size:9px; line-height:1.1; letter-spacing:.08em; opacity:.75; }
+.matchBattleClock strong { font-size:19px; line-height:1; color:#fff3cd; letter-spacing:.06em; }
+.matchBattleClock small { font-size:10px; font-weight:900; white-space:nowrap; color:#f4d48b; }
+.matchBattleClock.is-critical { border-color:rgba(248,89,101,.85); color:#ffd3d5; animation:matchClockWarning 1.2s ease-in-out infinite; }
+.matchBattleClock.is-critical strong { color:#ffb3b9; }
+@keyframes matchClockWarning { 50% { box-shadow:0 0 22px rgba(237,55,69,.35); } }
+@media (max-width:760px) { .matchBattleClock { min-width:92px; padding:4px 6px; gap:4px; } .matchBattleClock span { display:none; } .matchBattleClock strong { font-size:16px; } }
+@media (prefers-reduced-motion:reduce) { .matchBattleClock.is-critical { animation:none; } }

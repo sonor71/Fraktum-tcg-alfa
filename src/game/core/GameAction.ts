@@ -12,4 +12,5 @@ export type GameAction =
   | { type: "END_TURN"; playerId: PlayerId }
   | { type: "AI_TURN" }
   | { type: "START_NEXT_BATTLE"; battleNumber?: number }
+  | { type: "EXPIRE_BATTLE_CLOCK"; battleNumber: number }
   | { type: "CONCEDE"; playerId: PlayerId };
