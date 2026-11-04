@@ -260,9 +260,9 @@
     "cost": 3,
     "attack": 0,
     "health": 0,
-    "description": "Добавляет к матчу 71 секунду.",
+    "description": "Код 71: если у твоего героя 7 HP или меньше — восстанови 7 HP (не выше максимума). Иначе получи 1 Щит и добери 1 карту, если есть место в руке. Разовый эффект.",
     "image": "/cards/seventy-one.png",
-    "effectKey": "add_match_time_71",
+    "effectKey": "seventy_one_emergency_heal_7_or_shield_draw",
     "collection": "Iron Bazaar"
   },
   {
@@ -386,9 +386,9 @@
     "cost": 2,
     "attack": 0,
     "health": 0,
-    "description": "Ускоряет время матча вдвое. Повторное использование накладывается поверх другого и прибавляется.",
+    "description": "2X: нанеси по 2 урона двум вражеским картам. Если на поле врага только одна карта, ударь её дважды, пока она жива. Если поле врага пусто — 1 урон его герою. Разовый эффект.",
     "image": "/cards/double-speed.png",
-    "effectKey": "double_match_speed_stack",
+    "effectKey": "double_speed_two_hits_2_damage",
     "collection": "Iron Bazaar"
   },
   {

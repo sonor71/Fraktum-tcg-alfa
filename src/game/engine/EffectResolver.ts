@@ -46,9 +46,6 @@ type MatchStateWithRevealEvents = MatchState & {
   tacticalRevealSequence?: number;
 };
 
-type MatchNoteKey = "matchSecondsBonus" | "matchSpeedMultiplierBonus";
-type MatchStateWithNotes = MatchState & Partial<Record<MatchNoteKey, number>>;
-
 function log(state: MatchState, message: string): MatchState {
   return { ...state, log: [...state.log, message].slice(-LOG_LIMIT) };
 }
@@ -359,7 +356,7 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "fire": return [{ op: "damageFront", amount: 2 }, { op: "damageHero", amount: 1, target: "enemyHero" }];
     case "ice": return [{ op: "damageFront", amount: 2 }, { op: "damageHero", amount: 1, target: "enemyHero" }];
     case "hand_of_god": return [{ op: "playRevealedOracleCard" }];
-    case "seventy_one": return [{ op: "addMatchTime", amount: 71 }];
+    case "seventy_one": return [{ op: "seventyOneEmergency" }];
     case "time_of_reckoning": return [{ op: "halveEnemyWill" }, { op: "damageEnemyHeroPercent", amount: 25 }];
     case "dragon_eye": return [{ op: "revealRandomEnemyCard", amount: 1, target: "enemy" }];
     case "wood_vines": return [{ op: "freezeFront" }];
@@ -368,7 +365,7 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "book_knowledge": return [{ op: "knowledge" }];
     case "oracle": return [{ op: "oracleChooseEnemyCard" }];
     case "reverse_heart": return [{ op: "swapHeroHp" }];
-    case "double_speed": return [{ op: "doubleSpeed" }];
+    case "double_speed": return [{ op: "doubleXTwoHits" }];
     case "reverse": return [{ op: "reverseIncoming" }];
     case "fifteen_sixteen": return [{ op: "roulette" }];
     case "amulet_of_old_sage": return [{ op: "drawFromDiscardOrDeck", amount: 1 }];
@@ -969,12 +966,6 @@ function revealRandomEnemyCard(state: MatchState, playerId: PlayerId, sourceName
   return log(next, `${sourceName} revealed one random ${fromHand ? "hand" : "deck"} card from ${playerLabel(enemyId)}: ${getCardTitle(revealed)}.`);
 }
 
-function addMatchNote(state: MatchState, key: MatchNoteKey, amount: number, sourceName: string) {
-  const noteState = state as MatchStateWithNotes;
-  const current = Math.max(0, safeNumber(noteState[key], 0));
-  return log({ ...state, [key]: current + amount }, `${sourceName} changed ${key} by +${amount}.`);
-}
-
 function applyEffect(
   state: MatchState,
   playerId: PlayerId,
@@ -986,6 +977,37 @@ function applyEffect(
   const op = readOp(effect);
   const sourceName = getCardTitle(sourceCard);
   const amount = readAmount(effect, getPrintedAttack(sourceCard) || 1);
+
+  if (op === "seventyoneemergency") {
+    // Epic "71": a strong, situational comeback instead of a timer-only note.
+    if (state[playerId].hp <= 7) {
+      return healHero(state, playerId, 7, sourceName);
+    }
+    const shielded = addShield(state, playerId, 1, sourceName);
+    return shielded[playerId].hand.length < 7
+      ? drawCardsForSide(shielded, playerId, 1, sourceName)
+      : log(shielded, `${sourceName}: the hand is full; no extra card.`);
+  }
+  if (op === "doublextwohits") {
+    // Two 2-damage hits to enemy cards; no hero overflow after a kill.
+    const enemyId = otherPlayer(playerId);
+    const key = slotsKey(enemyId);
+    const slots = state.board[key];
+    const chosen = getSlotFromTarget(target, enemyId);
+    const first = chosen !== undefined && slots[chosen] && getCardCurrentHp(slots[chosen]) > 0
+      ? chosen
+      : slots.findIndex((card) => Boolean(card) && getCardCurrentHp(card) > 0);
+    if (first < 0) return damageHero(state, enemyId, 1, playerId, sourceName);
+    let next = damageSlot(state, enemyId, first, 2, sourceName);
+    const remaining = next.board[key];
+    const other = remaining.findIndex((card, index) => index !== first && card && getCardCurrentHp(card) > 0);
+    if (other >= 0) {
+      next = damageSlot(next, enemyId, other, 2, sourceName);
+    } else if (remaining[first] && getCardCurrentHp(remaining[first]) > 0) {
+      next = damageSlot(next, enemyId, first, 2, sourceName);
+    }
+    return log(next, `${sourceName}: dealt two 2-damage strikes (no overflow to heroes).`);
+  }
 
   if (op === "oraclechooseenemycard") {
     const owner = otherPlayer(playerId);
@@ -1221,10 +1243,8 @@ function applyEffect(
   if (op.includes("stungunaura")) return log(state, `${sourceName} is active: enemy Will gain is halved while this card remains on board.`);
   if (op.includes("playrevealedoraclecard")) return log(state, `${sourceName} requires a card revealed by Oracle; no random steal is performed.`);
   if (op.includes("stealandcastrandom")) return stealAndCastRandom(state, playerId, sourceName);
-  if (op.includes("addmatchtime")) return addMatchNote(state, "matchSecondsBonus", amount, sourceName);
   if (op.includes("forcedrawmatch")) return forceDrawMatch(state, sourceName);
   if (op.includes("knowledge")) return logKnowledge(state, otherPlayer(playerId), sourceName);
-  if (op.includes("doublespeed")) return addMatchNote(state, "matchSpeedMultiplierBonus", 1, sourceName);
   if (op.includes("roulette")) return roulette(state, playerId, sourceName);
   if (op.includes("returnplayedtodeck")) return returnPlayedToDeck(state, playerId, playedSlotIndex, sourceCard, sourceName);
 
