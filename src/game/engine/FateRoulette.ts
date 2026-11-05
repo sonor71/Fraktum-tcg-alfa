@@ -68,7 +68,8 @@ export function addRouletteEvent(state: MatchState, type: string, message: strin
 }
 
 export function createFateRouletteState(state: MatchState, ownerId: PlayerId, triggerRoll: 15 | 16): MatchState {
-  const id = `roulette_${state.turn}_${ownerId}_${state.engineEventSequence ?? 0}_${state.rngSeed}`;
+  // Player and enemy swap names between online clients. Do not put local ownerId in a shared roulette ID.
+  const id = `roulette_${state.battleNumber ?? 1}_${state.turn}_${state.engineEventSequence ?? 0}_${state.rngSeed}`;
   let next: MatchState = {
     ...state,
     phase: "roulette",
@@ -108,7 +109,8 @@ export function revealFateRouletteResult(state: MatchState, playerId: PlayerId, 
   const roulette = state.rouletteState;
   if (!roulette || roulette.id !== rouletteId) return state;
   if (roulette.stage === "result") return state;
-  if (playerId !== roulette.ownerId && playerId !== "player") return state;
+  // Only the owner can publish the result; the other client receives the same action from the event log.
+  if (playerId !== roulette.ownerId || roulette.stage !== "spinning") return state;
   if (!roulette.event || !isValidTimestamp(revealedAtMs)) return state;
 
   const confirmAvailableAt = revealedAtMs + FATE_ROULETTE_RESULT_READ_MS;

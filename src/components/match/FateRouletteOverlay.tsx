@@ -41,10 +41,10 @@ export function FateRouletteOverlay({ roulette, localPlayerId = "player", onSpin
   const finalAngle = getFateRouletteFinalAngle(roulette.resultIndex, roulette.extraRotations, roulette.spinNonce);
 
   useEffect(() => {
-    if (roulette.stage !== "spinning") return undefined;
+    if (!isOwner || roulette.stage !== "spinning") return undefined;
     const timeout = window.setTimeout(() => onReveal(roulette.id, Date.now()), window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 450 : 3800);
     return () => window.clearTimeout(timeout);
-  }, [onReveal, roulette.id, roulette.stage]);
+  }, [isOwner, onReveal, roulette.id, roulette.stage]);
 
   useEffect(() => {
     if (roulette.stage !== "result") return undefined;

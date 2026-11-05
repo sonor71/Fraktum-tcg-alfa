@@ -1458,10 +1458,11 @@ export default function MatchPage() {
     void submitGameAction({ type: "SPIN_FATE_ROULETTE", playerId: "player", rouletteId });
   }, [submitGameAction]);
   const handleRouletteReveal = useCallback((rouletteId: string, revealedAtMs: number) => {
-    void submitGameAction({ type: "REVEAL_FATE_ROULETTE_RESULT", playerId: stateRef.current.rouletteState?.ownerId ?? "player", rouletteId, revealedAtMs });
+    if (stateRef.current.rouletteState?.ownerId !== "player") return;
+    void submitGameAction({ type: "REVEAL_FATE_ROULETTE_RESULT", playerId: "player", rouletteId, revealedAtMs });
   }, [submitGameAction]);
   const handleRouletteConfirm = useCallback((rouletteId: string) => {
-    void submitGameAction({ type: "CONFIRM_FATE_ROULETTE_RESULT", playerId: "player", rouletteId });
+    void submitGameAction({ type: "CONFIRM_FATE_ROULETTE_RESULT", playerId: "player", rouletteId, confirmedAtMs: Date.now() });
   }, [submitGameAction]);
   const handleChooseAwakening = useCallback((choice: "freeCard" | "passive") => {
     void submitGameAction({ type: "CHOOSE_AWAKENING", playerId: "player", choice });

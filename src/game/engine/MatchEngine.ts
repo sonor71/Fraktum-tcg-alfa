@@ -663,7 +663,7 @@ export function dispatch(state: MatchState, action: GameAction): MatchState {
       case "REVEAL_FATE_ROULETTE_RESULT":
         return revealFateRouletteResult(state, action.playerId, action.rouletteId, action.revealedAtMs);
       case "CONFIRM_FATE_ROULETTE_RESULT":
-        return confirmFateRouletteResult(state, action.playerId, action.rouletteId);
+        return confirmFateRouletteResult(state, action.playerId, action.rouletteId, action.confirmedAtMs);
       case "DESTROY_OWN_CARD":
         return destroyOwnCard(state, action.playerId, action.slotIndex);
       case "END_TURN":
@@ -816,13 +816,14 @@ export function chooseAwakening(state: MatchState, playerId: PlayerId, choice: "
   return log({ ...state, currentTurn: { ...turn, awakeningChoice: choice, freeCards: true, awakeningPassiveAvailable: false } }, "Awakening: the next card costs 0 Will.");
 }
 
-export function confirmFateRouletteResult(state: MatchState, playerId: PlayerId, rouletteId: string): MatchState {
+export function confirmFateRouletteResult(state: MatchState, playerId: PlayerId, rouletteId: string, confirmedAtMs?: number): MatchState {
   const roulette = state.rouletteState;
   if (!roulette || roulette.id !== rouletteId) return state;
   if (roulette.ownerId !== playerId) return log(state, "Only the roulette owner can confirm this result.");
   if (roulette.stage !== "result" || !roulette.event) return state;
 
-  const nowMs = Date.now();
+  // Use the event timestamp on both online clients: local Date.now() can differ.
+  const nowMs = Number.isFinite(confirmedAtMs) ? Math.max(0, confirmedAtMs!) : Date.now();
   const remainingMs = getFateRouletteConfirmRemainingMs(state, nowMs);
   if (remainingMs > 0) {
     return addRouletteEvent(log(state, `[ROULETTE_RESULT_CONFIRM_BLOCKED] ${remainingMs}ms remaining before ${roulette.event} can be confirmed.`), "ROULETTE_RESULT_CONFIRM_BLOCKED", "Fate Roulette confirm blocked until the result has been readable for 15 seconds.", { rouletteId, ownerId: roulette.ownerId, remainingMs, confirmAvailableAt: roulette.confirmAvailableAt });
