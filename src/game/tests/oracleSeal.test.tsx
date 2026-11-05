@@ -129,7 +129,7 @@ describe("Seal of the Forgotten Souls: one-time field damage", () => {
   });
 });
 
-describe("Oracle: choose exactly one concealed enemy hand card", () => {
+describe("Oracle: manually reveal the entire concealed enemy hand", () => {
   function castOracle() {
     const state = createInitialMatchState({ seed: 33, startingPlayerId: "player" });
     const withHand: MatchState = {
@@ -152,11 +152,11 @@ describe("Oracle: choose exactly one concealed enemy hand card", () => {
     return { withHand, resolved, event: revealEvents.at(-1) };
   }
 
-  it("has the correct legendary description and creates a hidden-choice event, not an all-hand reveal", () => {
+  it("has the correct legendary description and creates a full-hand manual reveal event", () => {
     expect(CARDS_BY_ID.oracle.rarity).toBe("legendary");
-    expect(CARDS_BY_ID.oracle.description).toContain("одну закрытую");
+    expect(CARDS_BY_ID.oracle.description).toContain("все карты в руке противника");
     const { withHand, resolved, event } = castOracle();
-    expect(event?.kind).toBe("oracle-pick");
+    expect(event?.kind).toBe("oracle-hand");
     expect(event?.viewer).toBe("player");
     expect(event?.owner).toBe("enemy");
     expect(event?.cards).toHaveLength(3);
@@ -177,6 +177,8 @@ describe("Oracle: choose exactly one concealed enemy hand card", () => {
     expect(html).not.toContain(">Revolver<");
     expect(html).not.toContain(">Oreon<");
     expect(html).not.toContain(">Omega<");
+    expect(html).toContain("ОТКРЫТО 0 ИЗ 3");
+    expect(html).toContain("Можно раскрыть всю руку.");
   });
 
   it("hides an enemy Oracle reveal from the local human", () => {

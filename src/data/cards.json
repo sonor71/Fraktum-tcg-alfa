@@ -358,9 +358,9 @@
     "cost": 5,
     "attack": 0,
     "health": 0,
-    "description": "Выбери одну закрытую карту из руки противника: она перевернётся и будет раскрыта только тебе.",
+    "description": "Позволяет просмотреть все карты в руке противника: каждая сначала лежит рубашкой вверх, а ты самостоятельно переворачиваешь их по одной и открываешь полный паспорт. Остальные карты скрыты, пока ты их не выберешь.",
     "image": "/cards/oracle.png",
-    "effectKey": "oracle_choose_one_enemy_hand_card",
+    "effectKey": "oracle_reveal_entire_enemy_hand_manually",
     "collection": "Egyptian Echo"
   },
   {
