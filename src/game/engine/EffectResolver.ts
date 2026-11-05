@@ -11,7 +11,8 @@ import {
   playerLabel,
   slotsKey,
 } from "./TurnManager";
-import { FATE_ROULETTE_EVENTS } from "./Rules";
+import { FATE_ROULETTE_EVENTS, HAND_LIMIT } from "./Rules";
+import { applyTitanEyeProtection } from "./DamageSystem";
 
 const LOG_LIMIT = 80;
 
@@ -27,6 +28,7 @@ type TacticalRevealCard = {
   id: string;
   title: string;
   image: string;
+  baseId: string;
   cost: number;
   rarity: string;
 };
@@ -181,6 +183,7 @@ function makeRevealCard(card: CardInstance): TacticalRevealCard {
   const definition = getDefinitionRecord(card);
   return {
     id: card.instanceId,
+    baseId: card.baseId,
     title: getCardTitle(card),
     image: getCardImage(card),
     cost: getCardCost(card),
@@ -358,7 +361,7 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "hand_of_god": return [{ op: "playRevealedOracleCard" }];
     case "seventy_one": return [{ op: "addBattleTime", amount: 71 }];
     case "time_of_reckoning": return [{ op: "halveEnemyWill" }, { op: "damageEnemyHeroPercent", amount: 25 }];
-    case "dragon_eye": return [{ op: "revealRandomEnemyCard", amount: 1, target: "enemy" }];
+    case "dragon_eye": return [{ op: "oracleChooseEnemyCard" }];
     case "wood_vines": return [{ op: "freezeFront" }];
     case "tree_of_life": return [{ op: "restoreLastTurnLostHp", amount: 999 }];
     case "caduceus": return [{ op: "forceDrawMatch" }];
@@ -368,15 +371,15 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "double_speed": return [{ op: "doubleBattleClockSpeed" }];
     case "reverse": return [{ op: "reverseIncoming" }];
     case "fifteen_sixteen": return [{ op: "roulette" }];
-    case "amulet_of_old_sage": return [{ op: "drawFromDiscardOrDeck", amount: 1 }];
+    case "amulet_of_old_sage": return [{ op: "sageAmuletReturn" }];
     case "hyper_night": return [{ op: "skipTurnChanceOrDiscard", chance: 30, target: "enemy", amount: 2 }];
     case "shield_hope": return [{ op: "shield", amount: Math.max(3, getCardBoardMaxHp(card) || 3), target: "self" }];
-    case "legendary_messenger": return [{ op: "increaseNextCardPower", amount: 2 }, { op: "peekDeck", amount: 1, target: "self" }];
+    case "legendary_messenger": return [{ op: "legendaryMessengerCharge" }];
     case "seal_of_forgotten_souls": return [{ op: "sealFieldDamage" }];
     case "psychological_disorder": return [{ op: "psychologicalDisorder", target: "enemy" }];
     case "unrequited_love": return [{ op: "unrequitedLove" }];
     case "armor_of_chaos": return [{ op: "blockSmallDamage", amount: 3, target: "self" }];
-    case "titan_eye": return [{ op: "reduceNextEnemyCardPower", percent: 20 }];
+    case "titan_eye": return [{ op: "titanEyeAura" }];
     case "Stun_Gun": return [{ op: "stunGunAura" }];
     case "elite_knight": return [{ op: "damageOppositeCardOnly", amount: 4 }];
     case "healing": return [{ op: "healFriendlyCard", amount: 3 }];
@@ -619,28 +622,31 @@ function damageHero(
     return log(state, `${playerLabel(targetPlayerId)} blocked ${sourceName}: damage ${amount} is lower than ${blockedBySmallDamage}.`);
   }
 
-  const side = state[targetPlayerId];
+  const titan = applyTitanEyeProtection(state, targetPlayerId, amount);
+  const side = titan.state[targetPlayerId];
+  const protectedAmount = titan.damage;
   const protectionKey = `${state.activePlayerId}:${state.turn}:${state[state.activePlayerId].personalTurnsTaken ?? 0}`;
   const primeIsActive = state.board[slotsKey(targetPlayerId)].some((card) =>
     (card?.baseId === "prime" || card?.definition.id === "prime") && getCardCurrentHp(card) > 0,
   );
-  const primeCanProtect = primeIsActive && state.primeProtectionUsed?.[targetPlayerId] !== protectionKey;
-  const primeBlocked = primeCanProtect ? Math.min(2, amount) : 0;
-  const afterPrime = amount - primeBlocked;
+  const primeCanProtect = primeIsActive && titan.state.primeProtectionUsed?.[targetPlayerId] !== protectionKey && protectedAmount > 0;
+  const primeBlocked = primeCanProtect ? Math.min(2, protectedAmount) : 0;
+  const afterPrime = protectedAmount - primeBlocked;
   const shieldBlocked = Math.min(Math.max(0, side.shield ?? 0), afterPrime);
   const damageAfterShield = Math.max(0, afterPrime - shieldBlocked);
   const nextShield = Math.max(0, (side.shield ?? 0) - shieldBlocked);
   const nextHp = Math.max(0, side.hp - damageAfterShield);
 
   let next = updateSide(primeCanProtect ? {
-    ...state,
-    primeProtectionUsed: { ...state.primeProtectionUsed, [targetPlayerId]: protectionKey },
-  } : state, targetPlayerId, {
+    ...titan.state,
+    primeProtectionUsed: { ...titan.state.primeProtectionUsed, [targetPlayerId]: protectionKey },
+  } : titan.state, targetPlayerId, {
     hp: nextHp,
     shield: nextShield,
     lastTurnLostHp: (side.lastTurnLostHp ?? 0) + damageAfterShield,
   });
 
+  if (titan.blocked > 0) next = log(next, `Глаз Титана: первый урон по герою уменьшен на ${titan.blocked}.`);
   if (primeBlocked > 0) next = log(next, `Prime reduced the first hero damage this turn by ${primeBlocked}.`);
   if (shieldBlocked > 0) next = log(next, `${playerLabel(targetPlayerId)} shield blocked ${shieldBlocked} damage.`);
   next = log(next, damageAfterShield > 0 ? `${sourceName} dealt ${damageAfterShield} damage to ${playerLabel(targetPlayerId)} hero.` : `${sourceName} dealt no hero damage.`);
@@ -988,6 +994,50 @@ function applyEffect(
     return log({ ...state, battleClockSpeed: nextSpeed }, `${sourceName}: battle countdown now runs at ×${nextSpeed} speed (was ×${previous}).`);
   }
 
+
+  if (op === "legendarymessengercharge") {
+    // One-time tempo swing with card advantage, but no more than seven cards in hand.
+    const side = state[playerId];
+    const drawn = side.deck.slice(0, Math.max(0, Math.min(2, HAND_LIMIT - side.hand.length)));
+    let next = updateSide(state, playerId, {
+      deck: side.deck.slice(drawn.length),
+      hand: [...side.hand, ...drawn],
+    });
+    next = modifyWill(next, playerId, 2, sourceName);
+    const effects = getSideEffects(next, playerId).filter(effect => normalizeKey(effect.id) !== "next_card_power");
+    next = setSideEffects(next, playerId, [...effects, { id: "next_card_power", source: sourceName, amount: 3, remainingTurns: 1 }]);
+    return log(next, `${sourceName}: drew ${drawn.length} cards and charged the next damaging card with +3 power.`);
+  }
+  if (op === "sageamuletreturn") {
+    // The amulet is especially effective after valuable cards have entered discard.
+    let next = state;
+    let recovered = 0;
+    let drawn = 0;
+    for (let i = 0; i < 2 && next[playerId].hand.length < HAND_LIMIT; i += 1) {
+      const side = next[playerId];
+      if (side.discard.length) {
+        const chosen = side.discard[side.discard.length - 1];
+        next = updateSide(next, playerId, {
+          discard: side.discard.slice(0, -1),
+          hand: [...side.hand, chosen],
+        });
+        recovered += 1;
+      } else if (side.deck.length) {
+        next = updateSide(next, playerId, {
+          deck: side.deck.slice(1),
+          hand: [...side.hand, side.deck[0]],
+        });
+        drawn += 1;
+      } else break;
+    }
+    next = addShield(next, playerId, recovered || 1, sourceName);
+    if (recovered === 2) next = modifyWill(next, playerId, 1, sourceName);
+    return log(next, `${sourceName}: returned ${recovered} from discard, drew ${drawn}, gained ${recovered || 1} shield.`);
+  }
+  if (op === "titaneyeaura") {
+    // The passive is evaluated only while the 6-HP permanent occupies a living slot.
+    return addShield(state, playerId, 2, sourceName);
+  }
   if (op === "oraclechooseenemycard") {
     const owner = otherPlayer(playerId);
     const hand = state[owner].hand;
@@ -997,7 +1047,7 @@ function applyEffect(
       viewer: playerId,
       owner,
       source: sourceName,
-      title: `${sourceName}: choose one hidden enemy card`,
+      title: `${sourceName}: choose one hidden enemy card from hand`,
       cards: hand.map(makeRevealCard),
     });
     // Do not include hidden enemy card names in the shared match log.
@@ -1200,7 +1250,11 @@ function applyEffect(
     const enemyId = otherPlayer(playerId);
     const slotIndex = findDamageSlot(state, playerId, enemyId, target, playedSlotIndex, "frontEnemy");
     if (slotIndex < 0) return log(state, `${sourceName} found no front card to freeze.`);
-    return addTimedEffect(state, enemyId, { id: "skip_next_turn", source: sourceName, remainingTurns: 1 }, `${sourceName} froze ${playerLabel(enemyId)} next turn.`);
+    const slots = [...state.board[slotsKey(enemyId)]];
+    const card = slots[slotIndex];
+    if (!card || getCardCurrentHp(card) <= 0) return log(state, `${sourceName}: no living opposing card to freeze.`);
+    slots[slotIndex] = { ...card, statuses: [...new Set([...(card.statuses ?? []), "alpha_frozen"])] };
+    return log({ ...state, board: { ...state.board, [slotsKey(enemyId)]: slots } }, `${sourceName} заморозил ${getCardTitle(card)} в слоте ${slotIndex + 1}: следующая атака заблокирована.`);
   }
 
   if (op.includes("applyailment")) return addTimedEffect(state, otherPlayer(playerId), { id: "ailment", source: sourceName, remainingTurns: 1 }, `${sourceName} applied a random ailment.`);

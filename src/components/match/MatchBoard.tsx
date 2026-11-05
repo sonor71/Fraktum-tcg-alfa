@@ -46,6 +46,7 @@ type MatchBoardProps = {
   fxEvents?: MatchFxEvent[];
   cardTravelEvents?: CardTravelEvent[];
   tacticalRevealEvents?: TacticalRevealEvent[];
+  onTacticalRevealDismiss?: (id: string) => void;
   matchMode?: "ai" | "online" | string;
   opponentName?: string | null;
   opponentRankLabel?: string | null;
@@ -184,6 +185,7 @@ export function MatchBoard({
   fxEvents = [],
   cardTravelEvents = [],
   tacticalRevealEvents = [],
+  onTacticalRevealDismiss = () => undefined,
   matchMode = "ai",
   opponentName = null,
   opponentRankLabel = null,
@@ -284,14 +286,6 @@ export function MatchBoard({
 
         <div className="matchClockAndPhase">
           <div className={`matchPhaseBadge is-${state.phase}`}>{readablePhase}</div>
-          {typeof battleSecondsRemaining === "number" ? (
-            <div className={`matchBattleClock${battleSecondsRemaining <= 20 ? " is-critical" : ""}`} role="timer" aria-label="Время до конца боя" data-testid="battle-clock">
-              <span>ВРЕМЯ БОЯ</span>
-              <strong>{String(Math.floor(battleSecondsRemaining / 60)).padStart(2, "0")}:{String(battleSecondsRemaining % 60).padStart(2, "0")}</strong>
-              {battleClockSpeed > 1 ? <small>×{battleClockSpeed}</small> : null}
-              {clockPaused ? <small>ПАУЗА</small> : null}
-            </div>
-          ) : null}
         </div>
 
         <div className="matchTurnBlock is-right">
@@ -324,10 +318,7 @@ export function MatchBoard({
         </div>
       </section>
 
-      <div className="matchContextBanner" role="status" aria-live="polite">
-        <strong>{d20RuleText}</strong>
-        <span>КАРТЫ: {state.currentTurn?.cardsPlayed ?? 0} / {state.currentTurn?.d20Limit ?? "—"} · WILL: {state.player.will} / {state.player.maxWill}{state.currentTurn?.willCostMultiplier === 2 ? " · ×2 COST" : ""}</span>
-      </div>
+
       {state.lastRoll === 20 && state.currentTurn && !state.currentTurn.awakeningChoice ? <div className="matchAwakeningChoice"><b>ПРОБУЖДЕНИЕ</b><button type="button" onClick={() => onChooseAwakening("freeCard")}>СЫГРАТЬ КАРТУ БЕСПЛАТНО</button><button type="button" disabled={!state.currentTurn.awakeningPassiveAvailable} onClick={() => onChooseAwakening("passive")}>АКТИВИРОВАТЬ ПАССИВКУ</button></div> : null}
       {specialSourceCard ? <button className="matchSpecialSourceAction" type="button" disabled={specialSlotIndex < 0} onClick={() => onPlay(specialSourceCard.instanceId, Math.max(0, specialSlotIndex))}>{state.currentTurn?.discardPlayAvailable ? `СЫГРАТЬ ИЗ СБРОСА: ${getCardTitle(specialSourceCard)}` : "СЫГРАТЬ СЛУЧАЙНУЮ КАРТУ СОПЕРНИКА"}</button> : null}
 
@@ -408,6 +399,21 @@ export function MatchBoard({
       </section>
       {showD20Help ? <section className="matchD20Help" role="dialog" aria-modal="true"><header><b>D20 RULES</b><button onClick={() => setShowD20Help(false)}>×</button></header><dl><dt>1–10</dt><dd>До N карт</dd><dt>11–14</dt><dd>Карта из сброса</dd><dt>15–16</dt><dd>Рулетка Судьбы</dd><dt>17–18</dt><dd>Безлимит · Will ×2</dd><dt>19</dt><dd>Карта противника</dd><dt>20</dt><dd>Пробуждение</dd></dl></section> : null}
 
+      <div className="matchBattleInfoRail" aria-label="Battle status and time">
+        {typeof battleSecondsRemaining === "number" ? (
+          <div className={`matchBattleClock${battleSecondsRemaining <= 20 ? " is-critical" : ""}`} role="timer" aria-label="Время до конца боя" data-testid="battle-clock">
+            <span>ВРЕМЯ БОЯ</span>
+            <strong>{String(Math.floor(battleSecondsRemaining / 60)).padStart(2, "0")}:{String(battleSecondsRemaining % 60).padStart(2, "0")}</strong>
+            {battleClockSpeed > 1 ? <small>×{battleClockSpeed}</small> : null}
+            {clockPaused ? <small>ПАУЗА</small> : null}
+          </div>
+        ) : null}
+        <div className="matchContextBanner" role="status" aria-live="polite">
+        <strong>{d20RuleText}</strong>
+        <span>КАРТЫ: {state.currentTurn?.cardsPlayed ?? 0} / {state.currentTurn?.d20Limit ?? "—"} · WILL: {state.player.will} / {state.player.maxWill}{state.currentTurn?.willCostMultiplier === 2 ? " · ×2 COST" : ""}</span>
+      </div>
+      </div>
+
       <section className="matchPlayerActionZone is-auto-flow" aria-label="Match controls">
         <div className="matchActionStatus">
           <span>{state.winner ? "Result" : "Auto flow"}</span>
@@ -464,7 +470,7 @@ export function MatchBoard({
 
       <MatchFxLayer events={fxEvents} />
       <CardTravelLayer events={cardTravelEvents} />
-      <TacticalRevealLayer events={tacticalRevealEvents} />
+      <TacticalRevealLayer events={tacticalRevealEvents} onDismiss={onTacticalRevealDismiss} />
 
       {aiThinking ? (
         <div className="matchAiThinkingVeil" aria-hidden="true">

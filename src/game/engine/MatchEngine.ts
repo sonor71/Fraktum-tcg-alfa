@@ -428,19 +428,8 @@ function triggerTurnStartEffects(state: MatchState, playerId: PlayerId): MatchSt
     }
   }
 
-  const key = slotsKey(playerId);
-  const slots = next.board[key];
-  if (slots.some((card) => card?.statuses?.includes("alpha_frozen"))) {
-    next = {
-      ...next,
-      board: {
-        ...next.board,
-        [key]: slots.map((card) => card?.statuses?.includes("alpha_frozen")
-          ? { ...card, statuses: card.statuses?.filter((status) => status !== "alpha_frozen") }
-          : card),
-      },
-    };
-  }
+  // Frozen card markers persist through the owner's next combat resolution,
+  // where DamageSystem blocks that attack and then clears the marker.
   return next;
 }
 

@@ -736,3 +736,48 @@
   cursor: not-allowed;
   filter: grayscale(.35);
 }
+
+/* Battlefield HUD redesign: no floating overlays over the opponent's hand. */
+@media (min-width: 901px) and (min-height: 601px) {
+  .matchSeriesHud {
+    left:1.4% !important;
+    top:7.4% !important;
+    transform:none !important;
+    width:20.3% !important;
+    max-width:none !important;
+    padding:5px 8px !important;
+    gap:2px 5px !important;
+    border-width:2px !important;
+  }
+  .matchSeriesHud small { display:none; }
+  .matchArenaTopbar { left:24.5%; right:24.5%; top:1.25%; }
+  .matchBattleInfoRail {
+    position:absolute;
+    z-index:14;
+    right:3%;
+    top:61%;
+    width:15.9%;
+    display:grid;
+    gap:3px;
+    pointer-events:none;
+  }
+  .matchBattleInfoRail .matchBattleClock { min-width:0; border-radius:0; border:2px solid #394d7b; background:#0d152b; box-shadow:3px 3px 0 #020408; justify-content:space-between; padding:3px 6px; }
+  .matchBattleInfoRail .matchBattleClock strong { font-size:clamp(13px,1.05cqw,19px); }
+  .matchBattleInfoRail .matchBattleClock span { font-size:clamp(7px,.55cqw,9px); }
+  .matchBattleInfoRail .matchContextBanner {
+    position:static !important;
+    translate:none !important;
+    transform:none !important;
+    width:100% !important;
+    padding:3px 6px !important;
+    gap:1px;
+    border-width:1px;
+    box-sizing:border-box;
+    text-align:center;
+  }
+  .matchBattleInfoRail .matchContextBanner strong { font-size:clamp(8px,.7cqw,11px); }
+  .matchBattleInfoRail .matchContextBanner span { font-size:clamp(7px,.55cqw,9px); }
+}
+@media (max-width:900px), (max-height:600px) {
+  .matchBattleInfoRail { display:none !important; }
+}

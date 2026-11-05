@@ -84,7 +84,15 @@ export function BoardSlot({ card, side, index, valid = false, onActivate, target
   const temporary = Boolean(card?.temporaryUntilRoundEnd);
   const hp = getCardHp(card);
   const cardKind = card ? (temporary ? "temporary" : hp.hasHp ? "permanent" : "effect") : "none";
-  const title = getSlotTitle(side, index, card, canDrop);
+  const statuses = card?.statuses ?? [];
+  const frozen = statuses.includes("alpha_frozen");
+  const labels: Record<string, string> = {
+    alpha_frozen: "ЗАМОРОЗКА", alpha_bleeding: "КРОВОТЕЧЕНИЕ",
+    alpha_burning: "ОЖОГ", alpha_cold_mark: "ХОЛОД",
+    stunned: "ОГЛУШЕНИЕ", poisoned: "ЯД", weakened: "ОСЛАБЛЕНИЕ",
+  };
+  const title = getSlotTitle(side, index, card, canDrop)
+    + (statuses.length ? ` · Статусы: ${statuses.map(status => labels[status] || status).join(", ")}` : "");
 
   const className = [
     "matchBoardSlot",
@@ -96,6 +104,7 @@ export function BoardSlot({ card, side, index, valid = false, onActivate, target
     card && hp.hasHp ? "has-hp-card" : "",
     card && !hp.hasHp ? "has-no-hp-card" : "",
     hp.state !== "none" ? `is-hp-${hp.state}` : "",
+    ...(card?.statuses ?? []).map(status => `has-status-${status.replace(/[^a-z0-9_-]/gi, "-")}`),
   ].filter(Boolean).join(" ");
 
   return (
@@ -128,6 +137,12 @@ export function BoardSlot({ card, side, index, valid = false, onActivate, target
       {card ? (
         <div className="matchSlotCardShell">
           <CardView card={card} size="board" disabled />
+          {frozen ? <span className="matchFreezeCrystal" aria-hidden="true">❄</span> : null}
+          {statuses.length > 0 ? (
+            <span className="matchSlotStatusStack" aria-label={`Статусы карты: ${statuses.map(status => labels[status] || status).join(", ")}`}>
+              {statuses.map(status => <span key={status} className={status === "alpha_frozen" ? "is-frozen" : "is-status"} title={labels[status] || status}>{labels[status] || status}</span>)}
+            </span>
+          ) : null}
 
           {temporary ? (
             <span className="matchSlotStateTag is-temp">TEMP</span>

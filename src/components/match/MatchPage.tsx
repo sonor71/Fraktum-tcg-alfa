@@ -616,7 +616,7 @@ export default function MatchPage() {
   }, []);
   // Online countdown needs a server-authoritative start/deadline; do not decide online results on one client.
   const battleClockEnabled = !isOnlineMode;
-  const battleClockPaused = state.phase === "roulette" || state.phase === "betweenBattles" || state.phase === "ended" || tutorialStepIndex >= 0;
+  const battleClockPaused = state.phase === "roulette" || state.phase === "betweenBattles" || state.phase === "ended" || tutorialStepIndex >= 0 || tacticalRevealEvents.some(event => event.kind === "oracle-pick" && event.viewer === "player");
   const battleClock = useBattleClock(state, battleClockEnabled && !battleClockPaused, handleClockExpired);
 
   const previousFxState = useRef<MatchStateSnapshot | null>(null);
@@ -804,16 +804,18 @@ export default function MatchPage() {
       // An enemy Oracle must not reveal our hand to us through the same overlay.
       // Only the player who cast Oracle can choose and view a hidden card.
       const revealEvents = unseenRevealEvents.filter((event) => event.kind !== "oracle-pick" || event.viewer === "player");
-      const eventIds = new Set(revealEvents.map((event) => event.id));
       if (revealEvents.length === 0) return;
       setTacticalRevealEvents((currentEvents) => [...currentEvents, ...revealEvents].slice(-8));
 
-      const timer = window.setTimeout(() => {
-        setTacticalRevealEvents((currentEvents) => currentEvents.filter((event) => !eventIds.has(event.id)));
-        tacticalRevealTimers.current = tacticalRevealTimers.current.filter((candidate) => candidate !== timer);
-      }, revealEvents.some((event) => event.kind === "oracle-pick") ? 16000 : TACTICAL_REVEAL_TTL_MS);
-
-      tacticalRevealTimers.current.push(timer);
+      // Interactive choices stay open until the player finishes reading the passport.
+      const timedIds = new Set(revealEvents.filter(event => event.kind !== "oracle-pick").map(event => event.id));
+      if (timedIds.size) {
+        const timer = window.setTimeout(() => {
+          setTacticalRevealEvents((currentEvents) => currentEvents.filter(event => !timedIds.has(event.id)));
+          tacticalRevealTimers.current = tacticalRevealTimers.current.filter(candidate => candidate !== timer);
+        }, TACTICAL_REVEAL_TTL_MS);
+        tacticalRevealTimers.current.push(timer);
+      }
     }
   }, [state]);
 
@@ -1446,6 +1448,10 @@ export default function MatchPage() {
     }
   }, [recordDebug, onlineRoom?.id]);
 
+  const handleTacticalRevealDismiss = useCallback((id: string) => {
+    setTacticalRevealEvents(events => events.filter(event => event.id !== id));
+  }, []);
+
   const handleRouletteSpin = useCallback((rouletteId: string) => {
     void submitGameAction({ type: "SPIN_FATE_ROULETTE", playerId: "player", rouletteId });
   }, [submitGameAction]);
@@ -1839,6 +1845,7 @@ export default function MatchPage() {
         fxEvents={fxEvents}
         cardTravelEvents={cardTravelEvents}
         tacticalRevealEvents={tacticalRevealEvents}
+        onTacticalRevealDismiss={handleTacticalRevealDismiss}
         matchMode={matchMode}
         opponentName={opponentUi.name}
         opponentRankLabel={opponentUi.rankLabel}
