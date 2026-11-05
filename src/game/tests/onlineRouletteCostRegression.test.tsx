@@ -103,7 +103,7 @@ describe("effective Will price must match actual payment", () => {
     const html = renderToStaticMarkup(<CardView card={card} size="hand" effectiveCost={2} blockedReason="НУЖНО 2 ВОЛИ" />);
     expect(html).toContain('data-card-cost="2"');
     expect(html).toContain('data-card-printed-cost="1"');
-    expect(html).toContain("WILL ×2");
+    expect(html).toContain("ЦЕНА 1 → 2");
     expect(html).toContain("НУЖНО 2 ВОЛИ");
     const blocked = playCard(state, "player", card.instanceId, { type: "slot", playerId: "player", slotIndex: 0 });
     expect(blocked.player.hand).toHaveLength(1);
