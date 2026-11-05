@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { CardInstance, MatchState } from "../../game/core/types";
-import { canPlayCardWithCurrentResources, getEffectiveCardCost } from "../../game/engine/TurnManager";
+import { canPlayCardWithCurrentResources, getEffectiveCardCost, getCardCost, cardRequiresBoardSlot } from "../../game/engine/TurnManager";
 import { BattleLog } from "./BattleLog";
 import { BoardSlot } from "./BoardSlot";
 import { D20View } from "./D20View";
@@ -139,10 +139,12 @@ function getActionHint(
 
   const cost = getEffectiveCardCost(state, "player", selectedCard);
   if (state.player.will < cost) {
-    return `${getCardTitle(selectedCard)} needs ${cost} Will.`;
+    const printed = getCardCost(selectedCard);
+    return `${getCardTitle(selectedCard)}: нужно ${cost} Воли, доступно ${state.player.will}.${cost > printed ? ` D20 удвоил цену: ${printed} → ${cost}.` : ""}`;
   }
-
-  return `${getCardTitle(selectedCard)} selected. Drop it on a lower slot.`;
+  if (state.currentTurn?.playerId === "player" && state.currentTurn.d20Limit !== "unlimited" && (state.currentTurn.playsUsed ?? 0) >= state.currentTurn.d20Limit) return "Лимит разыгранных карт по D20 исчерпан.";
+  if (cardRequiresBoardSlot(selectedCard) && state.board.playerSlots.every(Boolean)) return "Нет свободных слотов на поле.";
+  return `${getCardTitle(selectedCard)}: стоимость ${cost} Воли. Перетащи в свободный слот.`;
 }
 
 function WillStrip({ player, label, side }: { player: MatchSide; label: string; side: "player" | "enemy" }) {
@@ -211,7 +213,7 @@ export function MatchBoard({
     selectedCard &&
     canPlay &&
     !blindTopActive &&
-    state.player.will >= getEffectiveCardCost(state, "player", selectedCard),
+    canPlayCardWithCurrentResources(state, "player", selectedCard),
   );
   const healingTargetMode = selectedCard?.baseId === "healing";
   const playerName = getHeroName(state.player, "Brian");
@@ -458,6 +460,15 @@ export function MatchBoard({
       <section className="matchPlayerHandZone" aria-label="Player hand area" data-tutorial-id="hand">
         <HandView
           cards={state.player.hand}
+          getEffectiveCost={(card) => getEffectiveCardCost(state, "player", card)}
+          getBlockedReason={(card) => {
+            if (!canPlay || blindTopActive) return null;
+            const cost = getEffectiveCardCost(state, "player", card);
+            if (cost > state.player.will) return `НУЖНО ${cost} ВОЛИ`;
+            if (state.currentTurn?.playerId === "player" && state.currentTurn.d20Limit !== "unlimited" && state.currentTurn.playsUsed >= state.currentTurn.d20Limit) return "ЛИМИТ D20";
+            if (cardRequiresBoardSlot(card) && state.board.playerSlots.every(Boolean)) return "НЕТ МЕСТА";
+            return null;
+          }}
           onPlay={onPlay}
           disabled={!canPlay || blindTopActive}
           hidden={hiddenHandActive}

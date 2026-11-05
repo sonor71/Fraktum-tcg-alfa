@@ -14,6 +14,8 @@ type HandViewProps = {
   onSelect?: (id: string | null) => void;
   onInvalidDrop?: (message: string) => void;
   onHandTarget?: (sourceCardId: string, targetCardId: string) => void;
+  getEffectiveCost?: (card: CardInstance) => number;
+  getBlockedReason?: (card: CardInstance) => string | null;
 };
 
 type DragState = {
@@ -128,6 +130,8 @@ export function HandView({
   onSelect,
   onInvalidDrop,
   onHandTarget,
+  getEffectiveCost,
+  getBlockedReason,
 }: HandViewProps) {
   const [drag, setDrag] = useState<DragState | null>(null);
   const dragCard = useMemo(
@@ -281,7 +285,7 @@ export function HandView({
             onMouseLeave={() => !drag && onSelect?.(null)}
             onPointerDown={(event) => startDrag(event, card)}
           >
-            <CardView card={card} disabled={disabled} selected={selected && !dragging} faceDown={hidden} />
+            <CardView card={card} disabled={disabled} selected={selected && !dragging} faceDown={hidden} effectiveCost={getEffectiveCost?.(card)} blockedReason={getBlockedReason?.(card)} />
           </div>
         );
       })}
@@ -297,7 +301,7 @@ export function HandView({
                 height: drag.height,
               }}
             >
-              <CardView card={dragCard} selected dragging faceDown={hidden} />
+              <CardView card={dragCard} selected dragging faceDown={hidden} effectiveCost={getEffectiveCost?.(dragCard)} blockedReason={getBlockedReason?.(dragCard)} />
             </div>,
             document.body,
           )

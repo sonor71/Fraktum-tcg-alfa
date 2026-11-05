@@ -976,14 +976,14 @@ export function playCard(
       ...turnState,
       playsUsed: turnState.playsUsed + 1,
       cardsPlayed: turnState.cardsPlayed + 1,
-      playedCosts: [...turnState.playedCosts, { playerId, cardTitle: getCardTitle(card), cost: printedCost }],
+      playedCosts: [...turnState.playedCosts, { playerId, cardTitle: getCardTitle(card), cost }],
       discardPlayAvailable: discardCard ? false : turnState.discardPlayAvailable,
       enemyDeckPlayCardId: enemyDeckCard ? undefined : turnState.enemyDeckPlayCardId,
       freeCards: turnState.awakeningChoice === "freeCard" ? false : turnState.freeCards,
     },
   };
 
-  next = log(next, `${playerLabel(playerId)} played ${getCardTitle(card)}${requiresSlot ? ` on slot ${slotIndex + 1}` : ""} (cost ${printedCost}).`);
+  next = log(next, `${playerLabel(playerId)} played ${getCardTitle(card)}${requiresSlot ? ` on slot ${slotIndex + 1}` : ""} (spent ${cost} Will${printedCost !== cost ? `; printed cost ${printedCost}, active modifiers applied` : ""}).`);
   next = log(
     next,
     isCardBoardPermanent(playedCard)
