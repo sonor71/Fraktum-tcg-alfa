@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { openCardPassport } from "../CardPassport";
 
 export type TacticalRevealCard = {
   id: string;
   title: string;
   image: string;
+  baseId?: string;
   cost?: number;
   rarity?: string;
 };
@@ -30,17 +32,26 @@ function getKindLabel(kind: TacticalRevealEvent["kind"]) {
 }
 
 // Mounted with an event key so a new Oracle play always starts with concealed cards.
-function OraclePickReveal({ event }: { event: TacticalRevealEvent }) {
+function OraclePickReveal({ event, onDismiss }: { event: TacticalRevealEvent; onDismiss: (id: string) => void }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [dismissed, setDismissed] = useState(false);
-
-  if (dismissed) return null;
+  useEffect(() => {
+    if (selectedIndex === null) return;
+    const chosen = event.cards[selectedIndex];
+    if (!chosen?.baseId) return;
+    // Let the concealed card finish its flip, then open the real card passport.
+    const timer = window.setTimeout(() => openCardPassport({
+      baseId: chosen.baseId!,
+      instanceId: chosen.id,
+      frontImage: chosen.image,
+    }), 620);
+    return () => window.clearTimeout(timer);
+  }, [event, selectedIndex]);
 
   return (
-    <section className="matchTacticalRevealLayer is-oracle-pick" role="dialog" aria-label="Оракул: выбор закрытой карты">
+    <section className="matchTacticalRevealLayer is-oracle-pick" role="dialog" aria-label={`${event.source}: выбор закрытой карты`} aria-modal="true">
       <div className="matchTacticalRevealPanel">
         <div className="matchTacticalRevealHeader">
-          <span>{getKindLabel(event.kind)}</span>
+          <span>ВЫБОР КАРТЫ СОПЕРНИКА</span>
           <b>{event.source}</b>
         </div>
         <div className="matchTacticalRevealCards oracleChoices" data-count={event.cards.length}>
@@ -73,20 +84,20 @@ function OraclePickReveal({ event }: { event: TacticalRevealEvent }) {
         </div>
         <p>{selectedIndex === null
           ? "Выбери одну закрытую карту противника. Только она перевернётся."
-          : "Карта раскрыта. Остальные карты остаются скрытыми."}</p>
-        <button className="oracleRevealClose" type="button" onClick={() => setDismissed(true)}>
-          {selectedIndex === null ? "ПРОПУСТИТЬ" : "ЗАКРЫТЬ"}
+          : "Паспорт выбранной карты открыт. Остальные карты скрыты. После просмотра нажми «Завершить»."}</p>
+        <button className="oracleRevealClose" type="button" onClick={() => onDismiss(event.id)}>
+          {selectedIndex === null ? "ПРОПУСТИТЬ" : "ЗАВЕРШИТЬ ПРОСМОТР"}
         </button>
       </div>
     </section>
   );
 }
 
-export function TacticalRevealLayer({ events }: { events: TacticalRevealEvent[] }) {
+export function TacticalRevealLayer({ events, onDismiss = () => undefined }: { events: TacticalRevealEvent[]; onDismiss?: (id: string) => void }) {
   if (events.length === 0) return null;
 
   const latest = events[events.length - 1];
-  if (latest.kind === "oracle-pick") return latest.viewer === "player" ? <OraclePickReveal key={latest.id} event={latest} /> : null;
+  if (latest.kind === "oracle-pick") return latest.viewer === "player" ? <OraclePickReveal key={latest.id} event={latest} onDismiss={onDismiss} /> : null;
 
   const shownCards = latest.cards.slice(0, latest.kind === "peek-hand" ? 8 : 1);
 

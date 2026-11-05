@@ -79,6 +79,22 @@ function getHealthState(hpPct: number) {
   return "stable";
 }
 
+function getActiveHeroEffectLabel(id: string): string {
+  const labels: Record<string, string> = {
+    skip_next_turn: "ПРОПУСК ХОДА",
+    next_card_power: "УСИЛЕНИЕ",
+    next_card_power_multiplier: "ОСЛАБЛЕНИЕ",
+    will_gain_multiplier: "ПОТЕРЯ ВОЛИ",
+    reverse_incoming: "ОТРАЖЕНИЕ",
+    alpha_will_suppression: "ПОДАВЛЕНИЕ",
+    alpha_next_lightning_discount: "МОЛНИЯ −1",
+    ailment: "НЕДУГ", friday: "ПРОКЛЯТИЕ",
+    psychological_disorder: "ПОМИНУТНОЕ БЕЗУМИЕ",
+    every_second_card_self_damage: "УРОН ЗА КАРТЫ",
+  };
+  return labels[id] || id.replaceAll("_", " ").toUpperCase();
+}
+
 export function HeroPanel({ player, label, alignment = "left" }: HeroPanelProps) {
   const hpMax = Math.max(1, player.maxHp);
   const hp = clamp(player.hp, 0, hpMax);
@@ -192,6 +208,16 @@ export function HeroPanel({ player, label, alignment = "left" }: HeroPanelProps)
           <b>{player.id === "enemy" ? `?/${willMax}` : `${will}/${willMax}`}</b>
         </span>
       </div>
+
+      {player.effects.length > 0 ? (
+        <div className="matchHeroActiveEffects" aria-label="Активные эффекты героя">
+          {player.effects.slice(0, 3).map((effect, index) => (
+            <span title={`${effect.label || effect.id}${effect.turns ? ` — ${effect.turns} ход.` : ""}`} key={`${effect.id}-${index}`}>
+              {getActiveHeroEffectLabel(effect.id)}
+            </span>
+          ))}
+        </div>
+      ) : null}
 
       <div className="matchBonusWrap">
         <div className="matchBonusLabel">

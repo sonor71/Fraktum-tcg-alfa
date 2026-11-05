@@ -28,6 +28,7 @@ type TacticalRevealCard = {
   id: string;
   title: string;
   image: string;
+  baseId: string;
   cost: number;
   rarity: string;
 };
@@ -182,6 +183,7 @@ function makeRevealCard(card: CardInstance): TacticalRevealCard {
   const definition = getDefinitionRecord(card);
   return {
     id: card.instanceId,
+    baseId: card.baseId,
     title: getCardTitle(card),
     image: getCardImage(card),
     cost: getCardCost(card),
