@@ -11,6 +11,8 @@ type CardViewProps = {
   size?: "hand" | "board" | "pile";
   dragging?: boolean;
   faceDown?: boolean;
+  effectiveCost?: number;
+  blockedReason?: string | null;
 };
 
 type CardDefinitionMeta = CardInstance["definition"] & {
@@ -75,6 +77,8 @@ export function CardView({
   size = "hand",
   dragging = false,
   faceDown = false,
+  effectiveCost,
+  blockedReason,
 }: CardViewProps) {
   const definition = card.definition as CardDefinitionMeta;
   const definitionRecord = definition as unknown as Record<string, unknown>;
@@ -84,7 +88,9 @@ export function CardView({
   const description = readString(definitionRecord, ["description", "text", "effectText"]);
   const image = readString(definitionRecord, ["image", "imageUrl", "src", "path"], "/cards/card-back.png");
   const rarity = readString(definitionRecord, ["rarity"], "common");
-  const cost = getWillCostByRarity(rarity);
+  const printedCost = getWillCostByRarity(rarity);
+  const cost = typeof effectiveCost === "number" && Number.isFinite(effectiveCost) ? Math.max(0, effectiveCost) : printedCost;
+  const modifiedCost = cost !== printedCost;
   const type = readString(definitionRecord, ["type"], "card");
   const hpStateClass = getHpStateClass(currentHp, maxHp);
 
@@ -102,6 +108,8 @@ export function CardView({
     selected ? "is-selected" : "",
     dragging ? "is-dragging" : "",
     disabled ? "is-disabled" : "",
+    modifiedCost && size === "hand" ? "has-modified-will-cost" : "",
+    blockedReason && size === "hand" ? "has-play-blocker" : "",
     card.temporaryUntilRoundEnd ? "is-temporary" : "",
     faceDown ? "is-face-down" : "",
   ].filter(Boolean).join(" ");
@@ -116,21 +124,26 @@ export function CardView({
       type="button"
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
-      title={faceDown ? "Hidden card" : `${title}${readableDescription}`}
+      title={faceDown ? "Hidden card" : `${title}${readableDescription}. Стоимость сейчас: ${cost} Воли${modifiedCost ? ` (обычная ${printedCost})` : ""}.${blockedReason ? ` Нельзя сыграть: ${blockedReason}.` : ""}`}
       data-card-id={card.instanceId}
       data-card-base-id={faceDown ? undefined : card.baseId}
       data-card-title={faceDown ? "Hidden card" : title}
       data-card-cost={faceDown ? undefined : cost}
+      data-card-printed-cost={faceDown ? undefined : printedCost}
+      data-card-blocked-reason={faceDown ? undefined : blockedReason || undefined}
       data-card-hp={faceDown ? undefined : hasHp ? currentHp : undefined}
-      aria-label={faceDown ? "Hidden card" : `${title}. Will cost ${cost}${hasHp ? `. HP ${hpLabel}` : ""}`}
+      aria-label={faceDown ? "Hidden card" : `${title}. ${modifiedCost ? `Цена сейчас ${cost}, обычная цена ${printedCost}` : `Стоимость ${cost}`} Воли${hasHp ? `. HP ${hpLabel}` : ""}${blockedReason ? `. Недоступно: ${blockedReason}` : ""}`}
     >
       <img className="matchCardImage" src={faceDown ? "/cards/card-back.png" : image} alt={faceDown ? "Hidden card" : title} draggable={false} />
 
       {!faceDown ? (
-        <span className="matchCardBadge is-cost" aria-hidden="true">
+        <span className={`matchCardBadge is-cost${modifiedCost ? " is-modified-cost" : ""}`} aria-hidden="true" title={modifiedCost ? `Цена хода: ${cost}; базовая: ${printedCost}` : `Стоимость: ${cost}`}>
           {cost}
         </span>
       ) : null}
+
+      {!faceDown && size === "hand" && modifiedCost ? <span className="matchCardCostModifier" aria-hidden="true">{cost === 0 ? "БЕСПЛАТНО" : `ЦЕНА ${printedCost} → ${cost}`}</span> : null}
+      {!faceDown && size === "hand" && blockedReason ? <span className="matchCardBlockReason" aria-hidden="true">{blockedReason}</span> : null}
 
       {!faceDown && hasHp ? (
         <span className="matchCardBadge is-hp" aria-hidden="true">

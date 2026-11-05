@@ -1458,10 +1458,11 @@ export default function MatchPage() {
     void submitGameAction({ type: "SPIN_FATE_ROULETTE", playerId: "player", rouletteId });
   }, [submitGameAction]);
   const handleRouletteReveal = useCallback((rouletteId: string, revealedAtMs: number) => {
-    void submitGameAction({ type: "REVEAL_FATE_ROULETTE_RESULT", playerId: stateRef.current.rouletteState?.ownerId ?? "player", rouletteId, revealedAtMs });
+    if (stateRef.current.rouletteState?.ownerId !== "player") return;
+    void submitGameAction({ type: "REVEAL_FATE_ROULETTE_RESULT", playerId: "player", rouletteId, revealedAtMs });
   }, [submitGameAction]);
   const handleRouletteConfirm = useCallback((rouletteId: string) => {
-    void submitGameAction({ type: "CONFIRM_FATE_ROULETTE_RESULT", playerId: "player", rouletteId });
+    void submitGameAction({ type: "CONFIRM_FATE_ROULETTE_RESULT", playerId: "player", rouletteId, confirmedAtMs: Date.now() });
   }, [submitGameAction]);
   const handleChooseAwakening = useCallback((choice: "freeCard" | "passive") => {
     void submitGameAction({ type: "CHOOSE_AWAKENING", playerId: "player", choice });
@@ -1594,7 +1595,16 @@ export default function MatchPage() {
 
     onlineActionUnsubscribe.current = subscribeToOnlineMatchActions(
       onlineRoom.id,
-      (event: OnlineMatchActionEvent) => processOnlineActionEvents([event]),
+      (_event: OnlineMatchActionEvent) => {
+        // Realtime notifications can arrive out of order. Re-read the durable
+        // event log and replay it in sequence, so roulette spin/reveal/confirm
+        // cannot reach the reducer before the preceding event.
+        void fetchOnlineMatchActions(onlineRoom.id)
+          .then(processOnlineActionEvents)
+          .catch((error: unknown) => {
+            setUiLog(entries => pushLimited(entries, `[WARN] Online resync failed: ${error instanceof Error ? error.message : String(error)}`));
+          });
+      },
       (error: unknown) => {
         setUiLog((entries) => pushLimited(entries, `[WARN] Online action realtime warning: ${error instanceof Error ? error.message : String(error)}`));
       },

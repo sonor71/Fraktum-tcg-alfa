@@ -4603,3 +4603,8 @@ button { -webkit-tap-highlight-color: transparent; }
   .matchTacticalRevealLayer.is-oracle-hand .matchTacticalRevealPanel { padding:12px; }
   .matchTacticalRevealLayer.is-oracle-hand .oracleOption { width:clamp(66px, 23vw, 94px); }
 }
+
+/* The badge always shows actual Will required for this hand card. */
+.matchCardView.is-hand .matchCardBadge.is-cost.is-modified-cost { background:#9a4b16; color:#fff9d9; outline:2px solid #ffd375; outline-offset:0; }
+.matchCardCostModifier { position:absolute; z-index:8; top:19%; left:0; right:0; padding:1px 2px; background:rgba(79,32,4,.94); border-top:1px solid #ffd275; border-bottom:1px solid #ffd275; color:#fff5ba; font-size:clamp(6px,.58cqw,10px); line-height:1.15; text-align:center; font-weight:900; text-shadow:0 1px 1px #000; pointer-events:none; }
+.matchCardBlockReason { position:absolute; z-index:8; bottom:7%; left:2%; right:2%; background:rgba(104,15,18,.94); color:#ffede1; border:1px solid #e27472; font-size:clamp(6px,.54cqw,9px); padding:1px 2px; text-align:center; line-height:1.1; font-weight:900; text-shadow:0 1px 1px #000; pointer-events:none; }

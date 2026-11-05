@@ -7,7 +7,7 @@ export type GameAction =
   | { type: "PLAY_BLIND_TOP_CARD"; playerId: PlayerId; target?: TargetRef }
   | { type: "SPIN_FATE_ROULETTE"; playerId: PlayerId; rouletteId: string }
   | { type: "REVEAL_FATE_ROULETTE_RESULT"; playerId: PlayerId; rouletteId: string; revealedAtMs: number }
-  | { type: "CONFIRM_FATE_ROULETTE_RESULT"; playerId: PlayerId; rouletteId: string }
+  | { type: "CONFIRM_FATE_ROULETTE_RESULT"; playerId: PlayerId; rouletteId: string; confirmedAtMs?: number }
   | { type: "DESTROY_OWN_CARD"; playerId: PlayerId; slotIndex: number }
   | { type: "END_TURN"; playerId: PlayerId }
   | { type: "AI_TURN" }

@@ -134,7 +134,7 @@ describe("FRAKTUM Match Rules v1.0", () => {
     state = { ...state, player: { ...state.player, will: 0, hand: [card] }, lastRoll: 20, currentTurn: { ...state.currentTurn!, freeCards: true } };
     const played = playCard(state, "player", card.instanceId, { type: "slot", playerId: "player", slotIndex: 0 });
     expect(played.player.will).toBe(0);
-    expect(played.currentTurn?.playedCosts[0].cost).toBe(5);
+    expect(played.currentTurn?.playedCosts[0].cost).toBe(0); // actual Will spent; D20=20 makes the card free
     expect(endTurn(played, "player").currentTurn).toBeUndefined();
   });
   it("13-14 new HP card attacks from next own turn only", () => {

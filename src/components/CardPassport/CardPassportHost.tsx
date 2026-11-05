@@ -94,7 +94,14 @@ export function CardPassportHost() {
       const resolved = resolvePassportFromDetail(customEvent.detail, ownedCards);
       if (resolved) {
         setAction({ actionLabel: customEvent.detail.actionLabel, actionDisabledReason: customEvent.detail.actionDisabledReason, onAction: customEvent.detail.onAction });
-        open(resolved);
+        const effectiveWillCost = customEvent.detail.effectiveWillCost;
+        if (typeof effectiveWillCost === "number" && Number.isFinite(effectiveWillCost) && effectiveWillCost !== resolved.willCost) {
+          open({
+            ...resolved,
+            usageRules: `ТЕКУЩАЯ СТОИМОСТЬ: ${effectiveWillCost} Воли (обычная: ${resolved.willCost}). ${resolved.usageRules}`,
+            willCost: effectiveWillCost,
+          });
+        } else open(resolved);
       }
     };
 
