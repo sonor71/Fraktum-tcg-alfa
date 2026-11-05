@@ -142,7 +142,7 @@ export function CardView({
         </span>
       ) : null}
 
-      {!faceDown && size === "hand" && modifiedCost ? <span className="matchCardCostModifier" aria-hidden="true">{cost === 0 ? "БЕСПЛАТНО" : `WILL ×2 / ${printedCost} → ${cost}`}</span> : null}
+      {!faceDown && size === "hand" && modifiedCost ? <span className="matchCardCostModifier" aria-hidden="true">{cost === 0 ? "БЕСПЛАТНО" : `ЦЕНА ${printedCost} → ${cost}`}</span> : null}
       {!faceDown && size === "hand" && blockedReason ? <span className="matchCardBlockReason" aria-hidden="true">{blockedReason}</span> : null}
 
       {!faceDown && hasHp ? (

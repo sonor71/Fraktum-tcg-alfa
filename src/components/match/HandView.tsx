@@ -218,7 +218,8 @@ export function HandView({
             instanceId: releasedCard.instanceId,
             frontImage: releasedCard.definition.image,
             actionLabel: "СЫГРАТЬ",
-            actionDisabledReason: disabled ? "Сейчас эту карту сыграть нельзя." : undefined,
+            actionDisabledReason: disabled ? "Сейчас эту карту сыграть нельзя." : getBlockedReason?.(releasedCard) || undefined,
+            effectiveWillCost: getEffectiveCost?.(releasedCard),
             onAction: () => onSelect?.(releasedCard.instanceId),
           });
         }

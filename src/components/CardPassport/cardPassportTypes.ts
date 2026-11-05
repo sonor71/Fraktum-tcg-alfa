@@ -42,6 +42,7 @@ export interface OpenPassportDetail {
   frontImage?: string;
   code?: string;
   onlinePrice?: number | null;
+  effectiveWillCost?: number;
   actionLabel?: string;
   actionDisabledReason?: string;
   onAction?: () => void;
