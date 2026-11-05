@@ -51,14 +51,14 @@ function directHit(owner: PlayerId, target: PlayerId, amount: number) {
 }
 
 describe("match visual-effect gameplay regressions", () => {
-  it("Dragon Eye and Oracle create a choice of enemy HAND cards, not random auto-reveal", () => {
+  it("Dragon Eye selects one hidden card, while Oracle permits revealing the entire hand", () => {
     for (const source of ["dragon_eye", "oracle"]) {
       const base = fixture();
       const hand = [instance("omega", "enemy", "a"), instance("oreon", "enemy", "b"), instance("revolver", "enemy", "c")];
       const state: MatchState = { ...base, enemy: { ...base.enemy, hand } };
       const next = cast(state, source);
       const event = (next as MatchState & { tacticalRevealEvents?: TacticalRevealEvent[] }).tacticalRevealEvents?.at(-1);
-      expect(event?.kind).toBe("oracle-pick");
+      expect(event?.kind).toBe(source === "oracle" ? "oracle-hand" : "oracle-pick");
       expect(event?.cards).toHaveLength(3);
       expect(event?.cards.map(card => card.baseId)).toEqual(["omega", "oreon", "revolver"]);
       expect(next.enemy.hand).toEqual(hand);
@@ -68,6 +68,8 @@ describe("match visual-effect gameplay regressions", () => {
       expect(html).toContain("Открыть закрытую карту 3");
       expect(html).not.toContain("Revolver");
       expect(html).not.toContain("Oreon");
+      if (source === "oracle") expect(html).toContain("ОТКРЫТО 0 ИЗ 3");
+      else expect(html).toContain("ВЫБЕРИ ОДНУ КАРТУ");
     }
   });
 

@@ -4579,3 +4579,27 @@ button { -webkit-tap-highlight-color: transparent; }
 .matchHeroActiveEffects span { color:#ffebc8; background:#221638; border:1px solid #8062b0; padding:3px 5px; font-size:clamp(6px,.52cqw,9px); font-weight:900; text-shadow:0 1px #000; }
 @keyframes matchFrozenGlow { to { opacity:.64; filter:brightness(1.5); } }
 @media (prefers-reduced-motion: reduce) { .matchFreezeCrystal { animation:none; } }
+
+/* Oracle can reveal the entire hand, one manually flipped card at a time. */
+.matchTacticalRevealLayer.is-oracle-hand { pointer-events:none; }
+.matchTacticalRevealLayer.is-oracle-hand .matchTacticalRevealPanel {
+  pointer-events:auto;
+  width:min(960px, 96%);
+  max-height:min(84vh, 850px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.matchTacticalRevealLayer.is-oracle-hand .matchTacticalRevealCards.oracleChoices {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:clamp(7px, 1.2cqw, 15px);
+}
+.matchTacticalRevealLayer.is-oracle-hand .oracleOption {
+  flex:0 1 auto;
+  width:clamp(76px, 7.5cqw, 115px);
+}
+@media (max-width:650px) {
+  .matchTacticalRevealLayer.is-oracle-hand .matchTacticalRevealPanel { padding:12px; }
+  .matchTacticalRevealLayer.is-oracle-hand .oracleOption { width:clamp(66px, 23vw, 94px); }
+}

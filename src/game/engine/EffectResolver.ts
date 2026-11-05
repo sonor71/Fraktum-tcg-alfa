@@ -35,7 +35,7 @@ type TacticalRevealCard = {
 
 type TacticalRevealEvent = {
   id: string;
-  kind: "peek-hand" | "peek-card" | "steal-cast" | "reverse" | "oracle-pick";
+  kind: "peek-hand" | "peek-card" | "steal-cast" | "reverse" | "oracle-pick" | "oracle-hand";
   viewer: PlayerId;
   owner: PlayerId;
   source: string;
@@ -255,6 +255,7 @@ function isEffectHostileToOpponent(effect: RawEffect) {
     op.includes("discard") ||
     op.includes("peek") ||
     op.includes("oraclechooseenemycard") ||
+    op.includes("oraclerevealenemyhand") ||
     op.includes("knowledge") ||
     op.includes("skip") ||
     op.includes("freeze") ||
@@ -366,7 +367,7 @@ function getKnownCardEffects(card: CardInstance): RawEffect[] {
     case "tree_of_life": return [{ op: "restoreLastTurnLostHp", amount: 999 }];
     case "caduceus": return [{ op: "forceDrawMatch" }];
     case "book_knowledge": return [{ op: "knowledge" }];
-    case "oracle": return [{ op: "oracleChooseEnemyCard" }];
+    case "oracle": return [{ op: "oracleRevealEnemyHand" }];
     case "reverse_heart": return [{ op: "swapHeroHp" }];
     case "double_speed": return [{ op: "doubleBattleClockSpeed" }];
     case "reverse": return [{ op: "reverseIncoming" }];
@@ -1038,20 +1039,25 @@ function applyEffect(
     // The passive is evaluated only while the 6-HP permanent occupies a living slot.
     return addShield(state, playerId, 2, sourceName);
   }
-  if (op === "oraclechooseenemycard") {
+  if (op === "oraclechooseenemycard" || op === "oraclerevealenemyhand") {
     const owner = otherPlayer(playerId);
     const hand = state[owner].hand;
     if (hand.length === 0) return log(state, `${sourceName}: the opponent has no cards in hand to reveal.`);
+    const revealAll = op === "oraclerevealenemyhand";
     const next = appendRevealEvent(state, {
-      kind: "oracle-pick",
+      kind: revealAll ? "oracle-hand" : "oracle-pick",
       viewer: playerId,
       owner,
       source: sourceName,
-      title: `${sourceName}: choose one hidden enemy card from hand`,
+      title: revealAll
+        ? `${sourceName}: manually reveal every card in the opponent's hand`
+        : `${sourceName}: choose one hidden enemy card from hand`,
       cards: hand.map(makeRevealCard),
     });
-    // Do not include hidden enemy card names in the shared match log.
-    return log(next, `${sourceName}: ${playerLabel(playerId)} may reveal one chosen card from the opponent's hand.`);
+    // The match log must not disclose hidden card identities to the other player.
+    return log(next, revealAll
+      ? `${sourceName}: ${playerLabel(playerId)} may inspect the opponent's entire hand, one card at a time.`
+      : `${sourceName}: ${playerLabel(playerId)} may reveal one chosen card from the opponent's hand.`);
   }
 
   if (op === "sealfielddamage") {

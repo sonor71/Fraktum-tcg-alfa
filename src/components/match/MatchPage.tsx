@@ -616,7 +616,7 @@ export default function MatchPage() {
   }, []);
   // Online countdown needs a server-authoritative start/deadline; do not decide online results on one client.
   const battleClockEnabled = !isOnlineMode;
-  const battleClockPaused = state.phase === "roulette" || state.phase === "betweenBattles" || state.phase === "ended" || tutorialStepIndex >= 0 || tacticalRevealEvents.some(event => event.kind === "oracle-pick" && event.viewer === "player");
+  const battleClockPaused = state.phase === "roulette" || state.phase === "betweenBattles" || state.phase === "ended" || tutorialStepIndex >= 0 || tacticalRevealEvents.some(event => (event.kind === "oracle-pick" || event.kind === "oracle-hand") && event.viewer === "player");
   const battleClock = useBattleClock(state, battleClockEnabled && !battleClockPaused, handleClockExpired);
 
   const previousFxState = useRef<MatchStateSnapshot | null>(null);
@@ -803,12 +803,14 @@ export default function MatchPage() {
       unseenRevealEvents.forEach((event) => seenTacticalRevealIds.current.add(event.id));
       // An enemy Oracle must not reveal our hand to us through the same overlay.
       // Only the player who cast Oracle can choose and view a hidden card.
-      const revealEvents = unseenRevealEvents.filter((event) => event.kind !== "oracle-pick" || event.viewer === "player");
+      const revealEvents = unseenRevealEvents.filter(event =>
+        (event.kind !== "oracle-pick" && event.kind !== "oracle-hand") || event.viewer === "player"
+      );
       if (revealEvents.length === 0) return;
       setTacticalRevealEvents((currentEvents) => [...currentEvents, ...revealEvents].slice(-8));
 
       // Interactive choices stay open until the player finishes reading the passport.
-      const timedIds = new Set(revealEvents.filter(event => event.kind !== "oracle-pick").map(event => event.id));
+      const timedIds = new Set(revealEvents.filter(event => event.kind !== "oracle-pick" && event.kind !== "oracle-hand").map(event => event.id));
       if (timedIds.size) {
         const timer = window.setTimeout(() => {
           setTacticalRevealEvents((currentEvents) => currentEvents.filter(event => !timedIds.has(event.id)));
