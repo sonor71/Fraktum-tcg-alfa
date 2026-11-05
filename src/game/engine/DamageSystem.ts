@@ -12,6 +12,22 @@ export function damageHero(player: PlayerState, raw: number) {
 }
 export function healHero(player: PlayerState, amount: number) { return { ...player, hp: Math.min(player.maxHp, player.hp + Math.max(0, Math.floor(amount))) }; }
 
+export function applyTitanEyeProtection(state: MatchState, playerId: PlayerId, rawDamage: number) {
+  const key = `${state.activePlayerId}:${state.turn}:${state[state.activePlayerId].personalTurnsTaken ?? 0}`;
+  const active = state.board[slotsKey(playerId)].some(card =>
+    (card?.baseId === "titan_eye" || card?.definition.id === "titan_eye") && getCardCurrentHp(card) > 0
+  );
+  if (!active || state.titanEyeProtectionUsed?.[playerId] === key || rawDamage <= 0) {
+    return { state, damage: rawDamage, blocked: 0 };
+  }
+  const blocked = Math.min(3, rawDamage);
+  return {
+    state: { ...state, titanEyeProtectionUsed: { ...state.titanEyeProtectionUsed, [playerId]: key } },
+    damage: rawDamage - blocked,
+    blocked,
+  };
+}
+
 function applyPrimeProtection(state: MatchState, playerId: PlayerId, rawDamage: number) {
   const key = `${state.activePlayerId}:${state.turn}:${state[state.activePlayerId].personalTurnsTaken ?? 0}`;
   const active = state.board[slotsKey(playerId)].some((card) =>
@@ -31,6 +47,7 @@ function applyPrimeProtection(state: MatchState, playerId: PlayerId, rawDamage: 
 function attackValue(card: CardInstance | null) { return Math.max(0, Math.floor(Number(card?.currentAttack ?? card?.definition.attack ?? 0))); }
 function canAttack(card: CardInstance | null, ownerPersonalTurnsTaken: number, ownerId: PlayerId, activeAttackerId: PlayerId) {
   if (!card || attackValue(card) <= 0 || card.definition.canAttack === false) return false;
+  if (card.statuses?.includes("alpha_frozen")) return false;
   const readyFrom = card.attackReadyFromOwnerPersonalTurn ?? 0;
   if (activeAttackerId !== ownerId && card.ownerPersonalTurnPlayed !== undefined && ownerPersonalTurnsTaken <= readyFrom) return false;
   return ownerPersonalTurnsTaken >= readyFrom;
@@ -124,21 +141,32 @@ export function resolveFieldCombat(state: MatchState, attackerId: PlayerId): Mat
   }
 
   let protectedState: MatchState = { ...state, board: { ...state.board, [attackerKey]: attackerSlots, [defenderKey]: defenderSlots } };
-  const attackerProtection = applyPrimeProtection(protectedState, attackerId, attackerHeroDamage);
+  const attackerTitan = applyTitanEyeProtection(protectedState, attackerId, attackerHeroDamage);
+  protectedState = attackerTitan.state;
+  const defenderTitan = applyTitanEyeProtection(protectedState, defenderId, defenderHeroDamage);
+  protectedState = defenderTitan.state;
+  const attackerProtection = applyPrimeProtection(protectedState, attackerId, attackerTitan.damage);
   protectedState = attackerProtection.state;
-  const defenderProtection = applyPrimeProtection(protectedState, defenderId, defenderHeroDamage);
+  const defenderProtection = applyPrimeProtection(protectedState, defenderId, defenderTitan.damage);
   protectedState = defenderProtection.state;
   const attackerDamage = damageHero(protectedState[attackerId], attackerProtection.damage).player;
   const defenderDamage = damageHero(protectedState[defenderId], defenderProtection.damage).player;
   if (attackerProtection.blocked > 0) logLines.push(`[PRIME_PROTECTED] ${attackerId} hero damage reduced by ${attackerProtection.blocked}.`);
   if (defenderProtection.blocked > 0) logLines.push(`[PRIME_PROTECTED] ${defenderId} hero damage reduced by ${defenderProtection.blocked}.`);
+  if (attackerTitan.blocked > 0) logLines.push(`[TITAN_EYE_PROTECTED] ${attackerId} -${attackerTitan.blocked} damage.`);
+  if (defenderTitan.blocked > 0) logLines.push(`[TITAN_EYE_PROTECTED] ${defenderId} -${defenderTitan.blocked} damage.`);
+  const frozen = attackerSlots.filter(card => card?.statuses?.includes("alpha_frozen"));
+  if (frozen.length > 0) logLines.push(`[FREEZE_EXPIRED] ${frozen.length} card(s) of ${attackerId} skipped their attack this combat.`);
+  const unfrozenAttackerSlots = attackerSlots.map(card => card?.statuses?.includes("alpha_frozen")
+    ? { ...card, statuses: card.statuses?.filter(status => status !== "alpha_frozen") }
+    : card);
   logLines.push(`[FIELD_COMBAT_COMPLETED] Active: ${attackerId}; ${attackerId} hero damage: ${attackerHeroDamage}; ${defenderId} hero damage: ${defenderHeroDamage}.`);
 
   return {
     ...protectedState,
     [attackerId]: attackerDamage,
     [defenderId]: defenderDamage,
-    board: { ...state.board, [attackerKey]: attackerSlots, [defenderKey]: defenderSlots },
+    board: { ...state.board, [attackerKey]: unfrozenAttackerSlots, [defenderKey]: defenderSlots },
     log: [...state.log, ...logLines].slice(-LOG_LIMIT),
   };
 }

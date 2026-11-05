@@ -288,9 +288,9 @@
     "cost": 3,
     "attack": 0,
     "health": 0,
-    "description": "Позволяет посмотреть 1 карту из колоды противника.",
+    "description": "Выбери одну из закрытых карт в руке противника. Только выбранная карта переворачивается, открывая её полный паспорт. Остальные карты остаются скрытыми.",
     "image": "/cards/dragon-eye.png",
-    "effectKey": "peek_enemy_deck_1",
+    "effectKey": "choose_one_enemy_hand_card_show_passport",
     "collection": "Ember Monastery"
   },
   {
@@ -302,9 +302,9 @@
     "cost": 1,
     "attack": 0,
     "health": 0,
-    "description": "Карта напротив замораживается на 1 ход. Карта без HP.",
+    "description": "Замораживает вражескую карту напротив до конца её следующего боевого расчёта: она пропускает атаку и контратаку. Заморозка отображается на карте.",
     "image": "/cards/wood-vines.png",
-    "effectKey": "freeze_front_card_1_turn",
+    "effectKey": "freeze_opposite_card_one_combat",
     "collection": "Verdant Code"
   },
   {
@@ -456,9 +456,9 @@
     "cost": 4,
     "attack": 0,
     "health": 0,
-    "description": "В начале хода даёт игроку +1 случайную карту из сброса или +1 карту из колоды, если сброс пуст.",
+    "description": "Верни до 2 карт из сброса в руку. Недостающие добери из колоды (лимит руки 7). Получи по 1 Щиту за возвращённую из сброса карту; если вернул две — дополнительно +1 Воля. При пустом сбросе получи 1 Щит.",
     "image": "/cards/amulet-of-old-sage.png",
-    "effectKey": "start_turn_grave_or_deck_draw",
+    "effectKey": "recover_two_from_discard_or_deck_shield_per_recovery",
     "collection": "Egyptian Echo"
   },
   {
@@ -498,9 +498,9 @@
     "cost": 5,
     "attack": 0,
     "health": 0,
-    "description": "При разыгрывании увеличивает силу следующей карты на +2 и открывает верхнюю карту колоды.",
+    "description": "При розыгрыше добери до 2 карт из колоды (лимит руки 7), восстанови 2 Воли. Следующая атакующая карта получает +3 к урону. Если колода пуста, добора нет; усиление одноразовое.",
     "image": "/cards/Legendary Messenger.png",
-    "effectKey": "next_card_power_plus_2_reveal_top_deck",
+    "effectKey": "messenger_draw_two_restore_two_will_next_attack_plus_three",
     "collection": "Fraktum Legends"
   },
   {
@@ -568,9 +568,9 @@
     "cost": 4,
     "attack": 0,
     "health": 6,
-    "description": "Эффективность следующей карты противника снижается на 20%. У карты есть HP.",
+    "description": "При розыгрыше даёт герою 2 Щита. Пока Глаз Титана (6 HP) стоит на поле, первый источник урона по герою в каждом ходе уменьшается на 3. Не складывается с другими Глазами; исчезает при уничтожении карты.",
     "image": "/cards/eye titan.png",
-    "effectKey": "enemy_next_card_effectiveness_minus_20",
+    "effectKey": "titan_eye_first_hero_hit_minus_three_aura",
     "collection": "Storm Fracture"
   },
   {
