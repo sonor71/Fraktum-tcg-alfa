@@ -1595,7 +1595,16 @@ export default function MatchPage() {
 
     onlineActionUnsubscribe.current = subscribeToOnlineMatchActions(
       onlineRoom.id,
-      (event: OnlineMatchActionEvent) => processOnlineActionEvents([event]),
+      (_event: OnlineMatchActionEvent) => {
+        // Realtime notifications can arrive out of order. Re-read the durable
+        // event log and replay it in sequence, so roulette spin/reveal/confirm
+        // cannot reach the reducer before the preceding event.
+        void fetchOnlineMatchActions(onlineRoom.id)
+          .then(processOnlineActionEvents)
+          .catch((error: unknown) => {
+            setUiLog(entries => pushLimited(entries, `[WARN] Online resync failed: ${error instanceof Error ? error.message : String(error)}`));
+          });
+      },
       (error: unknown) => {
         setUiLog((entries) => pushLimited(entries, `[WARN] Online action realtime warning: ${error instanceof Error ? error.message : String(error)}`));
       },
