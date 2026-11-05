@@ -73,7 +73,7 @@ describe("match visual-effect gameplay regressions", () => {
 
   it("Wood Vines freeze only the card opposite and cannot skip a whole enemy turn", () => {
     const state = fixture();
-    const target = { ...instance("revolver", "enemy", "target"), currentAttack: 4, currentHealth: 3 };
+    const target = { ...instance("oreon", "enemy", "target"), currentAttack: 4, currentHealth: 3 };
     const withEnemy: MatchState = {
       ...state,
       board: { ...state.board, enemySlots: [null, null, target, null, null] },
