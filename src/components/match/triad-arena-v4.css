@@ -68,15 +68,15 @@
   align-items:flex-start!important;gap:12px!important;
   height:100%!important;width:100%!important;min-width:0!important;
 }
-.triad-player-block.is-left .triad-field-line:nth-child(1){left:32%!important;top:44.5%!important}
-.triad-player-block.is-left .triad-field-line:nth-child(2){left:33.5%!important;top:19%!important}
-.triad-player-block.is-left .triad-field-line:nth-child(3){left:33.5%!important;top:31%!important}
-.triad-player-block.is-right .triad-field-line:nth-child(1){right:32%!important;top:44.5%!important}
-.triad-player-block.is-right .triad-field-line:nth-child(2){right:33.5%!important;top:19%!important}
-.triad-player-block.is-right .triad-field-line:nth-child(3){right:33.5%!important;top:31%!important}
-.triad-player-block.is-bottom .triad-field-line:nth-child(1){left:30%!important;top:53.5%!important}
-.triad-player-block.is-bottom .triad-field-line:nth-child(2){right:30%!important;top:53.5%!important}
-.triad-player-block.is-bottom .triad-field-line:nth-child(3){left:calc(50% - 112.5px)!important;top:65%!important}
+.triad-player-block.is-left .triad-field-line:nth-child(1){left:30.6%!important;top:40%!important}
+.triad-player-block.is-left .triad-field-line:nth-child(2){left:33.5%!important;top:14%!important}
+.triad-player-block.is-left .triad-field-line:nth-child(3){left:33.5%!important;top:27%!important}
+.triad-player-block.is-right .triad-field-line:nth-child(1){right:30.6%!important;top:40%!important}
+.triad-player-block.is-right .triad-field-line:nth-child(2){right:33.5%!important;top:14%!important}
+.triad-player-block.is-right .triad-field-line:nth-child(3){right:33.5%!important;top:27%!important}
+.triad-player-block.is-bottom .triad-field-line:nth-child(1){left:28.5%!important;top:53%!important}
+.triad-player-block.is-bottom .triad-field-line:nth-child(2){right:28.5%!important;top:53%!important}
+.triad-player-block.is-bottom .triad-field-line:nth-child(3){left:calc(50% - 112.5px)!important;top:58.5%!important}
 .triad-player-block .triad-field-label{
   display:none!important;
 }
@@ -160,7 +160,7 @@
 .triad-player-block.is-left .triad-hero-station{left:23%;top:29%}
 .triad-player-block.is-right .triad-hero-station{right:23%;top:29%;flex-direction:row-reverse}
 .triad-player-block.is-bottom .triad-hero-station{
-  left:calc(50% - 65px);top:77%;width:130px;height:103px;
+  left:calc(50% - 65px);top:71.5%;width:130px;height:103px;
 }
 .triad-hero-station .triad-player-portrait{
   position:relative!important;inset:auto!important;
