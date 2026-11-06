@@ -100,6 +100,7 @@ export default function TriadMatchPage() {
     privateMode ? null : createTriadMatch(botLoadouts, Date.now()));
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [oracleSeat, setOracleSeat] = useState<TriadSeat | null>(null);
+  const [revealLimit, setRevealLimit] = useState(99);
   const [flipped, setFlipped] = useState<string[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [chat, setChat] = useState<TriadEvent[]>([]);
@@ -245,7 +246,9 @@ export default function TriadMatchPage() {
             (lane === "support") !== triadIsSupport(selected)}
           onClick={() => {
             if (!selected) return;
-            if (selected.definition.id === "oracle" && lane !== "support") { setOracleSeat(lane); setFlipped([]); }
+            if (lane !== "support" && (selected.definition.id === "oracle" || selected.definition.id === "dragon_eye")) {
+              setOracleSeat(lane); setRevealLimit(selected.definition.id === "dragon_eye" ? 1 : 99); setFlipped([]);
+            }
             void send({ type: "PLAY", seat, cardId: selected.instanceId, lane, slot });
             setSelectedId(null);
           }} />)}
@@ -259,7 +262,7 @@ export default function TriadMatchPage() {
         <b>ПОБЕДЫ {match.players[owner].victories}/{TRIAD_VICTORIES_TO_WIN}</b></div>
       {owner !== seat ? <BackHand cards={match.players[owner].hand}
         revealed={oracleSeat === owner} flipped={flipped}
-        onFlip={(id) => setFlipped((current) => current.includes(id) ? current : [...current, id])} /> : null}
+        onFlip={(id) => setFlipped((current) => current.includes(id) || current.length >= revealLimit ? current : [...current, id])} /> : null}
       <div className="triad-player-fields">
         {displayField(owner, owner === seat ? left : seat, "НА " + match.players[owner === seat ? left : seat].name, owner === seat)}
         {displayField(owner, owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!,
