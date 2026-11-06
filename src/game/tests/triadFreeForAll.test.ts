@@ -79,6 +79,37 @@ describe("1x1x1 independent free-for-all", () => {
     expect(state.active).toBe("b");
     expect(state.phase).toBe("roll");
   });
+  it("requires explicit friendly target for Healing and restores only owner card HP", () => {
+    let state = ready();
+    const damaged = { ...state.players.a.hand[1], hp: 2,
+      definition: card("damaged_friendly", 2, 7), playedTurn: -2 };
+    const spell = { ...state.players.a.hand[0], definition: card("healing", 0, 0) };
+    state = { ...state, players: { ...state.players, a: {
+      ...state.players.a, hand: [spell],
+      lanes: { ...state.players.a.lanes, b: [damaged, null, null] },
+    } } };
+    const rejected = reduceTriad(state, { type: "PLAY", seat: "a", lane: "support", slot: 0,
+      cardId: spell.instanceId }, loadouts);
+    expect(rejected).toBe(state);
+    const treated = reduceTriad(state, { type: "PLAY", seat: "a", lane: "support", slot: 0,
+      cardId: spell.instanceId, targetSeat: "b", targetSlot: 0 }, loadouts);
+    expect(treated.players.a.lanes.b[0]?.hp).toBe(5);
+    expect(treated.players.b.hp).toBe(30);
+    expect(treated.players.c.hp).toBe(30);
+  });
+  it("Clean Sheet chooses a different hand card to discard then draws two", () => {
+    let state = ready();
+    const spell = { ...state.players.a.hand[0], definition: card("clean_sheet", 0, 0) };
+    const target = state.players.a.hand[1];
+    state = { ...state, players: { ...state.players, a: {
+      ...state.players.a, hand: [spell, target],
+    } } };
+    const next = reduceTriad(state, { type: "PLAY", seat: "a", lane: "support", slot: 0,
+      cardId: spell.instanceId, targetCardId: target.instanceId }, loadouts);
+    expect(next.players.a.discard.some((c) => c.instanceId === target.instanceId)).toBe(true);
+    expect(next.players.a.hand).toHaveLength(2);
+    expect(next.players.a.deck).toHaveLength(state.players.a.deck.length - 2);
+  });
   it("uses the dedicated support slots for global cards", () => {
     const tsunami = card("tsunami", 0, 0);
     let state = ready();
