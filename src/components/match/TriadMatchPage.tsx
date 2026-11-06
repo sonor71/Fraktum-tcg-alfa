@@ -296,7 +296,7 @@ export default function TriadMatchPage() {
   const section = (owner: TriadSeat, side: "left" | "right" | "bottom") => (
     <div className={"triad-player-block is-" + side + (match.active === owner ? " is-active" : "")}>
       <div className="triad-player-title">{match.players[owner].name} <b>HP {match.players[owner].hp}</b>
-        <b>🛡 {match.players[owner].shield}</b>
+        <b>ЩИТ {match.players[owner].shield}</b>
         <b>ПОБЕДЫ {match.players[owner].victories}/{TRIAD_VICTORIES_TO_WIN}</b></div>
       {owner !== seat ? <BackHand side={side === "bottom" ? "left" : side}
         seat={owner} cards={match.players[owner].hand}
@@ -333,7 +333,7 @@ export default function TriadMatchPage() {
       <div className="triad-left-hand-side">{section(left, "left")}</div>
       <div className="triad-right-hand-side">{section(right, "right")}</div>
       <div className="triad-center-device">
-        <D20View
+        <D20View dramaticMotion
           value={match.roll ?? undefined}
           disabled={!activeTurn || match.phase !== "roll" || busy || Boolean(roulettePresentation)}
           onRoll={() => void send({ type: "ROLL", seat })}
