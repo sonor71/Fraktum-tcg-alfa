@@ -25,6 +25,7 @@ export type TriadState = {
   roll: number | null; playLimit: number | "unlimited"; played: number; costMultiplier: number;
   freeCard: boolean; discardPlay: boolean; rouletteEvent: string | null;
   awakeningPending: boolean; borrowedCard: { seat: TriadSeat; cardId: string } | null;
+  rouletteUsed: boolean;
   log: string[]; battleWinner: TriadSeat | "draw" | null; winner: TriadSeat | null;
 };
 export type TriadAction =
@@ -86,7 +87,7 @@ export function createTriadMatch(loadouts: Record<TriadSeat, TriadLoadout>, seed
     id: "triad-" + normalizedSeed, seed: normalizedSeed, rngSeed: c.seed,
     round: 1, battle, phase: "roll", active: "a", roll: null, playLimit: 0,
     played: 0, costMultiplier: 1, freeCard: false, discardPlay: false, rouletteEvent: null,
-    awakeningPending: false, borrowedCard: null,
+    awakeningPending: false, borrowedCard: null, rouletteUsed: false,
     players: {
       a: createSide("a", loadouts.a, battle, a.value, scores.a),
       b: createSide("b", loadouts.b, battle, b.value, scores.b),
@@ -335,7 +336,10 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
 
   if (action.type === "ROLL") {
     if (state.phase !== "roll") return state;
-    const die = rollDie(state.rngSeed, 20);
+    let die = rollDie(state.rngSeed, 20);
+    if (state.rouletteUsed && (die.value === 15 || die.value === 16)) {
+      do { die = rollDie(die.seed, 20); } while (die.value === 15 || die.value === 16);
+    }
     const rule = getD20Rule(die.value);
     const side = state.players[action.seat];
     let next: TriadState = {
@@ -345,14 +349,14 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
       freeCard: false, discardPlay: rule === "discard", awakeningPending: rule === "awakening", borrowedCard: null,
       players: { ...state.players, [action.seat]: {
         ...side, will: Math.min(side.maxWill, side.will + side.regen),
-        deck: side.deck.slice(side.hand.length < 7 ? 1 : 0),
-        hand: side.hand.length < 7 && side.deck.length ? [...side.hand, side.deck[0]] : side.hand,
+        deck: side.deck.slice(Math.min(7 - side.hand.length, side.deck.length)),
+        hand: [...side.hand, ...side.deck.slice(0, Math.max(0, 7 - side.hand.length))],
       } },
     };
     if (rule === "roulette") {
       const events = ["MERGED_DECKS", "WORLD_WITHOUT_WILL", "BLIND_TOP", "HIDDEN_HAND", "EMPTY_OUTCOME"];
       const random = rollDie(next.rngSeed, events.length);
-      next = { ...next, rngSeed: random.seed, rouletteEvent: events[random.value - 1] };
+      next = { ...next, rngSeed: random.seed, rouletteEvent: events[random.value - 1], rouletteUsed: true };
       if (next.rouletteEvent === "MERGED_DECKS") {
         const pool = TRIAD_SEATS.flatMap((seat) => next.players[seat].deck);
         const shuffle = shuffleWithSeed(pool, next.rngSeed);
