@@ -1,4 +1,5 @@
 import { BoardSlot } from "./BoardSlot";
+import { getWillCostByRarity } from "../../game/rarityWillCost";
 import type { CardInstance } from "../../game/core/types";
 import type { TriadCard, TriadSeat } from "../../game/triad/triadEngine";
 
@@ -47,6 +48,13 @@ export function TriadSlot({ card, seat, lane, index, playable, onActivate }: Tri
         targetable={playable && Boolean(card)}
         onActivate={playable ? () => onActivate?.() : undefined}
       />
+      {card ? <div className="triad-unit-metrics" aria-label={"Воля " +
+        getWillCostByRarity(card.definition.rarity) + ", HP " + card.hp + "/" + card.definition.health}>
+        <span className="is-will" title="Цена карты в Воле">◆{getWillCostByRarity(card.definition.rarity)}</span>
+        {Number(card.definition.health) > 0
+          ? <span className="is-hp" title="Здоровье карты">♥{card.hp}/{card.definition.health}</span>
+          : null}
+      </div> : null}
     </div>
   );
 }
