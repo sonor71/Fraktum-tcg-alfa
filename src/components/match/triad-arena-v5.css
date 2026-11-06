@@ -222,7 +222,7 @@
 .triad-center-device{
   position:absolute;z-index:13;
   left:50%;top:43.2%;transform:translate(-50%,-50%);
-  width:7.6cqw;height:7.6cqw;
+  width:6.2cqw;height:6.2cqw;
   display:block;text-align:center;
 }
 .triad-center-device .matchD20.fraktumD20{
