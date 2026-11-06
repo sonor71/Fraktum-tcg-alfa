@@ -224,7 +224,6 @@ export default function TriadMatchPage() {
   const order = TRIAD_SEATS.indexOf(seat);
   const left: TriadSeat = TRIAD_SEATS[(order + 1) % 3];
   const right: TriadSeat = TRIAD_SEATS[(order + 2) % 3];
-  const rivals: TriadSeat[] = [left, right];
   const activeTurn = match.active === seat && !hero.eliminated;
   const selected = [...hero.hand, ...(match.discardPlay ? hero.discard : [])]
     .find((card) => card.instanceId === selectedId);
