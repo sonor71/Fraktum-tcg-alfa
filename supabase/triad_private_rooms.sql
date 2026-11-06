@@ -124,7 +124,7 @@ begin
   else raise exception 'NOT_ROOM_PARTICIPANT'; end if;
   v_kind := p_action->>'type';
   if jsonb_typeof(p_action) <> 'object'
-     or v_kind not in ('ROLL', 'PLAY', 'END', 'NEXT', 'CONCEDE', 'CHAT')
+     or v_kind not in ('ROLL', 'PLAY', 'END', 'NEXT', 'CONCEDE', 'CHAT', 'CHOOSE_AWAKENING')
      or p_action->>'seat' is distinct from v_seat
      or (v_kind = 'NEXT' and v_seat <> 'a') then
     raise exception 'INVALID_ACTION'; end if;
