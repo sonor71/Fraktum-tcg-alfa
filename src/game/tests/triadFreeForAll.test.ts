@@ -72,9 +72,17 @@ describe("1x1x1 independent free-for-all", () => {
     const source = state.players.a.hand[0];
     expect(triadIsSupport(source)).toBe(true);
     expect(triadCanPlay(state, "a", source, "support", 0)).toBe(true);
-    expect(triadCanPlay(state, "a", source, "b", 0)).toBe(true); // Target slot legal, type constraint enforced by PLAY.
+    expect(triadCanPlay(state, "a", source, "b", 0)).toBe(false);
+    // Both rivals have a defending card in the lane directed at player A.
+    const block = { ...source, definition: card("triad_defender", 0, 4), hp: 4 };
+    state = { ...state, players: { ...state.players,
+      b: { ...state.players.b, lanes: { ...state.players.b.lanes, a: [block, null, null] } },
+      c: { ...state.players.c, lanes: { ...state.players.c.lanes, a: [block, null, null] } },
+    } };
     state = reduceTriad(state, { type: "PLAY", seat: "a", lane: "support", slot: 0, cardId: source.instanceId }, loadouts);
     expect(state.players.a.support[0]).toBeNull();
+    expect(state.players.b.lanes.a[0]?.hp).toBe(2);
+    expect(state.players.c.lanes.a[0]?.hp).toBe(2);
     expect(state.players.a.discard.some((c) => c.instanceId === source.instanceId)).toBe(true);
   });
   it("requires three battle victories, not one elimination, to win the series", () => {
