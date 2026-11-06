@@ -1,0 +1,347 @@
+
+/* FRAKTUM triad 5.0: one scalable 1600x900 scene defined in triadBoardGeometry.ts.
+ * This is deliberately standalone: no V2/V3/V4 absolute-position overrides.
+ */
+.triad-page {
+  min-height:100vh;
+  padding:8px 10px 28px;
+  color:#f7dfb3;
+  font-family:inherit;
+  background:radial-gradient(ellipse at 50% 10%,#30263f 0%,#151222 57%,#0d0b17 100%);
+}
+.triad-page * {box-sizing:border-box}
+.triad-topbar{
+  max-width:1600px;min-height:35px;margin:0 auto 8px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  color:#f6dba6;font-size:12px;letter-spacing:.04em;
+}
+.triad-topbar>span{font-size:11px;color:#c9b8d0}
+.triad-page button{font:inherit}
+.triad-topbar button,
+.triad-controls button,.triad-lobby button,.triad-chat button{
+  border:2px solid #d4a461;border-radius:2px;padding:6px 12px;
+  color:#fce2ad;font-weight:900;cursor:pointer;
+  background:#312136;box-shadow:inset 0 0 0 2px #171021,2px 3px #090612;
+}
+.triad-page button:disabled{cursor:default;opacity:.55}
+.triad-topbar button:not(:disabled):hover,.triad-controls button:not(:disabled):hover,
+.triad-lobby button:not(:disabled):hover{filter:brightness(1.25)}
+/* Proportional width and height keep the table completely inside a desktop window.
+ * The minimum scale is applied only at tablet widths, with horizontal scrolling.
+ */
+.triad-arena{
+  container-type:inline-size;
+  position:relative;isolation:isolate;
+  width:min(98%,1600px,calc((100dvh - 103px) * 1.777778));
+  aspect-ratio:16/9;
+  height:auto;min-height:0;
+  margin:0 auto;overflow:visible;
+  border:0;outline:0;box-shadow:none;background:transparent;
+  image-rendering:pixelated;
+}
+.triad-arena::before{
+  content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
+  background:#d6a86c;
+  clip-path:polygon(22.1875% 2.667%,77.8125% 2.667%,98.125% 43.667%,71.25% 98.222%,30% 98.222%,1.375% 43.667%);
+}
+.triad-arena::after{
+  content:"";position:absolute;inset:4px;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% 42%,#4a3b53 0%,#31293f 45%,#1b172d 87%),
+    repeating-linear-gradient(0deg,transparent 0,transparent 24px,#d9ad7a0b 25px,#d9ad7a0b 26px);
+  background-blend-mode:normal;
+  clip-path:polygon(22.1875% 2.667%,77.8125% 2.667%,98.125% 43.667%,71.25% 98.222%,30% 98.222%,1.375% 43.667%);
+}
+.triad-board-geometry{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;shape-rendering:crispEdges}
+.triad-board-outline{fill:none;stroke:#e8b56d;stroke-width:5;vector-effect:non-scaling-stroke}
+.triad-board-inner{fill:#140f235e;stroke:#d4a678;stroke-width:5;vector-effect:non-scaling-stroke}
+.triad-board-divider{fill:none;stroke:#926d70;stroke-width:4;vector-effect:non-scaling-stroke}
+.triad-left-hand-side,.triad-right-hand-side,.triad-bottom-field{
+  position:absolute;inset:0;width:100%;height:100%;
+  z-index:2;pointer-events:none;
+}
+.triad-player-block{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.triad-player-block>*{pointer-events:none}
+.triad-player-title{
+  position:absolute;top:8%;width:max-content;max-width:18%;
+  padding:5px 8px;z-index:9;
+  background:#1a1125ee;border:2px solid #b9905c;
+  box-shadow:2px 3px #100b1b;
+  font-size:clamp(10px,.75cqw,13px);font-weight:900;
+  text-align:center;line-height:1.25;
+  color:#f4cb90;
+}
+.triad-player-title b{
+  display:inline-block;font-size:clamp(9px,.63cqw,11px);margin-left:5px;
+  padding:3px 5px;border:1px solid #74586a;color:#ffdda9;background:#2e2135;
+}
+.triad-player-block.is-left .triad-player-title{left:24%}
+.triad-player-block.is-right .triad-player-title{right:24%}
+.triad-player-block.is-bottom .triad-player-title{
+  display:block;top:75%;left:50%;transform:translateX(-50%);
+  min-width:140px;max-width:18%;text-align:center;
+}
+.triad-player-block.is-active .triad-player-title{
+  border-color:#ffe2a4;animation:triad-active-turn 1.9s ease-in-out infinite;
+}
+@keyframes triad-active-turn{
+  0%,100%{filter:brightness(1);box-shadow:0 0 7px #e3b45e3c}
+  50%{filter:brightness(1.2);box-shadow:0 0 18px #e3b45eaa}
+}
+/* Hand cards: backs face their owner and are EXACTLY tangent to the diagonal table edge. */
+.triad-rival-hand,.triad-rival-hand.is-left,.triad-rival-hand.is-right{
+  position:absolute;inset:0;width:100%;height:100%;
+  display:block;z-index:8;pointer-events:none;
+}
+.triad-back{
+  position:absolute;z-index:8;display:block;
+  width:2.75cqw;height:3.8cqw;max-width:none;
+  padding:0;border:2px solid #d2a35c;border-radius:2px;
+  background:#1a1124;box-shadow:2px 3px #0c0714;
+  overflow:hidden;pointer-events:auto;
+  perspective:500px;animation:triad-back-in .33s ease-out both;
+}
+@keyframes triad-back-in{from{opacity:0;filter:brightness(2)}to{opacity:1;filter:none}}
+.triad-back:disabled{opacity:1;cursor:default}
+.triad-back:not(:disabled):hover{border-color:#fff1b9;box-shadow:0 0 14px #f8c67e}
+.triad-back-flipper{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s ease-in-out}
+.triad-back.is-flipped .triad-back-flipper{transform:rotateY(180deg)}
+.triad-back-face{position:absolute;inset:0;display:block;backface-visibility:hidden}
+.triad-back-face.is-front{transform:rotateY(180deg)}
+.triad-back-face img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+/* All 27 slots use one shared geometric origin, never a rectangular region's nth-child. */
+.triad-player-fields,.triad-field-line,.triad-field-cards{display:contents}
+.triad-field-label{display:none}
+.triad-slot-anchor{
+  position:absolute;z-index:4;pointer-events:auto;
+  width:3.25cqw;height:auto;aspect-ratio:58/80;
+  transform-origin:50% 50%;
+  transition:filter .13s ease;
+}
+.triad-slot-anchor:has(.matchSlotCardShell):hover{z-index:20;filter:drop-shadow(0 0 12px #e6bd7e88)}
+.triad-combat-slot{position:relative;width:100%;height:100%;pointer-events:auto}
+.triad-combat-slot .matchBoardSlot{
+  position:relative;width:100%;height:100%;min-height:0;
+  padding:0;border:2px solid #a88b67;border-radius:2px;
+  background:repeating-linear-gradient(45deg,#211b2f 0,#211b2f 6px,#2a2137 7px,#2a2137 8px);
+  box-shadow:inset 0 0 0 2px #140e21,2px 3px #100b1a;
+  overflow:visible;transform:none;
+}
+.triad-combat-slot .matchBoardSlot:hover{transform:none}
+.triad-combat-slot.is-targetable .matchBoardSlot{
+  border-color:#ffe6a4;
+  box-shadow:0 0 0 2px #896843,0 0 15px #ffcb78b3,inset 0 0 0 2px #cc9c69;
+  animation:triad-slot-glow 1.3s ease-in-out infinite;cursor:pointer;
+}
+@keyframes triad-slot-glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.38)}}
+.triad-combat-slot .matchSlotRune{color:#caad81;opacity:.6}
+.triad-combat-slot .matchSlotNumber{right:2px;bottom:2px;font-size:8px}
+.triad-combat-slot .matchSlotCardShell{
+  width:100%;height:100%;display:block;
+  overflow:visible;animation:triad-card-land .23s steps(4,end) both;
+}
+@keyframes triad-card-land{
+  from{opacity:0;transform:translateY(-11px) scale(.9)}
+  to{opacity:1;transform:none}
+}
+.triad-combat-slot .matchCardView.is-board{
+  width:100%;height:100%;min-height:0;max-height:none;
+  display:block;opacity:1;padding:0;box-shadow:none;border-radius:0;
+}
+.triad-combat-slot .matchCardView img,.triad-combat-slot .matchCardImage{
+  width:100%;height:100%;object-fit:contain;image-rendering:pixelated;
+}
+.triad-combat-slot .matchCardView .matchCardBadge,
+.triad-combat-slot .matchSlotCardShell .matchSlotStateTag,
+.triad-combat-slot .matchSlotCardShell .matchSlotStatusStack{display:none}
+.triad-combat-slot .matchFreezeCrystal{z-index:10;pointer-events:none}
+.triad-unit-metrics{
+  position:absolute;top:calc(100% + 2px);left:-2px;right:-2px;
+  display:flex;align-items:center;justify-content:center;gap:2px;z-index:12;
+  pointer-events:none;white-space:nowrap;font-size:clamp(7px,.55cqw,10px);font-weight:900;
+}
+.triad-unit-metrics span{display:block;padding:1px 2px;background:#140e1de8;border:1px solid #977854;color:#ffda93}
+.triad-unit-metrics .is-hp{color:#b1eec2;border-color:#51986c}
+.triad-slot-anchor:has(.matchSlotCardShell):hover .matchSlotCardShell{
+  transform:scale(1.65);transform-origin:center 62%;
+  filter:drop-shadow(0 0 12px #efc883);
+  transition:transform .16s ease-out;
+}
+.triad-slot-anchor:has(.matchSlotCardShell):hover .triad-unit-metrics{z-index:21}
+.triad-player-block.is-bottom .triad-slot-anchor .matchBoardSlot{border-color:#bf9763}
+/* Reuse 1x1 character meters, without allocating a wide rectangle across the arena. */
+.triad-hero-station{
+  position:absolute;z-index:10;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  width:8.6cqw;height:6.85cqw;
+  padding:.3cqw;border:2px solid #aa815a;border-radius:2px;
+  background:#20172de9;box-shadow:0 0 0 2px #0b0715,2px 3px #080611;
+  pointer-events:auto!important;
+}
+.triad-player-block.is-left .triad-hero-station{left:18.5%;top:27.5%}
+.triad-player-block.is-right .triad-hero-station{right:18.5%;top:27.5%;flex-direction:row-reverse}
+.triad-player-block.is-bottom .triad-hero-station{left:50%;top:80%;transform:translate(-50%,-50%)}
+.triad-hero-station .triad-player-portrait{
+  position:relative;flex:1;inset:auto;
+  width:5.05cqw;height:6.08cqw;min-width:0;
+  border:2px solid #d6a56a;background:#1e1529;box-shadow:none;
+}
+.triad-hero-station .triad-player-portrait img{
+  display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;
+}
+.triad-hero-gauges{display:flex;gap:.25cqw;align-items:center;justify-content:center;height:100%;flex:0 0 2.15cqw}
+.triad-hero-gauge{width:.9cqw;height:5.55cqw;display:flex;flex-direction:column;align-items:center;gap:2px}
+.triad-hero-gauge .matchStatusBar{width:.8cqw!important;height:4.95cqw!important;min-height:0!important}
+.triad-hero-gauge .matchStatusBarMeta{display:none!important}
+.triad-hero-gauge .matchStatusTrack{height:100%;width:100%;border:1px solid #827a77;border-radius:1px;background:#0a0a11}
+.triad-hero-gauge .matchStatusBar.is-hp .matchStatusFill{background:#52d674}
+.triad-hero-gauge .matchStatusBar.is-shield .matchStatusFill{background:#74b9e5}
+.triad-hero-gauge-amount{white-space:nowrap;text-align:center;font-size:clamp(7px,.52cqw,10px);font-weight:900;text-shadow:1px 1px #000;color:#ffe4ac}
+/* Each of the three seats has two independent, labelled piles. */
+.triad-seat-piles{position:absolute;inset:0;pointer-events:none;z-index:6}
+.triad-pile-wrapper{position:absolute;pointer-events:auto;transform:translate(-50%,-50%)}
+.triad-player-block.is-left .triad-pile-wrapper.is-deck{left:16%;top:54%}
+.triad-player-block.is-left .triad-pile-wrapper.is-discard{left:24%;top:54%}
+.triad-player-block.is-right .triad-pile-wrapper.is-deck{left:84%;top:54%}
+.triad-player-block.is-right .triad-pile-wrapper.is-discard{left:76%;top:54%}
+.triad-player-block.is-bottom .triad-pile-wrapper.is-deck{left:21%;top:66%}
+.triad-player-block.is-bottom .triad-pile-wrapper.is-discard{left:79%;top:66%}
+.triad-pile-wrapper .matchPile{
+  width:4.7cqw;height:6.6cqw;min-width:0;min-height:0;
+  padding:.3cqw;border:2px solid #b28a5b;border-radius:2px;
+  box-shadow:2px 3px #110b19;
+  grid-template-rows:minmax(0,1fr) auto auto;gap:1px;overflow:hidden;
+  color:#eac99a;background:#1a1226;
+  font-size:clamp(7px,.55cqw,10px);
+}
+.triad-pile-wrapper .matchPileStack{width:2.9cqw;max-height:4.2cqw;align-self:center;aspect-ratio:58/80}
+.triad-pile-wrapper .matchPileStack img{width:100%;height:100%;object-fit:contain;border-radius:1px;image-rendering:pixelated}
+.triad-pile-wrapper .matchPileText b{font-size:clamp(7px,.53cqw,10px)}
+.triad-pile-wrapper .matchPileCount{font-size:clamp(8px,.6cqw,11px)}
+/* The original WebGL die, pinned to the intersection of the three target directions. */
+.triad-center-device{
+  position:absolute;z-index:13;
+  left:50%;top:43.2%;transform:translate(-50%,-50%);
+  width:7.6cqw;height:7.6cqw;
+  display:block;text-align:center;
+}
+.triad-center-device .matchD20.fraktumD20{
+  position:relative;width:100%;height:100%;
+  border:2px solid #e8b772;border-radius:50%;
+  background:radial-gradient(circle,#402c2c,#130f1a 75%);
+  box-shadow:0 0 0 3px #24182a,0 0 20px #db995457;
+  opacity:1;aspect-ratio:1;
+}
+.triad-center-device .matchD20.is-rolling{box-shadow:0 0 25px #efbf7aad}
+.triad-center-device .fraktumD20CanvasWrap{inset:6% 4% 17%}
+.triad-center-device .matchD20.fraktumD20:disabled{opacity:1}
+.triad-center-device .matchD20Hint{font-size:9px}
+.triad-center-device .matchD20Label{font-size:10px}
+.triad-center-device .triad-dice-caption,
+.triad-center-device>small,.triad-center-device>b{display:none}
+.triad-turn-sweep{
+  position:absolute;z-index:14;left:42%;top:54%;width:16%;
+  padding:3px 5px;pointer-events:none;
+  color:#ffe7a8;background:#140d1db5;border-top:1px solid #9d7e58;
+  text-align:center;font-size:clamp(9px,.75cqw,13px);font-weight:900;
+  animation:triad-turn-sweep 1.2s ease-out both;
+}
+@keyframes triad-turn-sweep{0%{opacity:0;transform:translateY(-12px)}28%,62%{opacity:1;transform:none}100%{opacity:0;transform:translateY(8px)}}
+.triad-controls{
+  position:absolute;z-index:14;left:62%;top:75.5%;
+  width:20%;min-height:4.2cqw;
+  display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:4px;
+  border:2px solid #ae825b;border-radius:2px;
+  padding:4px 6px;background:#1b1224ef;box-shadow:2px 3px #0e0917;
+  font-size:clamp(9px,.68cqw,12px);
+}
+.triad-controls>span{display:block;color:#efd7af}
+.triad-controls button{font-size:clamp(8px,.63cqw,11px);padding:4px 6px}
+.triad-roll-tip{display:block;font-size:clamp(8px,.6cqw,10px);color:#d8b184}
+/* Entire hand inside bottom rail at any desktop viewport height. */
+.triad-hand{
+  position:absolute;z-index:16;bottom:3.1%;left:26%;width:48%;height:10.5%;
+  display:flex;justify-content:center;align-items:flex-end;gap:.55cqw;
+  overflow:visible;
+}
+.triad-hand-card{
+  position:relative;flex:0 1 4.9cqw;width:4.9cqw;height:100%;
+  min-width:0;max-width:none;max-height:none;
+  transform-origin:center bottom;
+  transition:transform .19s ease,filter .19s ease;
+  animation:triad-card-draw .29s ease-out both;
+}
+.triad-hand-card .matchCardView,.triad-hand-card .matchCardView.is-hand{
+  width:100%;height:100%;max-width:none;max-height:none;min-height:0;
+  object-fit:contain;border-radius:2px;
+}
+.triad-hand-card.is-selected,.triad-hand-card:hover:has(.matchCardView:not(:disabled)){
+  z-index:20;transform:translateY(-22%) scale(1.15);filter:drop-shadow(0 0 12px #e5b66eac);
+}
+@keyframes triad-card-draw{from{opacity:0;transform:translateY(35px)}to{opacity:1;transform:none}}
+/* Elimination only covers the eliminated hero, never the whole board. */
+.triad-out{
+  position:absolute;z-index:18;top:39%;width:8%;padding:4px;
+  border:2px solid #c85e68;background:#130916ed;
+  color:#ffc1b4;font-size:clamp(12px,.9cqw,16px);font-weight:900;text-align:center;
+  pointer-events:none;animation:triad-out .5s ease-out;
+}
+.triad-player-block.is-left .triad-out{left:18%}
+.triad-player-block.is-right .triad-out{right:18%}
+.triad-player-block.is-bottom .triad-out{top:73%;left:46%}
+@keyframes triad-out{from{opacity:0;transform:scale(1.3)}to{opacity:1;transform:none}}
+.triad-player-block:has(.triad-out) .triad-hero-station,
+.triad-player-block:has(.triad-out) .triad-rival-hand{filter:grayscale(1) brightness(.7)}
+.triad-motion-layer{position:fixed;inset:0;z-index:9999;pointer-events:none}
+.triad-flying-card{
+  position:fixed;width:50px;height:69px;object-fit:contain;image-rendering:pixelated;
+  box-shadow:0 0 14px #ffd27b;
+  animation:triad-flight .59s ease-out forwards;
+}
+@keyframes triad-flight{0%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translate(var(--triad-fly-x),var(--triad-fly-y)) scale(.8)}}
+.triad-floating-number{
+  position:fixed;font-size:18px;font-weight:900;z-index:9999;color:#ffb8a0;
+  text-shadow:2px 2px #180b13;
+  animation:triad-number 1.15s ease-out forwards;
+}
+.triad-floating-number.is-heal{color:#91f9a5}
+.triad-floating-number.is-shield{color:#a6d7ff}
+@keyframes triad-number{from{opacity:0;transform:translate(-50%,0) scale(.65)}35%{opacity:1;transform:translate(-50%,-22px) scale(1.12)}to{opacity:0;transform:translate(-50%,-62px)}}
+.triad-info-panel{
+  width:min(96%,1600px);display:flex;gap:14px;margin:13px auto 0;
+}
+.triad-log,.triad-chat{
+  flex:1;min-width:0;min-height:120px;padding:12px;
+  border:2px solid #6c5265;background:#160f20;
+  color:#e5d8dd;font-size:12px;
+}
+.triad-log b,.triad-chat b{color:#f5c886}
+.triad-log p,.triad-chat p{margin:5px 0;line-height:1.45}
+.triad-chat-messages{max-height:160px;overflow:auto}
+.triad-chat form{display:flex;gap:6px}
+.triad-chat input,.triad-lobby input{
+  flex:1;min-width:0;padding:8px;
+  color:#fbe5c3;background:#241b2f;border:2px solid #9b755c;
+}
+.triad-tip{max-width:1000px;margin:12px auto;text-align:center;color:#f1d2a2}
+.triad-error{max-width:1000px;margin:12px auto;color:#ffaeb5;text-align:center}
+.triad-lobby{
+  max-width:690px;margin:10vh auto;
+  padding:32px;background:#201727;border:3px solid #ba8d55;
+  text-align:center;box-shadow:6px 6px #070510;
+}
+.triad-lobby h2{color:#f6c980}
+.triad-lobby p{color:#dfd1d7;line-height:1.6}
+.triad-lobby-join{display:flex;gap:8px;max-width:500px;margin:auto}
+@media(max-width:1050px){
+  .triad-page{overflow-x:auto}
+  .triad-arena{min-width:1050px;width:1050px}
+  .triad-topbar{min-width:1050px}
+  .triad-info-panel{min-width:1050px}
+}
+@media(prefers-reduced-motion:reduce){
+  .triad-player-title,.triad-back,.triad-back-flipper,.triad-hand-card,
+  .triad-combat-slot .matchSlotCardShell,.triad-turn-sweep,.triad-flying-card,.triad-floating-number{
+    animation-duration:.01ms!important;transition-duration:.01ms!important;
+  }
+}
