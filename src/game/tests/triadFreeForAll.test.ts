@@ -1,0 +1,91 @@
+import { describe, expect, it } from "vitest";
+import type { CardDefinition } from "../core/types";
+import {
+  TRIAD_VICTORIES_TO_WIN, createTriadMatch, reduceTriad,
+  triadCanPlay, triadIsSupport, type TriadLoadout,
+} from "../triad/triadEngine";
+
+function card(id: string, attack = 3, hp = 0): CardDefinition {
+  return {
+    id, title: id, type: "attack", rarity: "common", cost: 1, attack, health: hp,
+    description: "", image: "/cards/card-back.png", effectKey: "",
+  };
+}
+const cards = Array.from({ length: 20 }, (_, index) => card("triad_fixture_" + index));
+const hero = { ...card("triad_hero", 0, 30), type: "character" as const };
+const loadouts: Record<"a" | "b" | "c", TriadLoadout> = {
+  a: { name: "A", deck: cards, hero, maxWill: 20 },
+  b: { name: "B", deck: cards, hero, maxWill: 20 },
+  c: { name: "C", deck: cards, hero, maxWill: 20 },
+};
+function battle() {
+  return createTriadMatch(loadouts, 123456);
+}
+function ready() {
+  const state = battle();
+  return { ...state, phase: "main" as const, playLimit: "unlimited" as const };
+}
+
+describe("1x1x1 independent free-for-all", () => {
+  it("uses the same fixed A -> B -> C order for each turn", () => {
+    let state = battle();
+    expect(state.active).toBe("a");
+    state = reduceTriad(state, { type: "ROLL", seat: "a" }, loadouts);
+    state = reduceTriad(state, { type: "END", seat: "a" }, loadouts);
+    expect(state.active).toBe("b");
+    state = reduceTriad(state, { type: "ROLL", seat: "b" }, loadouts);
+    state = reduceTriad(state, { type: "END", seat: "b" }, loadouts);
+    expect(state.active).toBe("c");
+    state = reduceTriad(state, { type: "ROLL", seat: "c" }, loadouts);
+    state = reduceTriad(state, { type: "END", seat: "c" }, loadouts);
+    expect(state.active).toBe("a");
+  });
+  it("directed cards affect only the chosen opponent", () => {
+    let state = ready();
+    const source = state.players.a.hand[0];
+    expect(triadCanPlay(state, "a", source, "b", 0)).toBe(true);
+    expect(triadCanPlay(state, "a", source, "a", 0)).toBe(false);
+    state = reduceTriad(state, { type: "PLAY", seat: "a", lane: "b", slot: 0, cardId: source.instanceId }, loadouts);
+    expect(state.players.b.hp).toBeLessThan(30);
+    expect(state.players.c.hp).toBe(30);
+  });
+  it("a defeated player is skipped while the remaining two continue", () => {
+    let state = ready();
+    state = { ...state, players: {
+      ...state.players, b: { ...state.players.b, hp: 1 },
+    } };
+    const source = state.players.a.hand[0];
+    state = reduceTriad(state, { type: "PLAY", seat: "a", lane: "b", slot: 0, cardId: source.instanceId }, loadouts);
+    expect(state.players.b.eliminated).toBe(true);
+    expect(state.phase).toBe("main");
+    state = reduceTriad(state, { type: "END", seat: "a" }, loadouts);
+    expect(state.active).toBe("c");
+  });
+  it("uses the dedicated support slots for global cards", () => {
+    const tsunami = card("tsunami", 0, 0);
+    let state = ready();
+    state = { ...state, players: { ...state.players, a: {
+      ...state.players.a, hand: [
+        { ...state.players.a.hand[0], definition: tsunami },
+      ],
+    } } };
+    const source = state.players.a.hand[0];
+    expect(triadIsSupport(source)).toBe(true);
+    expect(triadCanPlay(state, "a", source, "support", 0)).toBe(true);
+    expect(triadCanPlay(state, "a", source, "b", 0)).toBe(true); // Target slot legal, type constraint enforced by PLAY.
+    state = reduceTriad(state, { type: "PLAY", seat: "a", lane: "support", slot: 0, cardId: source.instanceId }, loadouts);
+    expect(state.players.a.support[0]).toBeNull();
+    expect(state.players.a.discard.some((c) => c.instanceId === source.instanceId)).toBe(true);
+  });
+  it("requires three battle victories, not one elimination, to win the series", () => {
+    let state = createTriadMatch(loadouts, 123456, 3, { a: TRIAD_VICTORIES_TO_WIN - 1, b: 0, c: 0 });
+    state = { ...state, phase: "main", playLimit: "unlimited",
+      players: { ...state.players, b: { ...state.players.b, hp: 0, eliminated: true },
+        c: { ...state.players.c, hp: 1 } } };
+    const source = state.players.a.hand[0];
+    state = reduceTriad(state, { type: "PLAY", seat: "a", lane: "c", slot: 0, cardId: source.instanceId }, loadouts);
+    expect(state.phase).toBe("ended");
+    expect(state.winner).toBe("a");
+    expect(state.players.a.victories).toBe(3);
+  });
+});
