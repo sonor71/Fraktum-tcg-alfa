@@ -505,6 +505,20 @@ export function chooseTriadBotAction(state: TriadState): TriadAction {
     [...owner.hand, ...(state.discardPlay ? owner.discard : []),
       ...(state.borrowedCard ? state.players[state.borrowedCard.seat].deck.filter((c) => c.instanceId === state.borrowedCard?.cardId) : [])];
   for (const card of available) {
+    if (card.definition.id === "clean_sheet") continue;
+    if (card.definition.id === "healing") {
+      const woundedLane = targets.find((target) => owner.lanes[target].some((unit) =>
+        unit && unit.hp > 0 && unit.hp < Math.max(0, Number(unit.definition.health) || 0)));
+      const targetSlot = woundedLane === undefined ? -1 : owner.lanes[woundedLane].findIndex((unit) =>
+        unit && unit.hp > 0 && unit.hp < Math.max(0, Number(unit.definition.health) || 0));
+      const supportSlot = owner.support.findIndex((c) => !c);
+      if (woundedLane && targetSlot >= 0 && supportSlot >= 0 &&
+        triadCanPlay(state, seat, card, "support", supportSlot)) {
+        return { type: "PLAY", seat, cardId: card.instanceId, lane: "support", slot: supportSlot,
+          targetSeat: woundedLane, targetSlot };
+      }
+      continue;
+    }
     const lanes: TriadLane[] = triadIsSupport(card) ? ["support"] : targets;
     for (const lane of lanes) {
       const slots = lane === "support" ? owner.support : owner.lanes[lane];
