@@ -292,7 +292,7 @@ export default function TriadMatchPage() {
         return <div className="triad-slot-anchor" key={owner + "-" + lane + "-" + slot}
           data-triad-anchor={owner + ":" + lane + ":" + slot}
           style={position}><TriadSlot
-          card={card} seat={owner} lane={lane} index={slot} playable={permitted}
+          card={card} seat={owner} lane={lane} index={slot} playable={permitted} isOwn={owner === seat}
           onActivate={() => {
             if (!selected) return;
             if (healingTarget && lane !== "support") {
