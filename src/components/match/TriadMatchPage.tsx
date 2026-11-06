@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { splitDeckSelection } from "../../game/deckRules";
 import { loadCardDefinitions } from "../../game/data/cards";
@@ -14,7 +14,19 @@ import {
   joinTriadRoom, roomTriadLoadouts, seatForTriadRoom, sendTriadAction,
   subscribeTriadRoom, type TriadEvent, type TriadRoom,
 } from "../../services/triadRooms";
-import "./triad-arena.css";
+import { TriadSlot, triadToMatchCard } from "./TriadSlot";
+import { TriadHeroMeters } from "./TriadHeroMeters";
+import { TriadCharacterBonuses } from "./TriadCharacterBonuses";
+import { TriadPiles } from "./TriadPiles";
+import {
+  triadHandPoint, triadSlotPoint, TRIAD_OUTER_PATH,
+  TRIAD_INNER_PATH, TRIAD_INNER_DIVIDERS, type TriadViewGroup, type TriadViewSide,
+} from "./triadBoardGeometry";
+import { D20View } from "./D20View";
+import { CardView } from "./CardView";
+import { TriadCombatMotion, captureTriadFlight, type TriadFlightRequest } from "./TriadCombatMotion";
+import { MatchPresentationLayer, type MatchRoulettePresentation } from "./MatchPresentationLayer";
+import "./triad-arena-v5.css";
 
 const cardBack = "/cards/card-back.png";
 const catalog = loadCardDefinitions();
@@ -50,28 +62,29 @@ function namesForSeats(state: TriadState) {
 const cardTitle = (card: TriadCard) => card.definition.ruTitle || card.definition.title;
 const cardImage = (card: TriadCard) => card.definition.image || cardBack;
 
-function Slot({ card, selected, disabled, onClick, label }: {
-  card: TriadCard | null; selected?: boolean; disabled?: boolean; onClick?: () => void; label: string;
-}) {
-  return (
-    <button type="button" className={"triad-slot" + (selected ? " is-ready" : "") + (card ? " is-filled" : "")}
-      onClick={onClick} disabled={disabled} title={card ? cardTitle(card) + " · HP " + card.hp : label}>
-      {card ? <><img src={cardImage(card)} alt={cardTitle(card)} draggable={false} />
-        {card.definition.health > 0 ? <span className="triad-slot-hp">{card.hp} HP</span> : null}</> :
-        <span className="triad-slot-empty">✧</span>}
-    </button>
-  );
-}
-function BackHand({ cards, revealed, flipped, onFlip }: {
+/** Enemy cards always face their OWNER, never the spectator. Oracle flips only the chosen backs. */
+function BackHand({ cards, revealed, flipped, onFlip, side, seat }: {
   cards: TriadCard[]; revealed: boolean; flipped: string[]; onFlip: (id: string) => void;
+  side: "left" | "right"; seat: TriadSeat;
 }) {
-  return <div className="triad-rival-hand">
-    {cards.map((card) => {
-      const show = revealed && flipped.includes(card.instanceId);
-      return <button key={card.instanceId} className="triad-back" type="button"
-        onClick={() => revealed && onFlip(card.instanceId)} disabled={!revealed}
-        title={show ? cardTitle(card) : "Рубашка карты"}>
-        <img draggable={false} src={show ? cardImage(card) : cardBack} alt={show ? cardTitle(card) : "Скрытая карта"} />
+  const count = cards.length;
+  return <div className={"triad-rival-hand is-" + side} data-triad-owner-hand={seat}>
+    {cards.map((card, index) => {
+      const { x, y, angle } = triadHandPoint(side, index, count);
+      const position = {
+        left: (x / 16) + "%", top: (y / 9) + "%",
+        transform: "translate(-50%, -50%) rotate(" + angle + "deg)",
+      } as CSSProperties;
+      const visible = revealed && flipped.includes(card.instanceId);
+      return <button key={card.instanceId} className={"triad-back" + (visible ? " is-flipped" : "")}
+        style={position} type="button" onClick={() => revealed && onFlip(card.instanceId)}
+        disabled={!revealed} title={visible ? cardTitle(card) : "Скрытая карта"}>
+        <span className="triad-back-flipper">
+          <span className="triad-back-face is-back"><img draggable={false} src={cardBack} alt="Рубашка карты" /></span>
+          {visible && <span className="triad-back-face is-front">
+            <img draggable={false} src={cardImage(card)} alt={cardTitle(card)} />
+          </span>}
+        </span>
       </button>;
     })}
   </div>;
@@ -104,9 +117,24 @@ export default function TriadMatchPage() {
   const [flipped, setFlipped] = useState<string[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [chat, setChat] = useState<TriadEvent[]>([]);
+  const pendingFlight = useRef<TriadFlightRequest | null>(null);
+  const [roulettePresentation, setRoulettePresentation] = useState<MatchRoulettePresentation | null>(null);
+  const rouletteKeyRef = useRef("");
+  const closeRoulette = useCallback(() => setRoulettePresentation(null), []);
   const seat: TriadSeat = privateMode && room && userId
     ? seatForTriadRoom(room, userId) ?? "a" : "a";
   const loadouts = privateMode && room ? roomTriadLoadouts(room) : botLoadouts;
+
+  useEffect(() => {
+    if (!match?.rouletteEvent) return;
+    const key = [match.battle, match.round, match.active, match.rouletteEvent].join(":");
+    if (rouletteKeyRef.current === key) return;
+    rouletteKeyRef.current = key;
+    setRoulettePresentation({
+      id: match.battle * 100000 + match.round * 10 + TRIAD_SEATS.indexOf(match.active),
+      event: match.rouletteEvent, ownerId: match.active === seat ? "player" : "enemy",
+    });
+  }, [match?.rouletteEvent, match?.round, match?.battle, match?.active, seat]);
 
   const refreshRoom = useCallback(async (roomId: string) => {
     const fresh = await fetchTriadRoom(roomId);
@@ -141,13 +169,18 @@ export default function TriadMatchPage() {
   }, [privateMode, room?.id, refreshRoom]);
 
   useEffect(() => {
-    if (privateMode || !match || match.phase === "ended" || match.phase === "between" || match.active === "a") return;
+    if (privateMode || !match || roulettePresentation ||
+      match.phase === "ended" || match.phase === "between" || match.active === "a") return;
+    const pause = match.phase === "roll" ? 1050 : match.played === 0 ? 1450 : 780;
     const timer = window.setTimeout(() => {
-      setMatch((current) => current && current.active !== "a" && current.phase !== "ended" && current.phase !== "between"
-        ? reduceTriad(current, chooseTriadBotAction(current), botLoadouts) : current);
-    }, 520);
+      const action = chooseTriadBotAction(match);
+      if (action.type === "PLAY") pendingFlight.current = captureTriadFlight(action, match);
+      setMatch((current) => current && current.active === match.active &&
+        current.phase !== "ended" && current.phase !== "between"
+          ? reduceTriad(current, action, botLoadouts) : current);
+    }, pause);
     return () => window.clearTimeout(timer);
-  }, [privateMode, match, botLoadouts]);
+  }, [privateMode, match, botLoadouts, roulettePresentation]);
 
   async function enterRoom(join: boolean) {
     if (ownLoadout.deck.length !== 20) { setError("Сначала собери колоду из 20 карт."); return; }
@@ -164,7 +197,8 @@ export default function TriadMatchPage() {
   }
 
   const send = useCallback(async (action: TriadAction) => {
-    if (busy || !match) return;
+    if (busy || !match || roulettePresentation) return;
+    if (action.type === "PLAY") pendingFlight.current = captureTriadFlight(action, match);
     if (!privateMode) {
       setMatch((current) => current ? reduceTriad(current, action, botLoadouts) : current);
       return;
@@ -178,7 +212,7 @@ export default function TriadMatchPage() {
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Ошибка действия.");
     } finally { setBusy(false); }
-  }, [busy, match, privateMode, room, loadouts, seat, botLoadouts, refreshRoom]);
+  }, [busy, match, privateMode, room, loadouts, seat, botLoadouts, refreshRoom, roulettePresentation]);
 
   async function sendChat() {
     const text = chatInput.trim().slice(0, 500);
@@ -232,52 +266,73 @@ export default function TriadMatchPage() {
     ...(match.borrowedCard ? match.players[match.borrowedCard.seat].deck.filter((c) => c.instanceId === match.borrowedCard?.cardId) : []),
   ];
   const selected = [...hero.hand, ...specialCards].find((card) => card.instanceId === selectedId);
-  const canAct = !busy && activeTurn && match.phase === "main";
-  const displayField = (owner: TriadSeat, lane: TriadLane, label: string, allowPlay: boolean) => {
+  const canAct = !busy && !roulettePresentation && activeTurn && match.phase === "main";
+  const displayField = (owner: TriadSeat, lane: TriadLane, label: string,
+    allowPlay: boolean, side: TriadViewSide, group: TriadViewGroup) => {
     const p = match.players[owner];
     const slots = lane === "support" ? p.support : p.lanes[lane];
-    return <div className={"triad-field-line" + (allowPlay ? " is-mine" : "")} key={owner + "-" + lane}>
+    return <div className={"triad-field-line" + (allowPlay ? " is-mine" : "")}
+      key={owner + "-" + lane} data-triad-direction={lane} data-group={group}>
       <span className="triad-field-label">{label}</span>
       <div className="triad-field-cards">{slots.map((card, slot) => {
         const supportSlot = hero.support.findIndex((item) => !item);
         const healingTarget = Boolean(allowPlay && selected?.definition.id === "healing" &&
-          lane !== "support" && card && supportSlot >= 0 &&
-          triadCanPlay(match, seat, selected, "support", supportSlot));
-        const regularTarget = Boolean(allowPlay && selected && !["healing", "clean_sheet"].includes(selected.definition.id) &&
+          lane !== "support" && card && card.hp < (Number(card.definition.health) || 0) &&
+          supportSlot >= 0 && triadCanPlay(match, seat, selected, "support", supportSlot));
+        const regularTarget = Boolean(allowPlay && selected &&
+          !["healing", "clean_sheet"].includes(selected.definition.id) &&
           triadCanPlay(match, seat, selected, lane, slot));
         const permitted = healingTarget || regularTarget;
-        return <Slot key={slot} card={card} label={label + " " + (slot + 1)}
-          selected={permitted} disabled={!permitted}
-          onClick={() => {
+        const point = triadSlotPoint(side, group, slot);
+        const position = {
+          left: (point.x / 16) + "%",
+          top: (point.y / 9) + "%",
+          transform: "translate(-50%, -50%) rotate(" + point.angle + "deg)",
+        } as CSSProperties;
+        return <div className="triad-slot-anchor" key={owner + "-" + lane + "-" + slot}
+          data-triad-anchor={owner + ":" + lane + ":" + slot}
+          style={position}><TriadSlot
+          card={card} seat={owner} lane={lane} index={slot} playable={permitted} isOwn={owner === seat}
+          onActivate={() => {
             if (!selected) return;
             if (healingTarget && lane !== "support") {
               void send({ type: "PLAY", seat, cardId: selected.instanceId,
                 lane: "support", slot: supportSlot, targetSeat: lane, targetSlot: slot });
             } else {
-              if (lane !== "support" && (selected.definition.id === "oracle" || selected.definition.id === "dragon_eye")) {
-                setOracleSeat(lane); setRevealLimit(selected.definition.id === "dragon_eye" ? 1 : 99); setFlipped([]);
+              if (lane !== "support" && (selected.definition.id === "oracle" ||
+                selected.definition.id === "dragon_eye")) {
+                setOracleSeat(lane);
+                setRevealLimit(selected.definition.id === "dragon_eye" ? 1 : 99);
+                setFlipped([]);
               }
               void send({ type: "PLAY", seat, cardId: selected.instanceId, lane, slot });
             }
             setSelectedId(null);
-          }} />;
-      })}
-      </div>
+          }} /></div>;
+      })}</div>
     </div>;
   };
   const section = (owner: TriadSeat, side: "left" | "right" | "bottom") => (
     <div className={"triad-player-block is-" + side + (match.active === owner ? " is-active" : "")}>
-      <div className="triad-player-title">{match.players[owner].name} <b>HP {match.players[owner].hp}</b>
-        <b>🛡 {match.players[owner].shield}</b>
+      <div className="triad-player-title">{match.players[owner].name}
         <b>ПОБЕДЫ {match.players[owner].victories}/{TRIAD_VICTORIES_TO_WIN}</b></div>
-      {owner !== seat ? <BackHand cards={match.players[owner].hand}
+      {owner !== seat ? <BackHand side={side === "bottom" ? "left" : side}
+        seat={owner} cards={match.players[owner].hand}
         revealed={oracleSeat === owner} flipped={flipped}
         onFlip={(id) => setFlipped((current) => current.includes(id) || current.length >= revealLimit ? current : [...current, id])} /> : null}
+      <TriadHeroMeters seat={owner} player={match.players[owner]} />
+      <TriadCharacterBonuses seat={owner} loadout={loadouts[owner]} />
+      <TriadPiles seat={owner} side={side} player={match.players[owner]}
+        canBlindPlay={owner === seat && canAct && match.rouletteEvent === "BLIND_TOP" &&
+          match.players[owner].deck.length > 0}
+        onBlindPlay={() => setSelectedId(match.players[owner].deck[0]?.instanceId ?? null)} />
       <div className="triad-player-fields">
-        {displayField(owner, owner === seat ? left : seat, "НА " + match.players[owner === seat ? left : seat].name, owner === seat)}
+        {displayField(owner, owner === seat ? left : seat, "НА " + match.players[owner === seat ? left : seat].name,
+          owner === seat, side, 0)}
         {displayField(owner, owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!,
-          "НА " + match.players[owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!].name, owner === seat)}
-        {displayField(owner, "support", "СВОИ / ВСЕ", owner === seat)}
+          "НА " + match.players[owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!].name,
+          owner === seat, side, 1)}
+        {displayField(owner, "support", "ПРЯМО / СВОИ", owner === seat, side, 2)}
       </div>
       {match.players[owner].eliminated && <span className="triad-out">ВЫБЫЛ</span>}
     </div>
@@ -291,32 +346,36 @@ export default function TriadMatchPage() {
       {room && <span>КОД {room.invite_code}</span>}
     </header>
     <div className="triad-arena">
+      <svg className="triad-board-geometry" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path className="triad-board-outline" d={TRIAD_OUTER_PATH} />
+        <path className="triad-board-inner" d={TRIAD_INNER_PATH} />
+        <path className="triad-board-divider" d={TRIAD_INNER_DIVIDERS} />
+      </svg>
       <div className="triad-left-hand-side">{section(left, "left")}</div>
       <div className="triad-right-hand-side">{section(right, "right")}</div>
       <div className="triad-center-device">
-        <div className="triad-fate-triangle"><span className="triad-d20">D20</span></div>
-        <small>{match.roll === null ? "РУЛЕТКА СУДЬБЫ" : "D20: " + match.roll}</small>
-        {match.rouletteEvent && <small>СОБЫТИЕ: {match.rouletteEvent}</small>}
+        <D20View dramaticMotion
+          value={match.roll ?? undefined}
+          disabled={!activeTurn || match.phase !== "roll" || busy || Boolean(roulettePresentation)}
+          onRoll={() => void send({ type: "ROLL", seat })}
+          externalRollKey={match.roll !== null && match.active !== seat
+            ? match.battle + ":" + match.round + ":" + match.active : undefined}
+        />
+        <div className="triad-dice-caption">{match.phase === "roll"
+          ? "НАЖМИ НА D20" : match.roll !== null ? "ВЫПАЛО: " + match.roll : "КУБИК СУДЬБЫ"}</div>
+        {match.rouletteEvent && <small>СОБЫТИЕ: {match.rouletteEvent.replace(/_/g, " ")}</small>}
         <b>{match.phase === "ended" ? "ПОБЕДИТЕЛЬ: " + match.players[match.winner!].name :
           match.phase === "between" ? "БОЙ ОКОНЧЕН" :
           "ХОД: " + match.players[match.active].name}</b>
       </div>
+      <div key={match.battle + ":" + match.round + ":" + match.active}
+        className={"triad-turn-sweep" + (match.active === seat ? " is-self" : "")}
+        role="status" aria-live="polite">ХОД: {match.players[match.active].name}</div>
       <div className="triad-bottom-field">{section(seat, "bottom")}</div>
-      <div className="triad-deck-zone">
-        <img src={cardBack} alt="Ваша колода" />
-        <span>КОЛОДА {hero.deck.length}</span>
-        {match.rouletteEvent === "BLIND_TOP" && activeTurn && hero.deck.length > 0 &&
-          <button type="button" onClick={() => setSelectedId(hero.deck[0].instanceId)}>ВЕРХНЯЯ КАРТА</button>}
-      </div>
-      <div className="triad-discard-zone">
-        <img src={hero.discard.length ? cardImage(hero.discard[hero.discard.length - 1]) : cardBack} alt="Сброс" />
-        <span>СБРОС {hero.discard.length}</span>
-      </div>
+
       <div className="triad-controls">
-        <span>HP {hero.hp}/{hero.maxHp} · ЩИТ {hero.shield}</span>
         <span>ВОЛЯ {hero.will}/{hero.maxWill} · КАРТЫ {match.played}/{match.playLimit}</span>
-        {match.phase === "roll" && activeTurn && <button type="button" disabled={busy}
-          onClick={() => void send({ type: "ROLL", seat })}>БРОСИТЬ D20</button>}
+        {match.phase === "roll" && activeTurn && <span className="triad-roll-tip">БРОСЬ КУБИК В ЦЕНТРЕ</span>}
         {match.phase === "main" && activeTurn && match.awakeningPending && <>
           <button type="button" disabled={busy} onClick={() => void send({ type: "CHOOSE_AWAKENING", seat, choice: "freeCard" })}>ПРОБУЖДЕНИЕ: БЕСПЛАТНАЯ КАРТА</button>
           <button type="button" disabled={busy || !triadRivals(seat).some((r) => hero.lanes[r].some(Boolean)) && !hero.support.some(Boolean)}
@@ -329,29 +388,36 @@ export default function TriadMatchPage() {
         {match.phase === "between" && seat !== "a" && <span>Ожидание нового боя от хозяина комнаты</span>}
         {match.phase === "ended" && <span>ПОБЕДА: {match.players[match.winner!].name}</span>}
       </div>
-      <div className="triad-hand">
-        {[...hero.hand, ...specialCards].map((card) => <button key={card.instanceId} type="button"
-          className={"triad-hand-card" + (selectedId === card.instanceId ? " is-selected" : "")}
-          onClick={() => {
-            if (selected?.definition.id === "clean_sheet" && selected.instanceId !== card.instanceId &&
-              hero.hand.some((entry) => entry.instanceId === card.instanceId)) {
-              const slot = hero.support.findIndex((entry) => !entry);
-              if (slot >= 0 && triadCanPlay(match, seat, selected, "support", slot)) {
-                void send({ type: "PLAY", seat, cardId: selected.instanceId, lane: "support", slot,
-                  targetCardId: card.instanceId });
-                setSelectedId(null);
-              }
-              return;
-            }
-            setSelectedId(selectedId === card.instanceId ? null : card.instanceId);
-          }}
-          disabled={!canAct || (match.rouletteEvent === "BLIND_TOP" && hero.hand.some((c) => c.instanceId === card.instanceId))}
-          title={match.rouletteEvent === "HIDDEN_HAND" ? "Скрытая карта" : cardTitle(card) + " · " + getWillCostByRarity(card.definition.rarity) + " Воли"}>
-          <img src={match.rouletteEvent === "HIDDEN_HAND" && hero.hand.some((c) => c.instanceId === card.instanceId) ? cardBack : cardImage(card)}
-            alt={match.rouletteEvent === "HIDDEN_HAND" ? "Карта скрыта Рулеткой судьбы" : cardTitle(card)} draggable={false} />
-          <small>{triadEffectiveCost(match, seat, card)}</small>
-        </button>)}
+      <div className="triad-hand" role="group" aria-label="Ваша рука">
+        {[...hero.hand, ...specialCards].map((card) => {
+          const faceDown = match.rouletteEvent === "HIDDEN_HAND" &&
+            hero.hand.some((entry) => entry.instanceId === card.instanceId);
+          const disabled = !canAct || (match.rouletteEvent === "BLIND_TOP" &&
+            hero.hand.some((entry) => entry.instanceId === card.instanceId));
+          return <div key={card.instanceId} data-triad-hand-card={card.instanceId}
+            className={"triad-hand-card" + (selectedId === card.instanceId ? " is-selected" : "")}>
+            <CardView card={triadToMatchCard(card, "player")} size="hand" faceDown={faceDown}
+              effectiveCost={triadEffectiveCost(match, seat, card)} selected={selectedId === card.instanceId}
+              disabled={disabled} onClick={() => {
+                if (selected?.definition.id === "clean_sheet" && selected.instanceId !== card.instanceId &&
+                  hero.hand.some((entry) => entry.instanceId === card.instanceId)) {
+                  const slot = hero.support.findIndex((entry) => !entry);
+                  if (slot >= 0 && triadCanPlay(match, seat, selected, "support", slot)) {
+                    void send({ type: "PLAY", seat, cardId: selected.instanceId, lane: "support", slot,
+                      targetCardId: card.instanceId });
+                    setSelectedId(null);
+                  }
+                  return;
+                }
+                setSelectedId(selectedId === card.instanceId ? null : card.instanceId);
+              }} />
+          </div>;
+        })}
       </div>
+      <MatchPresentationLayer turnAnnouncement={null} roulettePresentation={roulettePresentation}
+        opponentName={match.players[match.active].name} isOnlineMode={privateMode}
+        onRouletteComplete={closeRoulette} />
+      <TriadCombatMotion match={match} pendingFlight={pendingFlight} />
     </div>
     <div className="triad-info-panel">
       <div className="triad-log"><b>ЖУРНАЛ БОЯ</b>

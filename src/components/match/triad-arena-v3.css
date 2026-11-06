@@ -1,0 +1,419 @@
+
+/* FRAKTUM TRIAD V3 — staged three-sided arena; inherits palette from 1x1. */
+.triad-page {
+  --triad-gold:#dca75d;
+  --triad-gold-soft:#ffdea0;
+  --triad-stone:#241b35;
+  overflow-x:auto;
+}
+.triad-arena {
+  --card-board-w:48px;
+  --card-board-h:67px;
+  --card-hand-w:68px;
+  --card-hand-h:95px;
+  position:relative;
+  width:100%; max-width:1600px;
+  min-width:1160px;
+  height:auto;min-height:0;
+  aspect-ratio:16/9;
+  isolation:isolate;overflow:hidden;
+  border:0;outline:0;box-shadow:none;
+  background:transparent;
+}
+.triad-arena::before {
+  content:"";position:absolute;inset:0;
+  z-index:-2;border:0;box-shadow:none;
+  background:#d8aa63;
+  clip-path:polygon(30% 2.5%,70% 2.5%,98.75% 42.8%,73.75% 97.5%,26.25% 97.5%,1.25% 42.8%);
+}
+.triad-arena::after {
+  content:"";position:absolute;inset:6px;
+  z-index:-1;width:auto;height:auto;border:0;box-shadow:none;
+  background:
+    radial-gradient(circle at 50% 29%,#ad784c16,transparent 29%),
+    repeating-linear-gradient(0deg, transparent 0 26px,#a8826b17 27px 28px),
+    repeating-linear-gradient(90deg,transparent 0 26px,#a8826b17 27px 28px),
+    radial-gradient(ellipse at center,#3f3049 0%,#261d35 56%,#171324 100%);
+  clip-path:polygon(30% 2.5%,70% 2.5%,98.75% 42.8%,73.75% 97.5%,26.25% 97.5%,1.25% 42.8%);
+}
+.triad-board-geometry {
+  display:block;position:absolute;inset:0;z-index:0;width:100%;height:100%;
+  overflow:visible;pointer-events:none;shape-rendering:crispEdges;
+  filter:drop-shadow(0 0 7px #c99c5930);
+}
+.triad-board-outline{fill:none;stroke:#f4c17b;stroke-width:5}
+.triad-board-inner{fill:#0d0a1530;stroke:#d5a46d88;stroke-width:4}
+.triad-board-divider{fill:none;stroke:#af7b767e;stroke-width:3}
+.triad-left-hand-side,.triad-right-hand-side,.triad-bottom-field {
+  position:absolute;z-index:2;pointer-events:none;
+}
+.triad-left-hand-side{left:2.5%;top:4%;width:47%;height:51%}
+.triad-right-hand-side{right:2.5%;top:4%;width:47%;height:51%}
+.triad-bottom-field{left:34%;top:47%;width:32%;height:33%}
+.triad-player-block,.triad-player-block.is-active {
+  position:relative;width:100%;height:100%;
+  padding:0;border:0;background:transparent;box-shadow:none;
+  pointer-events:none;
+}
+.triad-player-block>*{pointer-events:auto}
+.triad-player-title {
+  position:absolute;top:0;z-index:5;
+  width:max-content;max-width:310px;min-height:27px;
+  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px;
+  padding:5px 8px;
+  color:#ffdda6;background:#170e21e8;
+  border:2px solid #b7875a;
+  box-shadow:0 0 0 2px #100b17,3px 4px #0d0711;
+  font-size:12px;letter-spacing:.05em;line-height:1.22;
+}
+.triad-player-block.is-left .triad-player-title{right:2%}
+.triad-player-block.is-right .triad-player-title{left:2%}
+.triad-player-block.is-bottom .triad-player-title{display:none}
+.triad-player-title b{
+  font-size:10px;padding:3px 5px;
+  color:#ffedd0;background:#30223a;border:1px solid #866e6a;
+  border-radius:2px;white-space:nowrap;
+}
+.triad-player-block.is-active .triad-player-title {
+  border-color:#ffe19a;
+  animation:triadActiveSeat 2.4s ease-in-out infinite;
+}
+@keyframes triadActiveSeat {
+  0%,100%{box-shadow:0 0 0 2px #100b17,0 0 6px #f1b35c43}
+  50%{box-shadow:0 0 0 2px #100b17,0 0 24px #ffb55c9a}
+}
+/* Cards follow each rival's diagonal, face THE RIVAL, and remain unreadable. */
+.triad-rival-hand,.triad-rival-hand.is-left,.triad-rival-hand.is-right {
+  position:absolute;inset:0;top:0;left:0;right:0;width:100%;height:100%;
+  min-height:0;margin:0;display:block;pointer-events:none;
+}
+.triad-back {
+  position:absolute;
+  width:clamp(33px,2.7vw,44px);height:clamp(46px,3.85vw,61px);
+  padding:0;border:2px solid #b79056;border-radius:2px;
+  background:#100a21;box-shadow:2px 3px 0 #0e0815,0 0 9px #e2b66b18;
+  overflow:hidden;pointer-events:auto;
+  animation:triadEnemyDraw .48s cubic-bezier(.2,.7,.15,1) both;
+  transition:filter .18s ease,box-shadow .18s ease;
+  backface-visibility:visible;
+}
+.triad-back:disabled{opacity:1;cursor:default}
+.triad-back:not(:disabled):hover {
+  filter:drop-shadow(0 0 11px #fbc27d);
+  box-shadow:0 0 0 2px #fff0bb,0 0 22px #ffc57c8f;
+}
+.triad-back img {image-rendering:pixelated;object-fit:fill;width:100%;height:100%}
+.triad-back.is-flipped{border-color:#fff1b8}
+@keyframes triadEnemyDraw{from{opacity:0;filter:brightness(2)}to{opacity:1;filter:brightness(1)}}
+/* Central triangular battlefield. Each line targets one of the two other seats. */
+.triad-player-fields{position:absolute;z-index:4;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.triad-player-block.is-left .triad-player-fields{left:63%;top:26%;width:37%}
+.triad-player-block.is-right .triad-player-fields{right:63%;top:26%;width:37%}
+.triad-player-block.is-left .triad-field-line:nth-child(2){transform:translateX(-32px)}
+.triad-player-block.is-left .triad-field-line:nth-child(3){transform:translateX(-59px)}
+.triad-player-block.is-right .triad-field-line:nth-child(2){transform:translateX(32px)}
+.triad-player-block.is-right .triad-field-line:nth-child(3){transform:translateX(59px)}
+.triad-field-line{position:relative;display:flex;align-items:center;justify-content:center;min-height:0;gap:0}
+.triad-field-cards{display:flex;flex:0 0 auto;justify-content:center;gap:15px;pointer-events:auto}
+.triad-field-label{
+  position:absolute;z-index:2;top:50%;
+  right:calc(100% + 5px);width:89px;
+  transform:translateY(-50%);
+  text-transform:uppercase;
+  color:#b7b8d3;font-size:9px;line-height:1.3;
+  text-align:right;font-weight:900;text-shadow:0 2px 2px #08060d;
+}
+.triad-player-block:not(.is-bottom) .triad-field-label{display:none}
+/* Exact 1v1 BoardSlot DOM, restyled only for three-sided pixel proportions. */
+.triad-combat-slot{
+  position:relative;flex:0 0 auto;
+  width:47px;height:66px;
+  pointer-events:auto;
+  transform-origin:center center;
+  transition:filter .15s,transform .18s;
+}
+.triad-player-block.is-left .triad-combat-slot{transform:rotate(-22deg)}
+.triad-player-block.is-right .triad-combat-slot{transform:rotate(22deg)}
+.triad-combat-slot .matchBoardSlot {
+  width:100%;height:100%;min-height:0;
+  border:2px solid #91704f;border-radius:2px;
+  background:
+    linear-gradient(135deg,transparent 43%,#d8b77c10 43% 46%,transparent 46%),
+    linear-gradient(225deg,transparent 43%,#d8b77c10 43% 46%,transparent 46%),
+    repeating-linear-gradient(0deg,#20192e 0px,#20192e 6px,#2f263d 7px,#2f263d 8px);
+  box-shadow:inset 0 0 0 2px #120d1c,2px 3px 0 #100b18;
+  overflow:visible;
+  transition:border-color .18s,box-shadow .18s,background .18s;
+  cursor:default;
+  transform:none;
+}
+.triad-combat-slot .matchBoardSlot:hover{transform:none;box-shadow:inset 0 0 0 2px #120d1c,2px 3px #100b18}
+.triad-combat-slot .matchSlotRune{
+  color:#b38e65;font-size:20px;opacity:.32;
+  text-shadow:0 0 8px #dfb47160;
+}
+.triad-combat-slot .matchSlotNumber{right:3px;bottom:2px;width:14px;height:14px;font-size:8px}
+.triad-combat-slot .matchSlotHint{left:1px;top:3px;padding:1px 3px;font-size:7px;opacity:.75}
+.triad-combat-slot.is-targetable .matchBoardSlot{
+  cursor:pointer;border-color:#ffe4a3;
+  background:radial-gradient(circle,#dca9614a,transparent 80%),#312236;
+  box-shadow:0 0 0 2px #483421,0 0 16px #f5c064aa,inset 0 0 0 2px #c39865;
+  animation:triadSlotPulse 1.2s steps(4,end) infinite;
+}
+.triad-combat-slot .matchBoardSlot.is-occupied{border-color:#c9a16c;box-shadow:0 0 0 2px #231724,1px 2px 5px #100c1b}
+.triad-combat-slot .matchSlotCardShell{
+  width:100%;height:100%;overflow:hidden;display:block;
+  animation:triadCardMaterialize .36s cubic-bezier(.16,.74,.2,1) both;
+}
+.triad-combat-slot .matchSlotCardShell .matchCardView.is-board,
+.triad-combat-slot .matchSlotCardShell .matchCardView.is-board:disabled{
+  display:block;width:100%;height:100%;max-width:none;max-height:none;
+  margin:0;padding:0;border-radius:0;opacity:1;
+  box-shadow:none;filter:none;
+}
+.triad-combat-slot .matchCardView .matchCardDisabledVeil{display:none}
+.triad-combat-slot .matchCardView:disabled img{filter:none}
+.triad-combat-slot .matchSlotStatusStack{pointer-events:none;z-index:5}
+.triad-combat-slot .matchSlotStateTag{font-size:7px;bottom:1px;padding:1px 2px;white-space:nowrap;max-width:95%}
+.triad-combat-slot .matchBoardSlot.has-status-alpha_frozen{
+  border-color:#76d5fc;box-shadow:0 0 0 2px #2e94d5,0 0 18px #94e6ffbb;
+}
+.triad-combat-slot .matchFreezeCrystal{z-index:6}
+@keyframes triadSlotPulse{
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(1.48)}
+}
+@keyframes triadCardMaterialize{
+  from{opacity:0;transform:translateY(-22px) scale(.82);filter:brightness(2)}
+  65%{opacity:1;transform:translateY(4px) scale(1.04);filter:brightness(1.35)}
+  to{opacity:1;transform:none;filter:none}
+}
+.triad-player-block.is-bottom .triad-player-fields{
+  top:0;left:13%;width:74%;gap:9px;
+}
+.triad-player-block.is-bottom .triad-combat-slot{
+  width:46px;height:63px;transform:none;
+}
+.triad-player-block.is-bottom .triad-field-cards{gap:12px}
+.triad-player-block.is-bottom .triad-field-label{
+  right:calc(100% + 8px);width:95px;
+  color:#f0d7a6;font-size:10px;
+}
+/* Characters and resource piles have their own area, never on the card lanes. */
+.triad-player-portrait{
+  z-index:3;position:absolute;width:59px;height:82px;
+  padding:2px;border:2px solid #e5b66d;
+  background:#130e1b;box-shadow:0 0 0 2px #32233a,3px 4px #0b0711;
+  animation:triadPortraitEnter .52s cubic-bezier(.16,.7,.2,1) both;
+}
+.triad-player-portrait img{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixelated}
+.triad-player-block.is-left .triad-player-portrait{left:34%;top:49%}
+.triad-player-block.is-right .triad-player-portrait{right:34%;top:49%}
+.triad-player-block.is-bottom .triad-player-portrait{left:50%;top:77%;transform:translateX(-50%)}
+.triad-player-block.is-active .triad-player-portrait{box-shadow:0 0 0 2px #fff0bd,0 0 27px #ffc56d92}
+@keyframes triadPortraitEnter{from{opacity:0;filter:brightness(2)}to{opacity:1;filter:none}}
+.triad-center-device{
+  z-index:8;left:44%;top:21%;width:12%;
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+  text-align:center;
+}
+.triad-center-device .matchD20.fraktumD20{
+  position:relative;flex:none;
+  width:152px;height:152px;aspect-ratio:1;
+  border:2px solid #dfb978;border-radius:50%;
+  opacity:1;
+  background:radial-gradient(circle at 46% 43%,#4a2d1c,#100b16 73%);
+  box-shadow:0 0 0 3px #191020,0 0 21px #e7ac533f;
+}
+.triad-center-device .matchD20.is-rolling{
+  box-shadow:0 0 0 3px #4d2730,0 0 38px #ffcc78af;
+}
+.triad-center-device .matchD20.fraktumD20:disabled{opacity:.82}
+.triad-center-device .fraktumD20CanvasWrap{inset:8% 7% 15%}
+.triad-center-device .fraktumD20ReadoutPlate{
+  min-width:40px;padding:2px 8px 4px;bottom:2%;
+}
+.triad-center-device .matchD20Label{font-size:11px}
+.triad-center-device .matchD20Hint{bottom:9%;font-size:8px}
+.triad-center-device .triad-dice-caption{
+  margin-top:3px;
+  border:1px solid #b58a54;background:#130f1ce5;
+  color:#ffdfa5;padding:3px 7px;font-size:10px;font-weight:900;
+  white-space:nowrap;
+}
+.triad-center-device small,.triad-center-device b{
+  position:relative;display:block;
+  z-index:3;max-width:250px;
+  margin:1px 0;padding:3px 6px;
+  font-size:10px;line-height:1.2;
+  white-space:normal;
+  border:1px solid #9e7957;border-radius:0;
+  background:#160e20e6;color:#f4d7a7;
+  text-shadow:1px 1px #09070b;
+}
+.triad-turn-sweep {
+  position:absolute;z-index:7;
+  top:43%;left:34%;width:32%;
+  padding:8px 9px;text-align:center;pointer-events:none;
+  color:#ffdc99;background:#110c19c2;
+  font-size:17px;font-weight:900;letter-spacing:.16em;
+  text-shadow:0 0 15px #e5a85b;
+  border-top:1px solid #b38c60;
+  border-bottom:1px solid #b38c60;
+  animation:triadTurnSweep 1.5s cubic-bezier(.2,.7,.2,1) both;
+}
+.triad-turn-sweep.is-self{color:#fff2c7}
+@keyframes triadTurnSweep{
+  0%{opacity:0;transform:translateY(-28px) scale(.93);filter:blur(5px)}
+  15%,62%{opacity:1;transform:none;filter:none}
+  100%{opacity:0;transform:translateY(15px);filter:blur(4px)}
+}
+.triad-deck-zone,.triad-discard-zone{
+  position:absolute;z-index:5;top:59%;bottom:auto;
+  width:88px;min-height:116px;
+  padding:5px;border:2px solid #a1784c;background:#181122de;
+  color:#ffde9b;font-size:10px;font-weight:900;
+  box-shadow:3px 4px #0d0a14;
+}
+.triad-deck-zone{left:17%}
+.triad-discard-zone{right:17%}
+.triad-deck-zone img,.triad-discard-zone img{
+  width:58px;height:80px;border:2px solid #b9995f;
+  margin:auto auto 4px;object-fit:fill;image-rendering:pixelated;
+}
+.triad-controls{
+  position:absolute;z-index:9;
+  left:29%;top:82%;bottom:auto;width:42%;
+  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;
+  padding:5px 8px;
+  border:2px solid #ae804e;border-radius:2px;
+  color:#ffeacb;background:#170f20f4;
+  box-shadow:0 0 0 2px #100b19,3px 4px #0b0711;
+  font-size:12px;line-height:1.2;
+}
+.triad-controls>span{border:0;padding:2px 5px;white-space:nowrap}
+.triad-controls button{
+  border-radius:2px;min-height:28px;
+  color:#ffe6b1;font-weight:900;transition:filter .12s,transform .12s;
+}
+.triad-controls button:not(:disabled):hover{filter:brightness(1.3);transform:translateY(-2px)}
+.triad-controls .triad-roll-tip{font-size:11px;color:#dfbc80}
+.triad-hand{
+  position:absolute;z-index:10;
+  left:23%;bottom:1.6%;width:54%;height:10.2%;
+  display:flex;justify-content:center;align-items:flex-end;gap:8px;
+  overflow:visible;
+}
+.triad-hand-card{
+  flex:0 1 65px;min-width:36px;max-width:74px;
+  width:65px;height:100%;max-height:98px;
+  padding:0;border:0;border-radius:2px;background:transparent;
+  box-shadow:none;
+  transform-origin:center bottom;
+  transition:transform .20s cubic-bezier(.18,.8,.22,1),filter .16s;
+  animation:triadHandDraw .44s cubic-bezier(.18,.8,.22,1) both;
+}
+.triad-hand-card.is-selected,
+.triad-hand-card:hover:has(.matchCardView:not(:disabled)){
+  transform:translateY(-25px) scale(1.1);
+  z-index:20;filter:drop-shadow(0 0 13px #f9c670bd);
+}
+.triad-hand-card .matchCardView,
+.triad-hand-card .matchCardView.is-hand{
+  display:block;width:100%;height:100%;
+  min-height:0;border-radius:3px;
+  box-shadow:2px 3px 0 #0b0812;
+}
+.triad-hand-card .matchCardView:disabled{opacity:.62}
+.triad-hand-card .matchCardBadge{font-size:9px;min-width:16px;height:16px;padding:0 3px}
+.triad-hand-card .matchCardBadge.is-cost{top:1px;left:1px}
+.triad-hand-card .matchCardBadge.is-hp{bottom:1px;right:1px}
+@keyframes triadHandDraw{
+  from{opacity:0;transform:translateY(55px) scale(.86);filter:brightness(2)}
+  75%{opacity:1;transform:translateY(-5px) scale(1.02)}
+  to{opacity:1;transform:none;filter:none}
+}
+.triad-motion-layer {
+  position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:visible;
+}
+.triad-flying-card {
+  position:fixed;display:block;object-fit:fill;image-rendering:pixelated;
+  width:54px;height:75px;box-shadow:0 0 0 2px #ffcf78,0 0 21px #ffc05d;
+  animation:triadCardFlight .62s cubic-bezier(.24,.7,.23,1) forwards;
+}
+@keyframes triadCardFlight {
+  0%{opacity:1;transform:translate3d(0,0,0) scale(1.15) rotate(-7deg);filter:brightness(1.35)}
+  65%{opacity:1;filter:brightness(1.8)}
+  100%{opacity:0;transform:translate3d(var(--triad-fly-x),var(--triad-fly-y),0) scale(.88) rotate(4deg)}
+}
+.triad-floating-number{
+  position:fixed;z-index:10000;transform:translate(-50%,-50%);
+  min-width:36px;text-align:center;white-space:nowrap;
+  font-weight:950;font-size:17px;letter-spacing:.08em;
+  color:#ffc7a8;text-shadow:2px 2px #250a14,0 0 13px #d64e58;
+  animation:triadFloatingNumber 1.15s cubic-bezier(.15,.85,.18,1) forwards;
+}
+.triad-floating-number.is-heal{color:#a7ffb5;text-shadow:2px 2px #0d2613,0 0 14px #54c55d}
+.triad-floating-number.is-shield{color:#b5daff;text-shadow:2px 2px #0a1835,0 0 13px #72baff}
+@keyframes triadFloatingNumber{
+  0%{opacity:0;transform:translate(-50%,2px) scale(.55)}
+  18%{opacity:1;transform:translate(-50%,-15px) scale(1.22)}
+  73%{opacity:1;transform:translate(-50%,-35px) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-67px) scale(.86)}
+}
+.triad-player-block .triad-out {
+  position:absolute;z-index:15;inset:0;
+  display:grid;place-items:center;
+  border:0;background:#08050ba1;
+  color:#ffa0a5;font-weight:900;
+  text-shadow:2px 3px #1d0b15,0 0 22px #bf2b38;
+  animation:triadElimination .66s ease-out both;
+  pointer-events:none;
+}
+@keyframes triadElimination{from{opacity:0;filter:brightness(2)}to{opacity:1;filter:brightness(1)}}
+.triad-player-block:has(.triad-out) .triad-player-fields,
+.triad-player-block:has(.triad-out) .triad-player-portrait,
+.triad-player-block:has(.triad-out) .triad-rival-hand{filter:grayscale(1) brightness(.5)}
+.triad-info-panel{display:flex;gap:16px}
+.triad-log,.triad-chat{font-size:12px}
+.triad-log p{line-height:1.5}
+@media(max-width:1160px){
+  .triad-arena{min-width:1160px;min-height:0}
+  .triad-center-device .matchD20.fraktumD20{width:134px;height:134px}
+  .triad-center-device{top:19%}
+  .triad-back{width:34px;height:47px}
+  .triad-combat-slot{width:43px;height:60px}
+  .triad-player-block.is-bottom .triad-combat-slot{width:43px;height:60px}
+  .triad-player-block.is-bottom .triad-field-label{font-size:9px}
+  .triad-hand-card{width:60px}
+  .triad-hand{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+  .triad-player-block.is-active .triad-player-title,
+  .triad-turn-sweep,.triad-hand-card,.triad-back,
+  .triad-floating-number,.triad-flying-card,.triad-combat-slot .matchSlotCardShell{
+    animation-duration:.01ms !important;animation-iteration-count:1 !important;
+  }
+}
+
+/* Disabled rival hand cards must stay fully visible; only interaction is locked. */
+.triad-page .triad-rival-hand .triad-back:disabled { opacity:1; filter:none; cursor:default; }
+.triad-page .triad-center-device .matchD20.fraktumD20:disabled { opacity:.85; }
+
+/* Revealing Oracle/Dragon Eye cards now physically flips each selected back. */
+.triad-back { perspective:500px; }
+.triad-back-flipper {
+  display:block;position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;
+  transition:transform .52s cubic-bezier(.19,.82,.24,1);
+}
+.triad-back.is-flipped .triad-back-flipper {transform:rotateY(180deg)}
+.triad-back-face {
+  position:absolute;inset:0;display:block;width:100%;height:100%;
+  backface-visibility:hidden;overflow:hidden;
+}
+.triad-back-face.is-front {transform:rotateY(180deg)}
+.triad-back-face img {display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixelated}
+@media(prefers-reduced-motion:reduce) {
+  .triad-back-flipper {transition-duration:.01ms}
+}

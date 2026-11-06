@@ -56,3 +56,324 @@
 .triad-lobby button{font-weight:800}
 @media(max-width:1080px){.triad-arena{height:880px;min-height:880px}.triad-left-hand-side,.triad-right-hand-side{width:44%;top:4%}.triad-left-hand-side{left:1%}.triad-right-hand-side{right:1%}.triad-bottom-field{top:51%;left:24%;width:52%}.triad-center-device{top:34%;left:40%;width:20%}.triad-player-title{font-size:11px}.triad-field-label{width:73px;font-size:8px}.triad-slot{width:38px;height:53px}.triad-rival-hand{min-height:39px}.triad-back{width:26px;height:39px}.triad-hand{width:72%;left:14%}.triad-topbar{flex-wrap:wrap}}
 @media(max-width:680px){.triad-page{padding:8px 4px}.triad-topbar{font-size:11px;gap:6px}.triad-arena{height:970px;min-height:970px;border-width:3px}.triad-left-hand-side,.triad-right-hand-side{width:49%;top:2%}.triad-left-hand-side{left:0}.triad-right-hand-side{right:0}.triad-player-block{padding:3px}.triad-player-title{font-size:9px;gap:3px}.triad-player-title b{font-size:8px}.triad-field-line{gap:1px;min-height:38px}.triad-field-label{width:43px;font-size:7px}.triad-field-cards{gap:1px}.triad-slot{width:28px;height:40px;border-width:1px}.triad-back{width:17px;height:30px}.triad-rival-hand{min-height:31px}.triad-center-device{top:30%;left:33%;width:34%}.triad-fate-triangle{width:90px;height:75px}.triad-d20{width:45px;height:43px;font-size:14px}.triad-center-device b,.triad-center-device small{font-size:9px}.triad-bottom-field{top:52%;left:4%;width:92%}.triad-deck-zone,.triad-discard-zone{bottom:17%;width:58px;font-size:8px}.triad-deck-zone{left:2%}.triad-discard-zone{right:2%}.triad-deck-zone img,.triad-discard-zone img{width:35px;height:49px}.triad-controls{bottom:13%;left:19%;width:62%;font-size:9px;padding:3px;gap:3px}.triad-controls button{padding:5px}.triad-hand{bottom:1%;left:1%;width:98%;height:10%}.triad-hand-card{min-width:20px}.triad-info-panel{display:block}.triad-log,.triad-chat{width:100%;margin:8px 0}.triad-lobby{margin:10vh 8px;padding:18px}}
+
+
+/* TRIAD TABLE: true three-sided arena based on the approved board sketch.
+   These rules intentionally supersede the first rectangular-panel prototype. */
+.triad-page{overflow-x:auto}
+.triad-arena{
+  isolation:isolate;
+  width:100%;
+  max-width:1600px;
+  height:auto;
+  min-height:0;
+  aspect-ratio:16 / 9;
+  overflow:visible;
+  border:0;
+  outline:0;
+  box-shadow:none;
+  background:transparent;
+}
+.triad-arena::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  border:0;
+  background:#b58c59;
+  box-shadow:none;
+  clip-path:polygon(30% 2.5%,70% 2.5%,98.75% 42.8%,73.75% 97.5%,26.25% 97.5%,1.25% 42.8%);
+}
+.triad-arena::after{
+  content:"";
+  position:absolute;
+  inset:6px;
+  z-index:-1;
+  width:auto;
+  height:auto;
+  border:0;
+  box-shadow:none;
+  background:
+    repeating-linear-gradient(45deg,transparent 0,transparent 42px,#9a7c6530 43px,#9a7c6530 44px),
+    repeating-linear-gradient(-45deg,transparent 0,transparent 42px,#9a7c6524 43px,#9a7c6524 44px),
+    radial-gradient(ellipse at 50% 44%,#4b3a50 0%,#241e34 66%,#171323 100%);
+  clip-path:polygon(30% 2.5%,70% 2.5%,98.75% 42.8%,73.75% 97.5%,26.25% 97.5%,1.25% 42.8%);
+}
+.triad-board-geometry{
+  display:block;
+  position:absolute;
+  inset:0;
+  z-index:0;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  pointer-events:none;
+  shape-rendering:crispEdges;
+}
+.triad-board-outline{
+  fill:none;
+  stroke:#f0bb6b;
+  stroke-width:6;
+}
+.triad-board-inner{
+  fill:#20182b5e;
+  stroke:#c39661;
+  stroke-width:5;
+}
+.triad-board-divider{
+  fill:none;
+  stroke:#986d67;
+  stroke-width:4;
+}
+.triad-left-hand-side,
+.triad-right-hand-side,
+.triad-bottom-field{z-index:2}
+.triad-left-hand-side{left:3%;top:3%;width:47%;height:50%}
+.triad-right-hand-side{right:3%;top:3%;width:47%;height:50%}
+.triad-bottom-field{left:34%;top:50%;width:32%;height:29%}
+.triad-player-block,
+.triad-player-block.is-active{
+  position:relative;
+  width:100%;
+  height:100%;
+  padding:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+}
+.triad-player-title{
+  position:absolute;
+  z-index:4;
+  top:3%;
+  width:43%;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:4px 6px;
+  background:#201625d9;
+  border:2px solid #a37a55;
+  box-shadow:3px 3px #120d17;
+  font-size:12px;
+  line-height:1.25;
+  text-align:center;
+}
+.triad-player-title b{font-size:10px;white-space:nowrap}
+.triad-player-block.is-left .triad-player-title{right:0}
+.triad-player-block.is-right .triad-player-title{left:0}
+.triad-player-block.is-bottom .triad-player-title{display:none}
+.triad-rival-hand{
+  position:absolute;
+  z-index:5;
+  top:0;
+  width:55%;
+  height:76px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:2px;
+  margin:0;
+  min-height:0;
+}
+.triad-rival-hand.is-left{left:13.5%;width:44%}
+.triad-rival-hand.is-right{right:13.5%;width:44%}
+.triad-back{
+  flex:0 0 auto;
+  width:clamp(31px,2.7vw,42px);
+  height:clamp(43px,3.7vw,58px);
+  padding:0;
+  border:2px solid #b9874a;
+  box-shadow:2px 2px #130b14;
+}
+.triad-rival-hand.is-left .triad-back:nth-child(1),
+.triad-rival-hand.is-right .triad-back:nth-child(7){transform:translateY(264px)}
+.triad-rival-hand.is-left .triad-back:nth-child(2),
+.triad-rival-hand.is-right .triad-back:nth-child(6){transform:translateY(220px)}
+.triad-rival-hand.is-left .triad-back:nth-child(3),
+.triad-rival-hand.is-right .triad-back:nth-child(5){transform:translateY(176px)}
+.triad-rival-hand.is-left .triad-back:nth-child(4),
+.triad-rival-hand.is-right .triad-back:nth-child(4){transform:translateY(132px)}
+.triad-rival-hand.is-left .triad-back:nth-child(5),
+.triad-rival-hand.is-right .triad-back:nth-child(3){transform:translateY(88px)}
+.triad-rival-hand.is-left .triad-back:nth-child(6),
+.triad-rival-hand.is-right .triad-back:nth-child(2){transform:translateY(44px)}
+.triad-rival-hand.is-left .triad-back:nth-child(7),
+.triad-rival-hand.is-right .triad-back:nth-child(1){transform:translateY(0)}
+.triad-player-fields{
+  position:absolute;
+  z-index:3;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.triad-player-block.is-left .triad-player-fields{
+  left:59%;
+  top:34%;
+  width:38%;
+}
+.triad-player-block.is-right .triad-player-fields{
+  right:59%;
+  top:34%;
+  width:38%;
+}
+.triad-player-block.is-left .triad-field-line:nth-child(1){transform:translateX(29px)}
+.triad-player-block.is-left .triad-field-line:nth-child(3){transform:translateX(-29px)}
+.triad-player-block.is-right .triad-field-line:nth-child(1){transform:translateX(-29px)}
+.triad-player-block.is-right .triad-field-line:nth-child(3){transform:translateX(29px)}
+.triad-field-line{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  min-height:0;
+  gap:0;
+}
+.triad-field-cards{display:flex;gap:6px;justify-content:center;flex:0 0 auto}
+.triad-field-label{
+  position:absolute;
+  z-index:2;
+  top:50%;
+  right:calc(100% + 5px);
+  transform:translateY(-50%);
+  width:78px;
+  font-size:9px;
+  line-height:1.2;
+  text-align:right;
+  text-shadow:1px 1px 2px #09060c;
+}
+.triad-player-block:not(.is-bottom) .triad-field-label{display:none}
+.triad-slot{
+  width:46px;
+  height:64px;
+  flex:0 0 46px;
+  border:2px solid #947960;
+}
+.triad-player-block.is-bottom .triad-player-fields{
+  left:10%;
+  top:6%;
+  width:80%;
+  gap:4px;
+}
+.triad-player-block.is-bottom .triad-slot{
+  width:40px;
+  height:55px;
+  flex-basis:40px;
+}
+.triad-player-block.is-bottom .triad-field-cards{gap:8px}
+.triad-player-portrait{
+  position:absolute;
+  z-index:3;
+  width:58px;
+  height:80px;
+  border:3px solid #c79a5b;
+  box-shadow:inset 0 0 0 2px #1d1723,3px 3px #130c17;
+  background:#211827;
+}
+.triad-player-portrait img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:fill;
+  image-rendering:pixelated;
+}
+.triad-player-block.is-left .triad-player-portrait{left:35%;top:53%}
+.triad-player-block.is-right .triad-player-portrait{right:35%;top:53%}
+.triad-player-block.is-bottom .triad-player-portrait{
+  left:50%;
+  top:76%;
+  transform:translateX(-50%);
+}
+.triad-center-device{left:41%;top:30.5%;width:18%;z-index:4}
+.triad-fate-triangle{width:144px;height:124px}
+.triad-d20{width:80px;height:75px;font-size:24px}
+.triad-center-device small,.triad-center-device b{
+  position:relative;
+  z-index:2;
+  margin:0;
+  font-size:11px;
+}
+.triad-deck-zone,.triad-discard-zone{
+  top:55%;
+  bottom:auto;
+  z-index:4;
+  width:82px;
+}
+.triad-deck-zone{left:18%}
+.triad-discard-zone{right:18%}
+.triad-deck-zone img,.triad-discard-zone img{width:58px;height:80px}
+.triad-controls{
+  top:81.5%;
+  bottom:auto;
+  left:29%;
+  width:42%;
+  z-index:6;
+  gap:5px;
+  padding:6px 8px;
+  background:#201527ef;
+  box-shadow:3px 3px #120a16;
+  font-size:11px;
+}
+.triad-controls button{padding:5px 8px}
+.triad-hand{
+  left:25%;
+  bottom:1.4%;
+  width:50%;
+  height:11.6%;
+  z-index:7;
+  gap:8px;
+  overflow:visible;
+}
+.triad-hand-card{
+  width:clamp(42px,4.5vw,74px);
+  min-width:36px;
+  height:100%;
+  max-height:none;
+  flex:0 1 auto;
+  transition:transform 100ms steps(3,end);
+}
+.triad-hand-card.is-selected,
+.triad-hand-card:hover:not(:disabled){
+  transform:translateY(-13px) scale(1.08);
+  z-index:8;
+}
+.triad-player-block .triad-out{
+  background:#150f1eab;
+  border:2px solid #b65864;
+}
+@media(max-width:1150px){
+  .triad-arena{min-width:1100px;min-height:0;height:auto}
+  .triad-rival-hand.is-left .triad-back:nth-child(1),
+  .triad-rival-hand.is-right .triad-back:nth-child(7){transform:translateY(204px)}
+  .triad-rival-hand.is-left .triad-back:nth-child(2),
+  .triad-rival-hand.is-right .triad-back:nth-child(6){transform:translateY(170px)}
+  .triad-rival-hand.is-left .triad-back:nth-child(3),
+  .triad-rival-hand.is-right .triad-back:nth-child(5){transform:translateY(136px)}
+  .triad-rival-hand.is-left .triad-back:nth-child(4),
+  .triad-rival-hand.is-right .triad-back:nth-child(4){transform:translateY(102px)}
+  .triad-rival-hand.is-left .triad-back:nth-child(5),
+  .triad-rival-hand.is-right .triad-back:nth-child(3){transform:translateY(68px)}
+  .triad-rival-hand.is-left .triad-back:nth-child(6),
+  .triad-rival-hand.is-right .triad-back:nth-child(2){transform:translateY(34px)}
+}
+@media(max-width:680px){
+  .triad-player-block{padding:0}
+  .triad-player-title{font-size:12px}
+  .triad-player-title b{font-size:10px}
+  .triad-field-line{min-height:0}
+  .triad-field-label{width:78px;font-size:9px}
+  .triad-field-cards{gap:6px}
+  .triad-slot{width:46px;height:64px;flex-basis:46px}
+  .triad-back{width:38px;height:54px}
+  .triad-center-device{left:41%;top:30.5%;width:18%}
+  .triad-fate-triangle{width:144px;height:124px}
+  .triad-d20{width:80px;height:75px;font-size:24px}
+  .triad-center-device small,.triad-center-device b{font-size:11px}
+  .triad-deck-zone,.triad-discard-zone{top:55%;width:82px;font-size:10px}
+  .triad-deck-zone{left:18%}
+  .triad-discard-zone{right:18%}
+  .triad-deck-zone img,.triad-discard-zone img{width:58px;height:80px}
+  .triad-controls{top:81.5%;left:29%;width:42%;font-size:11px;padding:6px 8px}
+  .triad-controls button{padding:5px 8px}
+  .triad-hand{left:25%;bottom:1.4%;width:50%;height:11.6%}
+  .triad-hand-card{min-width:36px}
+}
