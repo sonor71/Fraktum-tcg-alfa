@@ -263,7 +263,24 @@ function assessBattle(state: TriadState): TriadState {
   }
   let next = { ...state, players };
   const survivors = TRIAD_SEATS.filter((seat) => !players[seat].eliminated);
-  if (survivors.length > 1) return next;
+  if (survivors.length > 1) {
+    if (players[state.active].eliminated) {
+      const startIndex = TRIAD_SEATS.indexOf(state.active);
+      const successor = [1, 2].map((offset) => TRIAD_SEATS[(startIndex + offset) % 3])
+        .find((candidate) => !players[candidate].eliminated);
+      if (successor) {
+        next = record({
+          ...next, active: successor, phase: "roll", roll: null, played: 0, playLimit: 0,
+          freeCard: false, costMultiplier: 1, discardPlay: false,
+          borrowedCard: null, rouletteEvent: null, awakeningPending: false,
+          players: { ...players, [state.active]: {
+            ...players[state.active], turnsTaken: players[state.active].turnsTaken + 1,
+          } },
+        }, players[successor].name + " получает ход после выбывания " + players[state.active].name + ".");
+      }
+    }
+    return next;
+  }
   if (survivors.length === 0) return record({ ...next, phase: "between", battleWinner: "draw" }, "Все игроки выбыли. Ничья.");
   const battleWinner = survivors[0];
   const side = { ...players[battleWinner], victories: players[battleWinner].victories + 1 };
