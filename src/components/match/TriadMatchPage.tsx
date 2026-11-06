@@ -16,6 +16,7 @@ import {
 } from "../../services/triadRooms";
 import { TriadSlot, triadToMatchCard } from "./TriadSlot";
 import { TriadHeroMeters } from "./TriadHeroMeters";
+import { TriadCharacterBonuses } from "./TriadCharacterBonuses";
 import { TriadPiles } from "./TriadPiles";
 import {
   triadHandPoint, triadSlotPoint, TRIAD_OUTER_PATH,
@@ -320,6 +321,7 @@ export default function TriadMatchPage() {
         revealed={oracleSeat === owner} flipped={flipped}
         onFlip={(id) => setFlipped((current) => current.includes(id) || current.length >= revealLimit ? current : [...current, id])} /> : null}
       <TriadHeroMeters seat={owner} player={match.players[owner]} />
+      <TriadCharacterBonuses seat={owner} loadout={loadouts[owner]} />
       <TriadPiles seat={owner} side={side} player={match.players[owner]}
         canBlindPlay={owner === seat && canAct && match.rouletteEvent === "BLIND_TOP" &&
           match.players[owner].deck.length > 0}
