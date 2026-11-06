@@ -177,38 +177,71 @@ function damageHero(side: TriadPlayer, raw: number): TriadPlayer {
   const blocked = Math.min(amount, side.shield);
   return { ...side, shield: side.shield - blocked, hp: Math.max(0, side.hp - amount + blocked) };
 }
-function damageUnit(card: TriadCard, amount: number): TriadCard {
-  const armor = Math.min(card.armor, amount);
-  return { ...card, armor: card.armor - armor, hp: Math.max(0, card.hp - Math.max(0, amount - armor)) };
+function hitUnit(card: TriadCard, amount: number) {
+  const absorbed = Math.min(card.armor, amount);
+  const remaining = Math.max(0, amount - absorbed);
+  return {
+    card: { ...card, armor: card.armor - absorbed, hp: Math.max(0, card.hp - remaining) },
+    overflow: Math.max(0, remaining - card.hp),
+  };
+}
+function attackPower(card: TriadCard | null, turns: number) {
+  if (!card || card.hp <= 0 || card.definition.canAttack === false || card.statuses.includes("alpha_frozen")) return 0;
+  if (card.playedTurn >= turns) return 0;
+  return Math.max(0, Math.floor(card.definition.attack || 0));
 }
 function attackLanes(state: TriadState, actor: TriadSeat): TriadState {
   let next = state;
+  // The current player engages EACH surviving rival in their own forward lane.
+  // Both cards in an opposed pair attack simultaneously, matching 1x1 combat.
   for (const rival of aliveRivals(next, actor)) {
-    const owner = next.players[actor];
-    const target = next.players[rival];
-    const attackerSlots = [...owner.lanes[rival]];
-    const defenderSlots = [...target.lanes[actor]];
-    let defender = target;
+    const source = next.players[actor];
+    const opponent = next.players[rival];
+    const attackSlots = [...source.lanes[rival]];
+    const defendSlots = [...opponent.lanes[actor]];
+    let sourceHeroDamage = 0;
+    let rivalHeroDamage = 0;
+    const sourceDiscard: TriadCard[] = [];
+    const rivalDiscard: TriadCard[] = [];
     for (let i = 0; i < TRIAD_LANE_SLOTS; i += 1) {
-      const source = attackerSlots[i];
-      if (!source || source.hp <= 0 || source.playedTurn >= owner.turnsTaken || source.statuses.includes("alpha_frozen")) continue;
-      const power = Math.max(0, Math.floor(source.definition.attack || 0));
-      if (power <= 0) continue;
-      const blocking = defenderSlots[i];
-      if (blocking && blocking.hp > 0) {
-        defenderSlots[i] = damageUnit(blocking, power);
-      } else {
-        defender = damageHero(defender, power);
+      const attacking = attackSlots[i];
+      const defending = defendSlots[i];
+      const attack = attackPower(attacking, source.turnsTaken);
+      const counter = attackPower(defending, opponent.turnsTaken);
+      if (attack > 0) {
+        if (defending) {
+          const outcome = hitUnit(defending, attack);
+          defendSlots[i] = outcome.card;
+          rivalHeroDamage += outcome.overflow;
+        } else rivalHeroDamage += attack;
+      }
+      if (counter > 0) {
+        if (attacking) {
+          const outcome = hitUnit(attacking, counter);
+          attackSlots[i] = outcome.card;
+          sourceHeroDamage += outcome.overflow;
+        } else sourceHeroDamage += counter;
       }
     }
-    const destroyed = defenderSlots.filter((c): c is TriadCard => Boolean(c && c.hp <= 0));
-    next = {
-      ...next, players: {
-        ...next.players,
-        [rival]: { ...defender, lanes: { ...defender.lanes, [actor]: defenderSlots.map((c) => c && c.hp <= 0 ? null : c) },
-          discard: [...defender.discard, ...destroyed] },
-      },
-    };
+    const finalAttack = attackSlots.map((card) => {
+      if (!card) return null;
+      if (card.hp <= 0) { sourceDiscard.push(card); return null; }
+      return { ...card, statuses: card.statuses.filter((status) => status !== "alpha_frozen") };
+    });
+    const finalDefend = defendSlots.map((card) => {
+      if (!card) return null;
+      if (card.hp <= 0) { rivalDiscard.push(card); return null; }
+      return card;
+    });
+    const updatedSource = damageHero({
+      ...source, lanes: { ...source.lanes, [rival]: finalAttack },
+      discard: [...source.discard, ...sourceDiscard],
+    }, sourceHeroDamage);
+    const updatedOpponent = damageHero({
+      ...opponent, lanes: { ...opponent.lanes, [actor]: finalDefend },
+      discard: [...opponent.discard, ...rivalDiscard],
+    }, rivalHeroDamage);
+    next = { ...next, players: { ...next.players, [actor]: updatedSource, [rival]: updatedOpponent } };
   }
   return next;
 }
