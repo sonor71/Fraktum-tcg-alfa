@@ -176,12 +176,12 @@
   margin:0;
   min-height:0;
 }
-.triad-rival-hand.is-left{left:0}
-.triad-rival-hand.is-right{right:0}
+.triad-rival-hand.is-left{left:13.5%;width:44%}
+.triad-rival-hand.is-right{right:13.5%;width:44%}
 .triad-back{
   flex:0 0 auto;
-  width:clamp(31px,3.1vw,48px);
-  height:clamp(43px,4.3vw,68px);
+  width:clamp(31px,2.7vw,42px);
+  height:clamp(43px,3.7vw,58px);
   padding:0;
   border:2px solid #b9874a;
   box-shadow:2px 2px #130b14;
@@ -208,13 +208,13 @@
   gap:5px;
 }
 .triad-player-block.is-left .triad-player-fields{
-  left:62%;
-  top:31%;
+  left:59%;
+  top:34%;
   width:38%;
 }
 .triad-player-block.is-right .triad-player-fields{
-  right:62%;
-  top:31%;
+  right:59%;
+  top:34%;
   width:38%;
 }
 .triad-player-block.is-left .triad-field-line:nth-child(1){transform:translateX(29px)}
@@ -250,7 +250,7 @@
 }
 .triad-player-block.is-bottom .triad-player-fields{
   left:10%;
-  top:0;
+  top:6%;
   width:80%;
   gap:4px;
 }
@@ -280,7 +280,7 @@
 .triad-player-block.is-right .triad-player-portrait{right:35%;top:53%}
 .triad-player-block.is-bottom .triad-player-portrait{
   left:50%;
-  top:69%;
+  top:76%;
   transform:translateX(-50%);
 }
 .triad-center-device{left:41%;top:30.5%;width:18%;z-index:4}
