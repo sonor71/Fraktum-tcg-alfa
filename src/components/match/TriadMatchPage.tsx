@@ -243,7 +243,7 @@ export default function TriadMatchPage() {
         const healingTarget = Boolean(allowPlay && selected?.definition.id === "healing" &&
           lane !== "support" && card && supportSlot >= 0 &&
           triadCanPlay(match, seat, selected, "support", supportSlot));
-        const regularTarget = Boolean(allowPlay && selected &&
+        const regularTarget = Boolean(allowPlay && selected && selected.definition.id !== "healing" &&
           triadCanPlay(match, seat, selected, lane, slot));
         const permitted = healingTarget || regularTarget;
         return <Slot key={slot} card={card} label={label + " " + (slot + 1)}
