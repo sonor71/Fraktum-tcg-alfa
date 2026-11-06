@@ -78,8 +78,7 @@
 .triad-player-block.is-left .triad-player-title{left:24%}
 .triad-player-block.is-right .triad-player-title{right:24%}
 .triad-player-block.is-bottom .triad-player-title{
-  display:block;top:75%;left:50%;transform:translateX(-50%);
-  min-width:140px;max-width:18%;text-align:center;
+  display:none; /* Score and player name are visible in the fixed top bar. */
 }
 .triad-player-block.is-active .triad-player-title{
   border-color:#ffe2a4;animation:triad-active-turn 1.9s ease-in-out infinite;
@@ -371,4 +370,4 @@
 .triad-character-bonuses .matchBonusSlot b{font-size:7px;padding:1px}
 .triad-player-block.is-left .triad-character-bonuses{left:29%;top:30%}
 .triad-player-block.is-right .triad-character-bonuses{right:29%;top:30%}
-.triad-player-block.is-bottom .triad-character-bonuses{left:40.5%;top:74%}
+.triad-player-block.is-bottom .triad-character-bonuses{left:35%;top:70%}
