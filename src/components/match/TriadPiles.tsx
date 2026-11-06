@@ -19,7 +19,7 @@ export function TriadPiles({ seat, side, player, canBlindPlay, onBlindPlay }: Pr
       data-triad-seat={seat} data-triad-count={player.deck.length}>
       <DeckPile count={player.deck.length} owner={own ? "player" : "enemy"}
         actionLabel="КОЛОДА" onActivate={canBlindPlay ? onBlindPlay : undefined}
-        disabled={!canBlindPlay}/>
+        />
     </div>
     <div className="triad-pile-wrapper is-discard" data-triad-pile="discard"
       data-triad-seat={seat} data-triad-count={player.discard.length}>
