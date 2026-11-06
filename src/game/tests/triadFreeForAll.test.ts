@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { CardDefinition } from "../core/types";
 import {
-  TRIAD_VICTORIES_TO_WIN, createTriadMatch, reduceTriad,
+  TRIAD_VICTORIES_TO_WIN, chooseTriadBotAction, createTriadMatch, reduceTriad,
   triadCanPlay, triadIsSupport, type TriadLoadout,
 } from "../triad/triadEngine";
 
@@ -27,6 +27,16 @@ function ready() {
 }
 
 describe("1x1x1 independent free-for-all", () => {
+  it("completes a match between automated participants without an infinite turn", () => {
+    let state = battle();
+    for (let step = 0; step < 500 && state.phase !== "between" && state.phase !== "ended"; step += 1) {
+      const action = chooseTriadBotAction(state);
+      const next = reduceTriad(state, action, loadouts);
+      expect(next).not.toBe(state);
+      state = next;
+    }
+    expect(["between", "ended"]).toContain(state.phase);
+  });
   it("uses the same fixed A -> B -> C order for each turn", () => {
     let state = battle();
     expect(state.active).toBe("a");
