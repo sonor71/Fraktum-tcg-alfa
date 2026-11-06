@@ -6,7 +6,7 @@ import { getWillCostByRarity } from "../../game/rarityWillCost";
 import { getWillStatsFromUpgrades, useGameStore, type OwnedCard } from "../../useGameStore";
 import {
   TRIAD_SEATS, TRIAD_VICTORIES_TO_WIN, chooseTriadBotAction, createTriadMatch,
-  reduceTriad, triadCanPlay, triadIsSupport, triadRivals, type TriadAction,
+  reduceTriad, triadCanPlay, triadEffectiveCost, triadIsSupport, triadRivals, type TriadAction,
   type TriadCard, type TriadLane, type TriadLoadout, type TriadSeat, type TriadState,
 } from "../../game/triad/triadEngine";
 import {
@@ -324,7 +324,7 @@ export default function TriadMatchPage() {
           title={match.rouletteEvent === "HIDDEN_HAND" ? "Скрытая карта" : cardTitle(card) + " · " + getWillCostByRarity(card.definition.rarity) + " Воли"}>
           <img src={match.rouletteEvent === "HIDDEN_HAND" && hero.hand.some((c) => c.instanceId === card.instanceId) ? cardBack : cardImage(card)}
             alt={match.rouletteEvent === "HIDDEN_HAND" ? "Карта скрыта Рулеткой судьбы" : cardTitle(card)} draggable={false} />
-          <small>{match.freeCard ? 0 : getWillCostByRarity(card.definition.rarity) * match.costMultiplier}</small>
+          <small>{triadEffectiveCost(match, seat, card)}</small>
         </button>)}
       </div>
     </div>
