@@ -39,7 +39,6 @@ const aliveRivals = (state: TriadState, seat: TriadSeat) =>
   triadRivals(seat).filter((s) => !state.players[s].eliminated);
 const record = (state: TriadState, message: string): TriadState =>
   ({ ...state, log: [...state.log, message].slice(-80) });
-const otherHero = (side: TriadPlayer) => side.hero;
 const price = (card: TriadCard) => getWillCostByRarity(card.definition.rarity);
 
 function makeCard(seat: TriadSeat, definition: CardDefinition, index: number, battle: number): TriadCard {
@@ -214,8 +213,8 @@ function assessBattle(state: TriadState): TriadState {
   let next = { ...state, players };
   const survivors = TRIAD_SEATS.filter((seat) => !players[seat].eliminated);
   if (survivors.length > 1) return next;
-  const battleWinner = survivors[0] ?? "draw";
-  if (battleWinner === "draw") return record({ ...next, phase: "between", battleWinner }, "Все игроки выбыли. Ничья.");
+  if (survivors.length === 0) return record({ ...next, phase: "between", battleWinner: "draw" }, "Все игроки выбыли. Ничья.");
+  const battleWinner = survivors[0];
   const side = { ...players[battleWinner], victories: players[battleWinner].victories + 1 };
   const finished = side.victories >= TRIAD_VICTORIES_TO_WIN;
   next = {
