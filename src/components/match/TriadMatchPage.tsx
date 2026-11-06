@@ -62,10 +62,11 @@ function Slot({ card, selected, disabled, onClick, label }: {
     </button>
   );
 }
-function BackHand({ cards, revealed, flipped, onFlip }: {
+function BackHand({ cards, revealed, flipped, onFlip, side }: {
   cards: TriadCard[]; revealed: boolean; flipped: string[]; onFlip: (id: string) => void;
+  side: "left" | "right";
 }) {
-  return <div className="triad-rival-hand">
+  return <div className={"triad-rival-hand is-" + side}>
     {cards.map((card) => {
       const show = revealed && flipped.includes(card.instanceId);
       return <button key={card.instanceId} className="triad-back" type="button"
@@ -270,9 +271,14 @@ export default function TriadMatchPage() {
       <div className="triad-player-title">{match.players[owner].name} <b>HP {match.players[owner].hp}</b>
         <b>🛡 {match.players[owner].shield}</b>
         <b>ПОБЕДЫ {match.players[owner].victories}/{TRIAD_VICTORIES_TO_WIN}</b></div>
-      {owner !== seat ? <BackHand cards={match.players[owner].hand}
+      {owner !== seat ? <BackHand side={side === "bottom" ? "left" : side}
+        cards={match.players[owner].hand}
         revealed={oracleSeat === owner} flipped={flipped}
         onFlip={(id) => setFlipped((current) => current.includes(id) || current.length >= revealLimit ? current : [...current, id])} /> : null}
+      <div className="triad-player-portrait" title={match.players[owner].hero.ruTitle || match.players[owner].hero.title}>
+        <img src={match.players[owner].hero.image || cardBack}
+          alt={match.players[owner].hero.ruTitle || match.players[owner].hero.title} draggable={false} />
+      </div>
       <div className="triad-player-fields">
         {displayField(owner, owner === seat ? left : seat, "НА " + match.players[owner === seat ? left : seat].name, owner === seat)}
         {displayField(owner, owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!,
@@ -291,6 +297,11 @@ export default function TriadMatchPage() {
       {room && <span>КОД {room.invite_code}</span>}
     </header>
     <div className="triad-arena">
+      <svg className="triad-board-geometry" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+        <path className="triad-board-outline" d="M 480 22 H 1120 L 1580 385 L 1180 878 H 420 L 20 385 Z" />
+        <path className="triad-board-inner" d="M 655 180 H 945 L 1060 468 L 932 630 H 668 L 540 468 Z" />
+        <path className="triad-board-divider" d="M 800 180 V 359 M 540 468 L 800 359 L 1060 468 M 800 359 V 630" />
+      </svg>
       <div className="triad-left-hand-side">{section(left, "left")}</div>
       <div className="triad-right-hand-side">{section(right, "right")}</div>
       <div className="triad-center-device">
