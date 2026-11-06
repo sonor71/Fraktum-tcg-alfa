@@ -3,6 +3,7 @@ import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import BackgroundMusic from "./components/BackgroundMusic";
 import { CardPassportHost } from "./components/CardPassport";
 import MatchPage from "./components/match/MatchPage";
+import TriadMatchPage from "./components/match/TriadMatchPage";
 import Collection from "./screens/Collection";
 import Clubs from "./screens/Clubs";
 import Deck from "./screens/Deck";
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/pack" element={<PackOpen />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/match/triad/:mode" element={<TriadMatchPage />} />
           <Route path="/match/ai" element={<MatchPage />} />
           <Route path="/match/online" element={<MatchPage />} />
           <Route path="/match/:mode" element={<MatchPage />} />
