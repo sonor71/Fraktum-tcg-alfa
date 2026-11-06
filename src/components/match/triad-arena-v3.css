@@ -399,3 +399,21 @@
 /* Disabled rival hand cards must stay fully visible; only interaction is locked. */
 .triad-page .triad-rival-hand .triad-back:disabled { opacity:1; filter:none; cursor:default; }
 .triad-page .triad-center-device .matchD20.fraktumD20:disabled { opacity:.85; }
+
+/* Revealing Oracle/Dragon Eye cards now physically flips each selected back. */
+.triad-back { perspective:500px; }
+.triad-back-flipper {
+  display:block;position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;
+  transition:transform .52s cubic-bezier(.19,.82,.24,1);
+}
+.triad-back.is-flipped .triad-back-flipper {transform:rotateY(180deg)}
+.triad-back-face {
+  position:absolute;inset:0;display:block;width:100%;height:100%;
+  backface-visibility:hidden;overflow:hidden;
+}
+.triad-back-face.is-front {transform:rotateY(180deg)}
+.triad-back-face img {display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixelated}
+@media(prefers-reduced-motion:reduce) {
+  .triad-back-flipper {transition-duration:.01ms}
+}
