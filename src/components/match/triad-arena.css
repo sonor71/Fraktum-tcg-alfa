@@ -1,0 +1,58 @@
+.triad-page{min-height:100vh;color:#f5e4bc;padding:12px 16px 28px;background:radial-gradient(ellipse at 50% 18%,#38223f 0%,#171526 52%,#0c0d16 100%);font-family:inherit}
+.triad-page *{box-sizing:border-box}
+.triad-topbar{display:flex;align-items:center;gap:18px;justify-content:space-between;max-width:1600px;margin:0 auto 10px;font-size:14px;letter-spacing:.06em}
+.triad-topbar>span{color:#c9b3aa}.triad-topbar button,.triad-controls button,.triad-lobby button,.triad-chat button{border:2px solid #d6a65d;background:#43283f;color:#ffeac6;box-shadow:inset 0 0 0 2px #241521,3px 3px 0 #0b0b11;padding:8px 14px;cursor:pointer;font:inherit}
+.triad-topbar button:hover,.triad-controls button:hover,.triad-lobby button:hover,.triad-chat button:hover{background:#68404e}
+.triad-page button:disabled{cursor:default;opacity:.55}
+.triad-arena{position:relative;overflow:hidden;max-width:1600px;width:100%;height:min(810px,60vw);min-height:720px;margin:auto;border:5px solid #a17749;outline:3px solid #1b101d;box-shadow:0 14px 0 #06070b,inset 0 0 0 5px #312137,0 0 45px #b04c652b;background:repeating-linear-gradient(45deg,transparent 0,transparent 46px,#d8bd8e0b 47px,#d8bd8e0b 48px),repeating-linear-gradient(-45deg,transparent 0,transparent 46px,#d8bd8e09 47px,#d8bd8e09 48px),radial-gradient(ellipse at 50% 53%,#494058 0%,#2b273b 56%,#171527 100%);image-rendering:pixelated}
+.triad-arena:before{content:"";pointer-events:none;position:absolute;inset:0;background:linear-gradient(120deg,#dfa66135,transparent 33%),linear-gradient(240deg,#dfa66135,transparent 33%);clip-path:polygon(22% 0,78% 0,100% 42%,78% 100%,22% 100%,0 42%);border:8px solid #ae8457}
+.triad-arena:after{content:"";pointer-events:none;position:absolute;z-index:0;left:34%;top:24%;width:32%;height:46%;border:3px solid #ae805f59;clip-path:polygon(50% 0,100% 70%,74% 100%,26% 100%,0 70%);box-shadow:0 0 0 10px #422d3a55}
+.triad-left-hand-side,.triad-right-hand-side,.triad-bottom-field,.triad-center-device,.triad-deck-zone,.triad-discard-zone,.triad-controls,.triad-hand{position:absolute;z-index:1}
+.triad-left-hand-side{top:5%;left:4%;width:39%}.triad-right-hand-side{top:5%;right:4%;width:39%}
+.triad-bottom-field{top:51%;left:27%;width:46%}
+.triad-player-block{position:relative;padding:6px 10px 10px;background:#201c2cae;border:2px solid #70566d;box-shadow:inset 0 0 0 2px #241a27}
+.triad-player-block.is-active{border-color:#f1ad54;box-shadow:0 0 15px #ffa94b55,inset 0 0 0 2px #241a27}
+.triad-player-title{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;font-size:13px;text-transform:uppercase;font-weight:800;padding:5px;color:#f7c994}
+.triad-player-title b{font-size:11px;color:#fff2d5;border:1px solid #77677a;background:#31283e;padding:2px 4px}
+.triad-player-fields{display:flex;flex-direction:column;gap:7px}
+.triad-field-line{display:flex;align-items:center;gap:7px;min-height:49px}
+.triad-field-label{color:#b4c3d6;width:95px;flex:none;font-size:9px;line-height:1.15;text-align:right;font-weight:bold;overflow-wrap:anywhere;text-transform:uppercase}
+.triad-field-line:has(.triad-slot.is-ready) .triad-field-label{color:#ffd17d}
+.triad-field-cards{display:flex;flex:1;justify-content:center;gap:7px;min-width:0}
+.triad-slot{position:relative;display:flex;justify-content:center;align-items:center;flex:none;width:46px;height:64px;border:2px solid #876b68;outline:1px solid #231822;background:repeating-linear-gradient(45deg,#2d2839 0,#2d2839 5px,#383144 6px,#383144 7px);box-shadow:inset 0 0 0 3px #211c2a;padding:0;overflow:hidden}
+.triad-slot.is-ready{border-color:#ffbb54;box-shadow:0 0 10px #eab557aa,inset 0 0 0 2px #5d473b}
+.triad-slot.is-filled{border-color:#c79c5b}
+.triad-slot img,.triad-back img,.triad-hand-card img,.triad-deck-zone img,.triad-discard-zone img{display:block;object-fit:fill;width:100%;height:100%;image-rendering:pixelated}
+.triad-slot-empty{font-size:19px;color:#71627c}
+.triad-slot-hp{position:absolute;bottom:1px;left:0;right:0;font-size:9px;color:#fff;background:#170e16cf;text-shadow:1px 1px #000}
+.triad-rival-hand{display:flex;gap:3px;justify-content:center;min-height:46px;margin:3px 0 8px}
+.triad-back{width:33px;height:46px;padding:0;border:1px solid #a98653;background:#331a30}
+.triad-out{position:absolute;inset:0;display:grid;place-items:center;font-size:34px;color:#ffb0a7;text-shadow:2px 3px #150e15;background:#130f1acc;z-index:2}
+.triad-center-device{left:42%;top:29%;width:16%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+.triad-fate-triangle{width:138px;height:112px;display:grid;place-items:start center;clip-path:polygon(0 0,100% 0,50% 100%);background:linear-gradient(150deg,#bb364b,#67192a);border-top:5px solid #f1a870;filter:drop-shadow(0 2px 5px #e43b4d7d)}
+.triad-d20{display:grid;place-items:center;width:76px;height:68px;margin-top:11px;background:linear-gradient(140deg,#e1b35f,#5a3628);clip-path:polygon(50% 0,95% 22%,88% 83%,50% 100%,10% 83%,5% 22%);font-size:22px;color:#fff3c9;font-weight:900;text-shadow:2px 2px #36241e}
+.triad-center-device small,.triad-center-device b{display:block;padding:3px 7px;border:1px solid #b78c55;background:#231728dc;font-size:11px;color:#ffe4ba}
+.triad-center-device b{font-size:12px;white-space:normal}
+.triad-deck-zone,.triad-discard-zone{width:82px;text-align:center;color:#f2cc90;font-size:10px;background:#251d30a8;padding:5px;border:2px solid #977148}
+.triad-deck-zone{left:11%;bottom:21%}.triad-discard-zone{right:11%;bottom:21%}
+.triad-deck-zone img,.triad-discard-zone img{width:51px;height:74px;margin:auto auto 4px;border:2px solid #b68e62}
+.triad-controls{bottom:12%;left:25%;width:50%;display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center;padding:7px;background:#1c1527e8;border:2px solid #a9825a;font-size:12px;font-weight:bold}
+.triad-controls>span{padding:4px 6px;border:1px solid #4c4353}
+.triad-hand{left:23%;bottom:1%;width:54%;height:10%;display:flex;justify-content:center;gap:8px;align-items:center}
+.triad-hand-card{position:relative;flex:0 1 66px;height:100%;max-height:84px;min-width:34px;padding:0;border:2px solid #9a714a;background:#26192a;box-shadow:3px 3px #160d16}
+.triad-hand-card.is-selected{transform:translateY(-11px);border-color:#ffcd76;box-shadow:0 0 16px #ffb958aa}
+.triad-hand-card small{position:absolute;top:1px;right:1px;color:#ffe0a2;font-size:11px;min-width:14px;background:#352132dd}
+.triad-info-panel{display:flex;gap:16px;max-width:1600px;margin:18px auto 0}
+.triad-log,.triad-chat{width:50%;background:#181420;border:2px solid #6c5160;padding:12px;min-height:150px;font-size:12px}
+.triad-log p,.triad-chat p{margin:5px 0;color:#c9c0cb}
+.triad-chat-messages{max-height:140px;overflow-y:auto}
+.triad-chat form{display:flex;gap:5px;margin-top:9px}
+.triad-chat input,.triad-lobby input{flex:1;min-width:80px;border:2px solid #99765d;background:#231c2d;color:#f9e0b2;padding:8px}
+.triad-tip{text-align:center;margin:12px auto;color:#ffe1a6}
+.triad-error{color:#ffacac;max-width:1000px;margin:10px auto;text-align:center;font-weight:bold}
+.triad-lobby{max-width:650px;margin:12vh auto;background:#201724;border:3px solid #a88152;padding:32px;text-align:center;box-shadow:8px 8px #08070c}
+.triad-lobby h2{font-size:25px;color:#f3c986}.triad-lobby p{line-height:1.6;color:#dfd0d4}
+.triad-lobby-join{display:flex;gap:12px;max-width:450px;margin:auto}
+.triad-lobby button{font-weight:800}
+@media(max-width:1080px){.triad-arena{height:880px;min-height:880px}.triad-left-hand-side,.triad-right-hand-side{width:44%;top:4%}.triad-left-hand-side{left:1%}.triad-right-hand-side{right:1%}.triad-bottom-field{top:51%;left:24%;width:52%}.triad-center-device{top:34%;left:40%;width:20%}.triad-player-title{font-size:11px}.triad-field-label{width:73px;font-size:8px}.triad-slot{width:38px;height:53px}.triad-rival-hand{min-height:39px}.triad-back{width:26px;height:39px}.triad-hand{width:72%;left:14%}.triad-topbar{flex-wrap:wrap}}
+@media(max-width:680px){.triad-page{padding:8px 4px}.triad-topbar{font-size:11px;gap:6px}.triad-arena{height:970px;min-height:970px;border-width:3px}.triad-left-hand-side,.triad-right-hand-side{width:49%;top:2%}.triad-left-hand-side{left:0}.triad-right-hand-side{right:0}.triad-player-block{padding:3px}.triad-player-title{font-size:9px;gap:3px}.triad-player-title b{font-size:8px}.triad-field-line{gap:1px;min-height:38px}.triad-field-label{width:43px;font-size:7px}.triad-field-cards{gap:1px}.triad-slot{width:28px;height:40px;border-width:1px}.triad-back{width:17px;height:30px}.triad-rival-hand{min-height:31px}.triad-center-device{top:30%;left:33%;width:34%}.triad-fate-triangle{width:90px;height:75px}.triad-d20{width:45px;height:43px;font-size:14px}.triad-center-device b,.triad-center-device small{font-size:9px}.triad-bottom-field{top:52%;left:4%;width:92%}.triad-deck-zone,.triad-discard-zone{bottom:17%;width:58px;font-size:8px}.triad-deck-zone{left:2%}.triad-discard-zone{right:2%}.triad-deck-zone img,.triad-discard-zone img{width:35px;height:49px}.triad-controls{bottom:13%;left:19%;width:62%;font-size:9px;padding:3px;gap:3px}.triad-controls button{padding:5px}.triad-hand{bottom:1%;left:1%;width:98%;height:10%}.triad-hand-card{min-width:20px}.triad-info-panel{display:block}.triad-log,.triad-chat{width:100%;margin:8px 0}.triad-lobby{margin:10vh 8px;padding:18px}}
