@@ -395,3 +395,7 @@
     animation-duration:.01ms !important;animation-iteration-count:1 !important;
   }
 }
+
+/* Disabled rival hand cards must stay fully visible; only interaction is locked. */
+.triad-page .triad-rival-hand .triad-back:disabled { opacity:1; filter:none; cursor:default; }
+.triad-page .triad-center-device .matchD20.fraktumD20:disabled { opacity:.85; }
