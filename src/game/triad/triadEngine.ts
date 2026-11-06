@@ -293,7 +293,7 @@ function assessBattle(state: TriadState): TriadState {
   return record(next, side.name + " победил в бою " + state.battle + ". Побед: " + side.victories + "/3.");
 }
 
-const GLOBAL_EFFECT_CARDS = new Set(["tsunami", "warlock", "ten_thousand_volts", "dawnless_winter", "revolver", "sandstorm"]);
+const GLOBAL_EFFECT_CARDS = new Set(["tsunami", "warlock", "unrequited_love"]);
 export function triadIsGlobal(card: TriadCard) {
   return GLOBAL_EFFECT_CARDS.has(card.definition.id) || /damageall|all_enemies|aoe/i.test(card.definition.effectKey ?? "");
 }
