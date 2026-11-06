@@ -42,6 +42,15 @@ const aliveRivals = (state: TriadState, seat: TriadSeat) =>
 const record = (state: TriadState, message: string): TriadState =>
   ({ ...state, log: [...state.log, message].slice(-80) });
 const price = (card: TriadCard) => getWillCostByRarity(card.definition.rarity);
+const lightningIds = new Set(["thunderbolts", "thunderer", "spherical_lightning", "Stun_Gun", "energy_sword", "felix", "ten_thousand_volts"]);
+function isLightning(card: TriadCard) {
+  return card.definition.element === "lightning" || lightningIds.has(card.definition.id);
+}
+export function triadEffectiveCost(state: TriadState, seat: TriadSeat, card: TriadCard) {
+  if (state.freeCard || state.rouletteEvent === "WORLD_WITHOUT_WILL") return 0;
+  const discount = isLightning(card) && state.players[seat].effects.some((effect) => effect.id === "alpha_next_lightning_discount") ? 1 : 0;
+  return Math.max(0, price(card) * state.costMultiplier - discount);
+}
 
 function makeCard(seat: TriadSeat, definition: CardDefinition, index: number, battle: number): TriadCard {
   return { instanceId: seat + "_" + battle + "_" + index + "_" + definition.id, definition,
@@ -101,8 +110,7 @@ export function triadCanPlay(state: TriadState, seat: TriadSeat, card: TriadCard
     state.players[state.borrowedCard.seat].deck.some((c) => c.instanceId === card.instanceId);
   if (state.rouletteEvent === "BLIND_TOP" && !fromBlind) return false;
   if (!fromHand && !fromDiscard && !fromBlind && !fromBorrowed) return false;
-  const cost = state.freeCard ? 0 : price(card) * state.costMultiplier;
-  return state.players[seat].will >= cost;
+  return state.players[seat].will >= triadEffectiveCost(state, seat, card);
 }
 
 const asDuelCard = (card: TriadCard, id: "player" | "enemy"): CardInstance => ({
@@ -373,11 +381,12 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
     if (!source || !triadCanPlay(state, action.seat, source, action.lane, action.slot)) return state;
     if (action.lane === "support" && !triadIsSupport(source)) return state;
     if (action.lane !== "support" && triadIsSupport(source)) return state;
-    const cost = state.freeCard ? 0 : price(source) * state.costMultiplier;
+    const cost = triadEffectiveCost(state, action.seat, source);
     const played: TriadCard = { ...source, playedTurn: player.turnsTaken,
       hp: Math.max(0, Number(source.definition.health) || 0) };
     const nextSide = {
       ...player, will: player.will - cost,
+      effects: isLightning(source) ? player.effects.filter((effect) => effect.id !== "alpha_next_lightning_discount") : player.effects,
       hand: player.hand.filter((c) => c.instanceId !== source.instanceId),
       discard: player.discard.filter((c) => c.instanceId !== source.instanceId),
       deck: player.deck.filter((c) => c.instanceId !== source.instanceId),
