@@ -225,8 +225,12 @@ export default function TriadMatchPage() {
   const left: TriadSeat = TRIAD_SEATS[(order + 1) % 3];
   const right: TriadSeat = TRIAD_SEATS[(order + 2) % 3];
   const activeTurn = match.active === seat && !hero.eliminated;
-  const selected = [...hero.hand, ...(match.discardPlay ? hero.discard : [])]
-    .find((card) => card.instanceId === selectedId);
+  const specialCards = [
+    ...(match.rouletteEvent === "BLIND_TOP" ? hero.deck.slice(0, 1) : []),
+    ...(match.discardPlay ? hero.discard : []),
+    ...(match.borrowedCard ? match.players[match.borrowedCard.seat].deck.filter((c) => c.instanceId === match.borrowedCard?.cardId) : []),
+  ];
+  const selected = [...hero.hand, ...specialCards].find((card) => card.instanceId === selectedId);
   const canAct = !busy && activeTurn && match.phase === "main";
   const displayField = (owner: TriadSeat, lane: TriadLane, label: string, allowPlay: boolean) => {
     const p = match.players[owner];
@@ -288,6 +292,8 @@ export default function TriadMatchPage() {
       <div className="triad-deck-zone">
         <img src={cardBack} alt="Ваша колода" />
         <span>КОЛОДА {hero.deck.length}</span>
+        {match.rouletteEvent === "BLIND_TOP" && activeTurn && hero.deck.length > 0 &&
+          <button type="button" onClick={() => setSelectedId(hero.deck[0].instanceId)}>ВЕРХНЯЯ КАРТА</button>}
       </div>
       <div className="triad-discard-zone">
         <img src={hero.discard.length ? cardImage(hero.discard[hero.discard.length - 1]) : cardBack} alt="Сброс" />
@@ -298,7 +304,12 @@ export default function TriadMatchPage() {
         <span>ВОЛЯ {hero.will}/{hero.maxWill} · КАРТЫ {match.played}/{match.playLimit}</span>
         {match.phase === "roll" && activeTurn && <button type="button" disabled={busy}
           onClick={() => void send({ type: "ROLL", seat })}>БРОСИТЬ D20</button>}
-        {match.phase === "main" && activeTurn && <button type="button" disabled={busy}
+        {match.phase === "main" && activeTurn && match.awakeningPending && <>
+          <button type="button" disabled={busy} onClick={() => void send({ type: "CHOOSE_AWAKENING", seat, choice: "freeCard" })}>ПРОБУЖДЕНИЕ: БЕСПЛАТНАЯ КАРТА</button>
+          <button type="button" disabled={busy || !triadRivals(seat).some((r) => hero.lanes[r].some(Boolean)) && !hero.support.some(Boolean)}
+            onClick={() => void send({ type: "CHOOSE_AWAKENING", seat, choice: "passive" })}>ПОВТОРИТЬ ЭФФЕКТ</button>
+        </>}
+        {match.phase === "main" && activeTurn && <button type="button" disabled={busy || match.awakeningPending}
           onClick={() => { setOracleSeat(null); setFlipped([]); void send({ type: "END", seat }); }}>ЗАКОНЧИТЬ ХОД</button>}
         {match.phase === "between" && seat === "a" &&
           <button type="button" disabled={busy} onClick={() => void send({ type: "NEXT", seat })}>СЛЕДУЮЩИЙ БОЙ</button>}
@@ -306,12 +317,14 @@ export default function TriadMatchPage() {
         {match.phase === "ended" && <span>ПОБЕДА: {match.players[match.winner!].name}</span>}
       </div>
       <div className="triad-hand">
-        {hero.hand.map((card) => <button key={card.instanceId} type="button"
+        {[...hero.hand, ...specialCards].map((card) => <button key={card.instanceId} type="button"
           className={"triad-hand-card" + (selectedId === card.instanceId ? " is-selected" : "")}
           onClick={() => setSelectedId(selectedId === card.instanceId ? null : card.instanceId)}
-          disabled={!canAct} title={cardTitle(card) + " · " + getWillCostByRarity(card.definition.rarity) + " Воли"}>
-          <img src={cardImage(card)} alt={cardTitle(card)} draggable={false} />
-          <small>{getWillCostByRarity(card.definition.rarity) * match.costMultiplier}</small>
+          disabled={!canAct || (match.rouletteEvent === "BLIND_TOP" && hero.hand.some((c) => c.instanceId === card.instanceId))}
+          title={match.rouletteEvent === "HIDDEN_HAND" ? "Скрытая карта" : cardTitle(card) + " · " + getWillCostByRarity(card.definition.rarity) + " Воли"}>
+          <img src={match.rouletteEvent === "HIDDEN_HAND" && hero.hand.some((c) => c.instanceId === card.instanceId) ? cardBack : cardImage(card)}
+            alt={match.rouletteEvent === "HIDDEN_HAND" ? "Карта скрыта Рулеткой судьбы" : cardTitle(card)} draggable={false} />
+          <small>{match.freeCard ? 0 : getWillCostByRarity(card.definition.rarity) * match.costMultiplier}</small>
         </button>)}
       </div>
     </div>
@@ -328,7 +341,7 @@ export default function TriadMatchPage() {
             <button disabled={busy || !chatInput.trim()} type="submit">ОТПРАВИТЬ</button>
           </form></> : <p>Тренировка против двух ботов.</p>}</div>
     </div>
-    {selected && <p className="triad-tip">Выбрана карта: {cardTitle(selected)}. Нажми на свободный слот нужного направления.
+    {selected && <p className="triad-tip">Выбрана карта: {match.rouletteEvent === "HIDDEN_HAND" ? "СКРЫТА" : cardTitle(selected)}. Нажми на свободный слот нужного направления.
       {triadIsSupport(selected) ? " Эта карта используется в зоне СВОИ / ВСЕ." : ""}</p>}
     {error && <p className="triad-error" role="alert">{error}</p>}
   </main>;
