@@ -26,11 +26,12 @@ type TriadSlotProps = {
   lane: TriadSeat | "support";
   index: number;
   playable: boolean;
+  isOwn?: boolean;
   onActivate?: () => void;
 };
 
 /** Reuses the actual 1×1 slot (runes, HP, temporary and status effects). */
-export function TriadSlot({ card, seat, lane, index, playable, onActivate }: TriadSlotProps) {
+export function TriadSlot({ card, seat, lane, index, playable, isOwn = false, onActivate }: TriadSlotProps) {
   return (
     <div
       className={`triad-combat-slot${playable ? " is-targetable" : ""}`}
@@ -41,8 +42,8 @@ export function TriadSlot({ card, seat, lane, index, playable, onActivate }: Tri
       key={card?.instanceId ?? "empty"}
     >
       <BoardSlot
-        card={card ? triadToMatchCard(card, playable ? "player" : "enemy") : null}
-        side={playable ? "player" : "enemy"}
+        card={card ? triadToMatchCard(card, isOwn ? "player" : "enemy") : null}
+        side={isOwn ? "player" : "enemy"}
         index={index}
         valid={playable && !card}
         targetable={playable && Boolean(card)}
