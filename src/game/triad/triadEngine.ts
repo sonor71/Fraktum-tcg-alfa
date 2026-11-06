@@ -30,7 +30,7 @@ export type TriadState = {
 export type TriadAction =
   | { type: "ROLL"; seat: TriadSeat }
   | { type: "CHOOSE_AWAKENING"; seat: TriadSeat; choice: "freeCard" | "passive" }
-  | { type: "PLAY"; seat: TriadSeat; cardId: string; lane: TriadLane; slot: number; targetSeat?: TriadSeat }
+  | { type: "PLAY"; seat: TriadSeat; cardId: string; lane: TriadLane; slot: number; targetSeat?: TriadSeat; targetSlot?: number }
   | { type: "END"; seat: TriadSeat }
   | { type: "NEXT"; seat: TriadSeat }
   | { type: "CONCEDE"; seat: TriadSeat };
@@ -396,6 +396,13 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
       (state.rouletteEvent === "BLIND_TOP" && player.deck[0]?.instanceId === action.cardId ? player.deck[0] : undefined) ??
       (state.borrowedCard?.cardId === action.cardId ? state.players[state.borrowedCard.seat].deck.find((c) => c.instanceId === action.cardId) : undefined);
     if (!source || !triadCanPlay(state, action.seat, source, action.lane, action.slot)) return state;
+    if (source.definition.id === "healing") {
+      const healingLane = action.targetSeat;
+      const index = action.targetSlot;
+      if (!healingLane || healingLane === action.seat || typeof index !== "number" ||
+        !Number.isInteger(index) || index < 0 || index >= TRIAD_LANE_SLOTS ||
+        !player.lanes[healingLane][index]) return state;
+    }
     if (action.lane === "support" && !triadIsSupport(source)) return state;
     if (action.lane !== "support" && triadIsSupport(source)) return state;
     const cost = triadEffectiveCost(state, action.seat, source);
@@ -423,7 +430,20 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
       } } };
     }
     const rivals = aliveRivals(next, action.seat);
-    if (action.lane === "support") {
+    if (source.definition.id === "healing" && action.targetSeat && typeof action.targetSlot === "number") {
+      const healingSide = next.players[action.seat];
+      const index = action.targetSlot;
+      const wounded = healingSide.lanes[action.targetSeat][index];
+      if (wounded) {
+        const maxHp = Math.max(0, Number(wounded.definition.health) || 0);
+        const healed = { ...wounded, hp: Math.min(maxHp, wounded.hp + 3) };
+        next = { ...next, players: { ...next.players, [action.seat]: {
+          ...healingSide, lanes: { ...healingSide.lanes,
+            [action.targetSeat]: healingSide.lanes[action.targetSeat].map((c, i) => i === index ? healed : c),
+          },
+        } } };
+      }
+    } else if (action.lane === "support") {
       // Support/global cards interact with both opponents only when they have an area effect.
       const targets = triadIsGlobal(source) ? rivals : rivals.slice(0, 1);
       targets.forEach((rival, index) => { next = resolveAgainst(next, action.seat, rival, played, "support", action.slot, index === 0); });
