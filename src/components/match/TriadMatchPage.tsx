@@ -243,7 +243,7 @@ export default function TriadMatchPage() {
         const healingTarget = Boolean(allowPlay && selected?.definition.id === "healing" &&
           lane !== "support" && card && supportSlot >= 0 &&
           triadCanPlay(match, seat, selected, "support", supportSlot));
-        const regularTarget = Boolean(allowPlay && selected && selected.definition.id !== "healing" &&
+        const regularTarget = Boolean(allowPlay && selected && !["healing", "clean_sheet"].includes(selected.definition.id) &&
           triadCanPlay(match, seat, selected, lane, slot));
         const permitted = healingTarget || regularTarget;
         return <Slot key={slot} card={card} label={label + " " + (slot + 1)}
@@ -332,7 +332,19 @@ export default function TriadMatchPage() {
       <div className="triad-hand">
         {[...hero.hand, ...specialCards].map((card) => <button key={card.instanceId} type="button"
           className={"triad-hand-card" + (selectedId === card.instanceId ? " is-selected" : "")}
-          onClick={() => setSelectedId(selectedId === card.instanceId ? null : card.instanceId)}
+          onClick={() => {
+            if (selected?.definition.id === "clean_sheet" && selected.instanceId !== card.instanceId &&
+              hero.hand.some((entry) => entry.instanceId === card.instanceId)) {
+              const slot = hero.support.findIndex((entry) => !entry);
+              if (slot >= 0 && triadCanPlay(match, seat, selected, "support", slot)) {
+                void send({ type: "PLAY", seat, cardId: selected.instanceId, lane: "support", slot,
+                  targetCardId: card.instanceId });
+                setSelectedId(null);
+              }
+              return;
+            }
+            setSelectedId(selectedId === card.instanceId ? null : card.instanceId);
+          }}
           disabled={!canAct || (match.rouletteEvent === "BLIND_TOP" && hero.hand.some((c) => c.instanceId === card.instanceId))}
           title={match.rouletteEvent === "HIDDEN_HAND" ? "Скрытая карта" : cardTitle(card) + " · " + getWillCostByRarity(card.definition.rarity) + " Воли"}>
           <img src={match.rouletteEvent === "HIDDEN_HAND" && hero.hand.some((c) => c.instanceId === card.instanceId) ? cardBack : cardImage(card)}
@@ -355,7 +367,7 @@ export default function TriadMatchPage() {
           </form></> : <p>Тренировка против двух ботов.</p>}</div>
     </div>
     {selected && <p className="triad-tip">Выбрана карта: {match.rouletteEvent === "HIDDEN_HAND" ? "СКРЫТА" : cardTitle(selected)}. Нажми на свободный слот нужного направления.
-      {selected.definition.id === "healing" ? " Выбери свою повреждённую карту для лечения." : triadIsSupport(selected) ? " Эта карта используется в зоне СВОИ / ВСЕ." : ""}</p>}
+      {selected.definition.id === "healing" ? " Выбери свою повреждённую карту для лечения." : selected.definition.id === "clean_sheet" ? " Нажми на другую карту в руке, которую хочешь сбросить." : triadIsSupport(selected) ? " Эта карта используется в зоне СВОИ / ВСЕ." : ""}</p>}
     {error && <p className="triad-error" role="alert">{error}</p>}
   </main>;
 }
