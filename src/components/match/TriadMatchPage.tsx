@@ -15,6 +15,8 @@ import {
   subscribeTriadRoom, type TriadEvent, type TriadRoom,
 } from "../../services/triadRooms";
 import { TriadSlot, triadToMatchCard } from "./TriadSlot";
+import { TriadHeroMeters } from "./TriadHeroMeters";
+import { TriadPiles } from "./TriadPiles";
 import { D20View } from "./D20View";
 import { CardView } from "./CardView";
 import { TriadCombatMotion, captureTriadFlight, type TriadFlightRequest } from "./TriadCombatMotion";
@@ -65,10 +67,11 @@ function BackHand({ cards, revealed, flipped, onFlip, side, seat }: {
   return <div className={"triad-rival-hand is-" + side} data-triad-owner-hand={seat}>
     {cards.map((card, index) => {
       const t = (index + 0.5) / count;
-      const point = side === "left" ? 62 - t * 44 : 38 + t * 44;
+      // Parallel to the perimeter of the owner's side, mirrored right-to-left.
+      const point = side === "left" ? 28.6 - t * 19.8 : 71.4 + t * 19.8;
       const position = {
-        left: point + "%", top: (4 + 61 * t) + "%",
-        transform: "translate(-50%, -50%) rotate(" + (side === "left" ? -47 : 47) + "deg)",
+        left: point + "%", top: (9 + 29 * t) + "%",
+        transform: "translate(-50%, -50%) rotate(" + (side === "left" ? 52 : -52) + "deg)",
       } as CSSProperties;
       const visible = revealed && flipped.includes(card.instanceId);
       return <button key={card.instanceId} className={"triad-back" + (visible ? " is-flipped" : "")}
@@ -300,18 +303,17 @@ export default function TriadMatchPage() {
   };
   const section = (owner: TriadSeat, side: "left" | "right" | "bottom") => (
     <div className={"triad-player-block is-" + side + (match.active === owner ? " is-active" : "")}>
-      <div className="triad-player-title">{match.players[owner].name} <b>HP {match.players[owner].hp}</b>
-        <b>ЩИТ {match.players[owner].shield}</b>
+      <div className="triad-player-title">{match.players[owner].name}
         <b>ПОБЕДЫ {match.players[owner].victories}/{TRIAD_VICTORIES_TO_WIN}</b></div>
       {owner !== seat ? <BackHand side={side === "bottom" ? "left" : side}
         seat={owner} cards={match.players[owner].hand}
         revealed={oracleSeat === owner} flipped={flipped}
         onFlip={(id) => setFlipped((current) => current.includes(id) || current.length >= revealLimit ? current : [...current, id])} /> : null}
-      <div className="triad-player-portrait" data-triad-portrait={owner}
-        title={match.players[owner].hero.ruTitle || match.players[owner].hero.title}>
-        <img src={match.players[owner].hero.image || cardBack}
-          alt={match.players[owner].hero.ruTitle || match.players[owner].hero.title} draggable={false} />
-      </div>
+      <TriadHeroMeters seat={owner} player={match.players[owner]} />
+      <TriadPiles seat={owner} side={side} player={match.players[owner]}
+        canBlindPlay={owner === seat && canAct && match.rouletteEvent === "BLIND_TOP" &&
+          match.players[owner].deck.length > 0}
+        onBlindPlay={() => setSelectedId(match.players[owner].deck[0]?.instanceId ?? null)} />
       <div className="triad-player-fields">
         {displayField(owner, owner === seat ? left : seat, "НА " + match.players[owner === seat ? left : seat].name, owner === seat)}
         {displayField(owner, owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!,
@@ -356,18 +358,8 @@ export default function TriadMatchPage() {
         className={"triad-turn-sweep" + (match.active === seat ? " is-self" : "")}
         role="status" aria-live="polite">ХОД: {match.players[match.active].name}</div>
       <div className="triad-bottom-field">{section(seat, "bottom")}</div>
-      <div className="triad-deck-zone">
-        <img src={cardBack} alt="Ваша колода" />
-        <span>КОЛОДА {hero.deck.length}</span>
-        {match.rouletteEvent === "BLIND_TOP" && activeTurn && hero.deck.length > 0 &&
-          <button type="button" onClick={() => setSelectedId(hero.deck[0].instanceId)}>ВЕРХНЯЯ КАРТА</button>}
-      </div>
-      <div className="triad-discard-zone">
-        <img src={hero.discard.length ? cardImage(hero.discard[hero.discard.length - 1]) : cardBack} alt="Сброс" />
-        <span>СБРОС {hero.discard.length}</span>
-      </div>
+
       <div className="triad-controls">
-        <span>HP {hero.hp}/{hero.maxHp} · ЩИТ {hero.shield}</span>
         <span>ВОЛЯ {hero.will}/{hero.maxWill} · КАРТЫ {match.played}/{match.playLimit}</span>
         {match.phase === "roll" && activeTurn && <span className="triad-roll-tip">БРОСЬ КУБИК В ЦЕНТРЕ</span>}
         {match.phase === "main" && activeTurn && match.awakeningPending && <>
