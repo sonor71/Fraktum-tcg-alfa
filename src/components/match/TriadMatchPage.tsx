@@ -17,13 +17,15 @@ import {
 import { TriadSlot, triadToMatchCard } from "./TriadSlot";
 import { TriadHeroMeters } from "./TriadHeroMeters";
 import { TriadPiles } from "./TriadPiles";
+import {
+  triadHandPoint, triadSlotPoint, TRIAD_OUTER_PATH,
+  TRIAD_INNER_PATH, TRIAD_INNER_DIVIDERS, type TriadViewGroup, type TriadViewSide,
+} from "./triadBoardGeometry";
 import { D20View } from "./D20View";
 import { CardView } from "./CardView";
 import { TriadCombatMotion, captureTriadFlight, type TriadFlightRequest } from "./TriadCombatMotion";
 import { MatchPresentationLayer, type MatchRoulettePresentation } from "./MatchPresentationLayer";
-import "./triad-arena.css";
-import "./triad-arena-v3.css";
-import "./triad-arena-v4.css";
+import "./triad-arena-v5.css";
 
 const cardBack = "/cards/card-back.png";
 const catalog = loadCardDefinitions();
@@ -64,15 +66,13 @@ function BackHand({ cards, revealed, flipped, onFlip, side, seat }: {
   cards: TriadCard[]; revealed: boolean; flipped: string[]; onFlip: (id: string) => void;
   side: "left" | "right"; seat: TriadSeat;
 }) {
-  const count = Math.max(cards.length, 1);
+  const count = cards.length;
   return <div className={"triad-rival-hand is-" + side} data-triad-owner-hand={seat}>
     {cards.map((card, index) => {
-      const t = (index + 0.5) / count;
-      // Parallel to the perimeter of the owner's side, mirrored right-to-left.
-      const point = side === "left" ? 28.6 - t * 19.8 : 71.4 + t * 19.8;
+      const { x, y, angle } = triadHandPoint(side, index, count);
       const position = {
-        left: point + "%", top: (9 + 29 * t) + "%",
-        transform: "translate(-50%, -50%) rotate(" + (side === "left" ? 52 : -52) + "deg)",
+        left: (x / 16) + "%", top: (y / 9) + "%",
+        transform: "translate(-50%, -50%) rotate(" + angle + "deg)",
       } as CSSProperties;
       const visible = revealed && flipped.includes(card.instanceId);
       return <button key={card.instanceId} className={"triad-back" + (visible ? " is-flipped" : "")}
@@ -266,11 +266,12 @@ export default function TriadMatchPage() {
   ];
   const selected = [...hero.hand, ...specialCards].find((card) => card.instanceId === selectedId);
   const canAct = !busy && !roulettePresentation && activeTurn && match.phase === "main";
-  const displayField = (owner: TriadSeat, lane: TriadLane, label: string, allowPlay: boolean) => {
+  const displayField = (owner: TriadSeat, lane: TriadLane, label: string,
+    allowPlay: boolean, side: TriadViewSide, group: TriadViewGroup) => {
     const p = match.players[owner];
     const slots = lane === "support" ? p.support : p.lanes[lane];
     return <div className={"triad-field-line" + (allowPlay ? " is-mine" : "")}
-      key={owner + "-" + lane} data-triad-direction={lane}>
+      key={owner + "-" + lane} data-triad-direction={lane} data-group={group}>
       <span className="triad-field-label">{label}</span>
       <div className="triad-field-cards">{slots.map((card, slot) => {
         const supportSlot = hero.support.findIndex((item) => !item);
@@ -281,7 +282,15 @@ export default function TriadMatchPage() {
           !["healing", "clean_sheet"].includes(selected.definition.id) &&
           triadCanPlay(match, seat, selected, lane, slot));
         const permitted = healingTarget || regularTarget;
-        return <TriadSlot key={owner + "-" + lane + "-" + slot + "-" + (card?.instanceId ?? "empty")}
+        const point = triadSlotPoint(side, group, slot);
+        const position = {
+          left: (point.x / 16) + "%",
+          top: (point.y / 9) + "%",
+          transform: "translate(-50%, -50%) rotate(" + point.angle + "deg)",
+        } as CSSProperties;
+        return <div className="triad-slot-anchor" key={owner + "-" + lane + "-" + slot}
+          data-triad-anchor={owner + ":" + lane + ":" + slot}
+          style={position}><TriadSlot
           card={card} seat={owner} lane={lane} index={slot} playable={permitted}
           onActivate={() => {
             if (!selected) return;
@@ -298,7 +307,7 @@ export default function TriadMatchPage() {
               void send({ type: "PLAY", seat, cardId: selected.instanceId, lane, slot });
             }
             setSelectedId(null);
-          }} />;
+          }} /></div>;
       })}</div>
     </div>;
   };
@@ -316,10 +325,12 @@ export default function TriadMatchPage() {
           match.players[owner].deck.length > 0}
         onBlindPlay={() => setSelectedId(match.players[owner].deck[0]?.instanceId ?? null)} />
       <div className="triad-player-fields">
-        {displayField(owner, owner === seat ? left : seat, "НА " + match.players[owner === seat ? left : seat].name, owner === seat)}
+        {displayField(owner, owner === seat ? left : seat, "НА " + match.players[owner === seat ? left : seat].name,
+          owner === seat, side, 0)}
         {displayField(owner, owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!,
-          "НА " + match.players[owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!].name, owner === seat)}
-        {displayField(owner, "support", "ПРЯМО / СВОИ", owner === seat)}
+          "НА " + match.players[owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!].name,
+          owner === seat, side, 1)}
+        {displayField(owner, "support", "ПРЯМО / СВОИ", owner === seat, side, 2)}
       </div>
       {match.players[owner].eliminated && <span className="triad-out">ВЫБЫЛ</span>}
     </div>
@@ -333,10 +344,10 @@ export default function TriadMatchPage() {
       {room && <span>КОД {room.invite_code}</span>}
     </header>
     <div className="triad-arena">
-      <svg className="triad-board-geometry" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
-        <path className="triad-board-outline" d="M 480 22 H 1120 L 1580 385 L 1180 878 H 420 L 20 385 Z" />
-        <path className="triad-board-inner" d="M 655 180 H 945 L 1060 468 L 932 630 H 668 L 540 468 Z" />
-        <path className="triad-board-divider" d="M 800 180 V 359 M 540 468 L 800 359 L 1060 468 M 800 359 V 630" />
+      <svg className="triad-board-geometry" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path className="triad-board-outline" d={TRIAD_OUTER_PATH} />
+        <path className="triad-board-inner" d={TRIAD_INNER_PATH} />
+        <path className="triad-board-divider" d={TRIAD_INNER_DIVIDERS} />
       </svg>
       <div className="triad-left-hand-side">{section(left, "left")}</div>
       <div className="triad-right-hand-side">{section(right, "right")}</div>
