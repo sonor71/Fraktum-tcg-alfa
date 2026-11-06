@@ -31,7 +31,7 @@ export type TriadState = {
 export type TriadAction =
   | { type: "ROLL"; seat: TriadSeat }
   | { type: "CHOOSE_AWAKENING"; seat: TriadSeat; choice: "freeCard" | "passive" }
-  | { type: "PLAY"; seat: TriadSeat; cardId: string; lane: TriadLane; slot: number; targetSeat?: TriadSeat; targetSlot?: number }
+  | { type: "PLAY"; seat: TriadSeat; cardId: string; lane: TriadLane; slot: number; targetSeat?: TriadSeat; targetSlot?: number; targetCardId?: string }
   | { type: "END"; seat: TriadSeat }
   | { type: "NEXT"; seat: TriadSeat }
   | { type: "CONCEDE"; seat: TriadSeat };
@@ -400,6 +400,9 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
       (state.rouletteEvent === "BLIND_TOP" && player.deck[0]?.instanceId === action.cardId ? player.deck[0] : undefined) ??
       (state.borrowedCard?.cardId === action.cardId ? state.players[state.borrowedCard.seat].deck.find((c) => c.instanceId === action.cardId) : undefined);
     if (!source || !triadCanPlay(state, action.seat, source, action.lane, action.slot)) return state;
+    if (source.definition.id === "clean_sheet" && (!action.targetCardId ||
+      action.targetCardId === source.instanceId ||
+      !player.hand.some((c) => c.instanceId === action.targetCardId))) return state;
     if (source.definition.id === "healing") {
       const healingLane = action.targetSeat;
       const index = action.targetSlot;
@@ -434,7 +437,19 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
       } } };
     }
     const rivals = aliveRivals(next, action.seat);
-    if (source.definition.id === "healing" && action.targetSeat && typeof action.targetSlot === "number") {
+    if (source.definition.id === "clean_sheet" && action.targetCardId) {
+      const owner = next.players[action.seat];
+      const replaced = owner.hand.find((card) => card.instanceId === action.targetCardId);
+      if (replaced) {
+        const drawn = owner.deck.slice(0, 2);
+        next = { ...next, players: { ...next.players, [action.seat]: {
+          ...owner,
+          hand: [...owner.hand.filter((card) => card.instanceId !== action.targetCardId), ...drawn],
+          deck: owner.deck.slice(drawn.length),
+          discard: [...owner.discard, replaced],
+        } } };
+      }
+    } else if (source.definition.id === "healing" && action.targetSeat && typeof action.targetSlot === "number") {
       const healingSide = next.players[action.seat];
       const index = action.targetSlot;
       const wounded = healingSide.lanes[action.targetSeat][index];
