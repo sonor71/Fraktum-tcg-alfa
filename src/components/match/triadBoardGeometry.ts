@@ -15,7 +15,7 @@ const mirror = (points: readonly TriadPoint[]): TriadPoint[] =>
 // Upper-left player's bottom-pointing cards, outward-pointing cards, and straight cards.
 const upperLeft = [
   [p(575, 456, -22), p(642, 438, -22), p(709, 420, -22)],
-  [p(662, 255, 24), p(632, 320, 24), p(574, 370, 24)],
+  [p(662, 255, 24), p(632, 320, 24), p(569, 375, 24)],
   [p(724, 197), p(724, 270), p(724, 343)],
 ] as const;
 
