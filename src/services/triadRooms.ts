@@ -42,7 +42,7 @@ export async function createTriadRoom(snapshot: TriadLoadout): Promise<TriadRoom
   const { client } = await withUser();
   const { data, error } = await client.rpc("create_triad_room", { p_snapshot: snapshot });
   if (error) throw new Error("Не удалось создать комнату: " + error.message);
-  return data as TriadRoom;
+  return (Array.isArray(data) ? data[0] : data) as TriadRoom;
 }
 export async function joinTriadRoom(code: string, snapshot: TriadLoadout): Promise<TriadRoom> {
   const { client } = await withUser();
@@ -50,7 +50,7 @@ export async function joinTriadRoom(code: string, snapshot: TriadLoadout): Promi
   if (normalized.length !== 6) throw new Error("Код комнаты должен содержать 6 символов.");
   const { data, error } = await client.rpc("join_triad_room", { p_code: normalized, p_snapshot: snapshot });
   if (error) throw new Error("Не удалось присоединиться: " + error.message);
-  return data as TriadRoom;
+  return (Array.isArray(data) ? data[0] : data) as TriadRoom;
 }
 export async function fetchTriadRoom(roomId: string): Promise<TriadRoom | null> {
   const { client } = await withUser();
@@ -72,7 +72,7 @@ export async function sendTriadAction(roomId: string, action: TriadNetworkAction
     p_room_id: roomId, p_action: action, p_client_action_id: clientActionId,
   });
   if (error) throw new Error("Не удалось выполнить действие: " + error.message);
-  return data as TriadEvent;
+  return (Array.isArray(data) ? data[0] : data) as TriadEvent;
 }
 export function subscribeTriadRoom(roomId: string, notify: () => void) {
   if (!supabase) return () => undefined;
