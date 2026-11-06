@@ -24,10 +24,12 @@ export type TriadState = {
   phase: TriadPhase; active: TriadSeat; players: Record<TriadSeat, TriadPlayer>;
   roll: number | null; playLimit: number | "unlimited"; played: number; costMultiplier: number;
   freeCard: boolean; discardPlay: boolean; rouletteEvent: string | null;
+  awakeningPending: boolean; borrowedCard: { seat: TriadSeat; cardId: string } | null;
   log: string[]; battleWinner: TriadSeat | "draw" | null; winner: TriadSeat | null;
 };
 export type TriadAction =
   | { type: "ROLL"; seat: TriadSeat }
+  | { type: "CHOOSE_AWAKENING"; seat: TriadSeat; choice: "freeCard" | "passive" }
   | { type: "PLAY"; seat: TriadSeat; cardId: string; lane: TriadLane; slot: number; targetSeat?: TriadSeat }
   | { type: "END"; seat: TriadSeat }
   | { type: "NEXT"; seat: TriadSeat }
@@ -75,6 +77,7 @@ export function createTriadMatch(loadouts: Record<TriadSeat, TriadLoadout>, seed
     id: "triad-" + normalizedSeed, seed: normalizedSeed, rngSeed: c.seed,
     round: 1, battle, phase: "roll", active: "a", roll: null, playLimit: 0,
     played: 0, costMultiplier: 1, freeCard: false, discardPlay: false, rouletteEvent: null,
+    awakeningPending: false, borrowedCard: null,
     players: {
       a: createSide("a", loadouts.a, battle, a.value, scores.a),
       b: createSide("b", loadouts.b, battle, b.value, scores.b),
@@ -87,10 +90,17 @@ export function triadCanPlay(state: TriadState, seat: TriadSeat, card: TriadCard
   if (state.phase !== "main" || state.active !== seat || state.players[seat].eliminated) return false;
   if (!Number.isInteger(slot) || slot < 0 || slot >= TRIAD_LANE_SLOTS) return false;
   if (state.playLimit !== "unlimited" && state.played >= state.playLimit) return false;
+  if (state.awakeningPending) return false;
+  if ((lane === "support") !== triadIsSupport(card)) return false;
   if (lane !== "support" && (lane === seat || state.players[lane].eliminated)) return false;
   if ((lane === "support" ? state.players[seat].support : state.players[seat].lanes[lane])[slot]) return false;
-  if (!state.players[seat].hand.some((c) => c.instanceId === card.instanceId)
-      && !(state.discardPlay && state.players[seat].discard.some((c) => c.instanceId === card.instanceId))) return false;
+  const fromHand = state.players[seat].hand.some((c) => c.instanceId === card.instanceId);
+  const fromDiscard = state.discardPlay && state.players[seat].discard.some((c) => c.instanceId === card.instanceId);
+  const fromBlind = state.rouletteEvent === "BLIND_TOP" && state.players[seat].deck[0]?.instanceId === card.instanceId;
+  const fromBorrowed = state.borrowedCard?.cardId === card.instanceId &&
+    state.players[state.borrowedCard.seat].deck.some((c) => c.instanceId === card.instanceId);
+  if (state.rouletteEvent === "BLIND_TOP" && !fromBlind) return false;
+  if (!fromHand && !fromDiscard && !fromBlind && !fromBorrowed) return false;
   const cost = state.freeCard ? 0 : price(card) * state.costMultiplier;
   return state.players[seat].will >= cost;
 }
@@ -243,6 +253,22 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
   if (state.phase === "between") return state;
   if (action.seat !== state.active || state.players[action.seat].eliminated) return state;
 
+  if (action.type === "CHOOSE_AWAKENING") {
+    if (state.phase !== "main" || !state.awakeningPending) return state;
+    if (action.choice === "passive") {
+      const side = state.players[action.seat];
+      const activeLane = triadRivals(action.seat).find((seat) => side.lanes[seat].some(Boolean));
+      const ownerLane: TriadLane | undefined = activeLane ?? (side.support.some(Boolean) ? "support" : undefined);
+      const rival = activeLane ?? aliveRivals(state, action.seat)[0];
+      if (!ownerLane || !rival) return state;
+      const card = (ownerLane === "support" ? side.support : side.lanes[ownerLane]).find((entry) => entry !== null);
+      if (!card) return state;
+      const next = resolveAgainst({ ...state, awakeningPending: false }, action.seat, rival, card, ownerLane, 0);
+      return assessBattle(record(next, side.name + " повторно активировал способность " + card.definition.title + "."));
+    }
+    return record({ ...state, awakeningPending: false, freeCard: true }, "Пробуждение: следующая карта бесплатна.");
+  }
+
   if (action.type === "CONCEDE") {
     return assessBattle(record({ ...state, players: {
       ...state.players, [action.seat]: { ...state.players[action.seat], hp: 0, eliminated: true },
@@ -258,7 +284,7 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
       ...state, rngSeed: die.seed, phase: "main", roll: die.value,
       playLimit: getD20PlayLimit(die.value), played: 0,
       costMultiplier: rule === "doubleWill" ? 2 : 1,
-      freeCard: rule === "awakening", discardPlay: rule === "discard",
+      freeCard: false, discardPlay: rule === "discard", awakeningPending: rule === "awakening", borrowedCard: null,
       players: { ...state.players, [action.seat]: {
         ...side, will: Math.min(side.maxWill, side.will + side.regen),
         deck: side.deck.slice(side.hand.length < 7 ? 1 : 0),
@@ -269,8 +295,38 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
       const events = ["MERGED_DECKS", "WORLD_WITHOUT_WILL", "BLIND_TOP", "HIDDEN_HAND", "EMPTY_OUTCOME"];
       const random = rollDie(next.rngSeed, events.length);
       next = { ...next, rngSeed: random.seed, rouletteEvent: events[random.value - 1] };
+      if (next.rouletteEvent === "MERGED_DECKS") {
+        const pool = TRIAD_SEATS.flatMap((seat) => next.players[seat].deck);
+        const shuffle = shuffleWithSeed(pool, next.rngSeed);
+        let cursor = 0;
+        const players = { ...next.players };
+        for (const seat of TRIAD_SEATS) {
+          const count = players[seat].deck.length;
+          players[seat] = { ...players[seat], deck: shuffle.items.slice(cursor, cursor + count) };
+          cursor += count;
+        }
+        next = { ...next, rngSeed: shuffle.seed, players };
+      }
+      // Fate Roulette resolves once, then the owner receives a new D20 result.
+      let reroll = rollDie(next.rngSeed, 20);
+      while (reroll.value === 15 || reroll.value === 16) reroll = rollDie(reroll.seed, 20);
+      const rerule = getD20Rule(reroll.value);
+      next = { ...next, rngSeed: reroll.seed, roll: reroll.value,
+        playLimit: getD20PlayLimit(reroll.value),
+        costMultiplier: rerule === "doubleWill" ? 2 : 1,
+        discardPlay: rerule === "discard", awakeningPending: rerule === "awakening" };
       if (next.rouletteEvent === "WORLD_WITHOUT_WILL") next.freeCard = true;
     } else next.rouletteEvent = null;
+    if (getD20Rule(next.roll ?? die.value) === "enemyDeck") {
+      const targets = aliveRivals(next, action.seat).filter((id) => next.players[id].deck.length > 0);
+      if (targets.length > 0) {
+        const rand = rollDie(next.rngSeed, targets.length);
+        const victim = targets[rand.value - 1];
+        const deck = next.players[victim].deck;
+        const selected = rollDie(rand.seed, deck.length);
+        next = { ...next, rngSeed: selected.seed, borrowedCard: { seat: victim, cardId: deck[selected.value - 1].instanceId } };
+      }
+    }
     next = attackLanes(next, action.seat);
     next = assessBattle(next);
     return record(next, side.name + " бросил D20: " + die.value + " (" + rule + ").");
@@ -278,7 +334,9 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
   if (action.type === "PLAY") {
     const player = state.players[action.seat];
     const source = player.hand.find((c) => c.instanceId === action.cardId) ??
-      (state.discardPlay ? player.discard.find((c) => c.instanceId === action.cardId) : undefined);
+      (state.discardPlay ? player.discard.find((c) => c.instanceId === action.cardId) : undefined) ??
+      (state.rouletteEvent === "BLIND_TOP" && player.deck[0]?.instanceId === action.cardId ? player.deck[0] : undefined) ??
+      (state.borrowedCard?.cardId === action.cardId ? state.players[state.borrowedCard.seat].deck.find((c) => c.instanceId === action.cardId) : undefined);
     if (!source || !triadCanPlay(state, action.seat, source, action.lane, action.slot)) return state;
     if (action.lane === "support" && !triadIsSupport(source)) return state;
     if (action.lane !== "support" && triadIsSupport(source)) return state;
@@ -289,14 +347,22 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
       ...player, will: player.will - cost,
       hand: player.hand.filter((c) => c.instanceId !== source.instanceId),
       discard: player.discard.filter((c) => c.instanceId !== source.instanceId),
+      deck: player.deck.filter((c) => c.instanceId !== source.instanceId),
       lanes: action.lane === "support" ? player.lanes :
         { ...player.lanes, [action.lane]: player.lanes[action.lane].map((c, i) => i === action.slot ? played : c) },
       support: action.lane === "support" ?
         player.support.map((c, i) => i === action.slot ? played : c) : player.support,
     };
     let next: TriadState = { ...state, played: state.played + 1,
-      freeCard: false, discardPlay: false,
+      freeCard: state.rouletteEvent === "WORLD_WITHOUT_WILL", discardPlay: false,
+      borrowedCard: null,
       players: { ...state.players, [action.seat]: nextSide } };
+    if (state.borrowedCard?.cardId === source.instanceId) {
+      const victim = state.borrowedCard.seat;
+      next = { ...next, players: { ...next.players, [victim]: {
+        ...next.players[victim], deck: next.players[victim].deck.filter((c) => c.instanceId !== source.instanceId),
+      } } };
+    }
     const rivals = aliveRivals(next, action.seat);
     if (action.lane === "support") {
       // Support/global cards interact with both opponents only when they have an area effect.
@@ -341,7 +407,7 @@ export function reduceTriad(state: TriadState, action: TriadAction, loadouts: Re
     return record({ ...next, players: nextPlayers, active: successor, phase: "roll",
       round: next.round + (successor === "a" ? 1 : 0), roll: null,
       playLimit: 0, played: 0, freeCard: false, discardPlay: false,
-      rouletteEvent: null, costMultiplier: 1 }, nextPlayers[successor].name + " начинает ход.");
+      rouletteEvent: null, costMultiplier: 1, awakeningPending: false, borrowedCard: null }, nextPlayers[successor].name + " начинает ход.");
   }
   return state;
 }
@@ -351,7 +417,10 @@ export function chooseTriadBotAction(state: TriadState): TriadAction {
   if (state.phase === "roll") return { type: "ROLL", seat };
   const owner = state.players[seat];
   const targets = aliveRivals(state, seat);
-  const available = [...owner.hand, ...(state.discardPlay ? owner.discard : [])];
+  if (state.awakeningPending) return { type: "CHOOSE_AWAKENING", seat, choice: "freeCard" };
+  const available = state.rouletteEvent === "BLIND_TOP" ? owner.deck.slice(0, 1) :
+    [...owner.hand, ...(state.discardPlay ? owner.discard : []),
+      ...(state.borrowedCard ? state.players[state.borrowedCard.seat].deck.filter((c) => c.instanceId === state.borrowedCard?.cardId) : [])];
   for (const card of available) {
     const lanes: TriadLane[] = triadIsSupport(card) ? ["support"] : targets;
     for (const lane of lanes) {
