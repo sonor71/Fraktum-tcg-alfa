@@ -238,20 +238,30 @@ export default function TriadMatchPage() {
     const slots = lane === "support" ? p.support : p.lanes[lane];
     return <div className={"triad-field-line" + (allowPlay ? " is-mine" : "")} key={owner + "-" + lane}>
       <span className="triad-field-label">{label}</span>
-      <div className="triad-field-cards">{slots.map((card, slot) =>
-        <Slot key={slot} card={card} label={label + " " + (slot + 1)}
-          selected={Boolean(allowPlay && selected && triadCanPlay(match, seat, selected, lane, slot) &&
-            (lane === "support") === triadIsSupport(selected))}
-          disabled={!allowPlay || !selected || !triadCanPlay(match, seat, selected, lane, slot) ||
-            (lane === "support") !== triadIsSupport(selected)}
+      <div className="triad-field-cards">{slots.map((card, slot) => {
+        const supportSlot = hero.support.findIndex((item) => !item);
+        const healingTarget = Boolean(allowPlay && selected?.definition.id === "healing" &&
+          lane !== "support" && card && supportSlot >= 0 &&
+          triadCanPlay(match, seat, selected, "support", supportSlot));
+        const regularTarget = Boolean(allowPlay && selected &&
+          triadCanPlay(match, seat, selected, lane, slot));
+        const permitted = healingTarget || regularTarget;
+        return <Slot key={slot} card={card} label={label + " " + (slot + 1)}
+          selected={permitted} disabled={!permitted}
           onClick={() => {
             if (!selected) return;
-            if (lane !== "support" && (selected.definition.id === "oracle" || selected.definition.id === "dragon_eye")) {
-              setOracleSeat(lane); setRevealLimit(selected.definition.id === "dragon_eye" ? 1 : 99); setFlipped([]);
+            if (healingTarget && lane !== "support") {
+              void send({ type: "PLAY", seat, cardId: selected.instanceId,
+                lane: "support", slot: supportSlot, targetSeat: lane, targetSlot: slot });
+            } else {
+              if (lane !== "support" && (selected.definition.id === "oracle" || selected.definition.id === "dragon_eye")) {
+                setOracleSeat(lane); setRevealLimit(selected.definition.id === "dragon_eye" ? 1 : 99); setFlipped([]);
+              }
+              void send({ type: "PLAY", seat, cardId: selected.instanceId, lane, slot });
             }
-            void send({ type: "PLAY", seat, cardId: selected.instanceId, lane, slot });
             setSelectedId(null);
-          }} />)}
+          }} />;
+      })}
       </div>
     </div>;
   };
@@ -345,7 +355,7 @@ export default function TriadMatchPage() {
           </form></> : <p>Тренировка против двух ботов.</p>}</div>
     </div>
     {selected && <p className="triad-tip">Выбрана карта: {match.rouletteEvent === "HIDDEN_HAND" ? "СКРЫТА" : cardTitle(selected)}. Нажми на свободный слот нужного направления.
-      {triadIsSupport(selected) ? " Эта карта используется в зоне СВОИ / ВСЕ." : ""}</p>}
+      {selected.definition.id === "healing" ? " Выбери свою повреждённую карту для лечения." : triadIsSupport(selected) ? " Эта карта используется в зоне СВОИ / ВСЕ." : ""}</p>}
     {error && <p className="triad-error" role="alert">{error}</p>}
   </main>;
 }
