@@ -45,7 +45,7 @@ export function triadHandPoint(side: "left" | "right", slot: number, count: numb
   const index = Math.max(0, slot);
   const span = Math.min(7, Math.max(1, count));
   // Equal center-to-center spacing; the long side of each back tracks the border.
-  const y = 89 + index * (282 / Math.max(1, span - 1));
+  const y = 89 + (7 - span) * 24 + index * 48;
   const borderX = 355 - (y - 24) * (333 / 369);
   return side === "left" ? p(borderX + 28, y, 42) : p(1600 - borderX - 28, y, -42);
 }
