@@ -74,7 +74,12 @@ function BackHand({ cards, revealed, flipped, onFlip, side, seat }: {
       return <button key={card.instanceId} className={"triad-back" + (visible ? " is-flipped" : "")}
         style={position} type="button" onClick={() => revealed && onFlip(card.instanceId)}
         disabled={!revealed} title={visible ? cardTitle(card) : "Скрытая карта"}>
-        <img draggable={false} src={visible ? cardImage(card) : cardBack} alt={visible ? cardTitle(card) : "Рубашка карты"} />
+        <span className="triad-back-flipper">
+          <span className="triad-back-face is-back"><img draggable={false} src={cardBack} alt="Рубашка карты" /></span>
+          {visible && <span className="triad-back-face is-front">
+            <img draggable={false} src={cardImage(card)} alt={cardTitle(card)} />
+          </span>}
+        </span>
       </button>;
     })}
   </div>;
