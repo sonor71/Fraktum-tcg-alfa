@@ -61,6 +61,24 @@ describe("1x1x1 independent free-for-all", () => {
     state = reduceTriad(state, { type: "END", seat: "a" }, loadouts);
     expect(state.active).toBe("c");
   });
+  it("advances to the next alive player if the active hero is killed by a counterattack", () => {
+    let state = ready();
+    const attacker = { ...state.players.a.hand[0], hp: 1, playedTurn: -2,
+      definition: card("attacker", 0, 1) };
+    const defender = { ...state.players.b.hand[0], hp: 4, playedTurn: -2,
+      definition: card("defender", 4, 4) };
+    state = { ...state, phase: "roll", players: {
+      ...state.players,
+      a: { ...state.players.a, hp: 1, turnsTaken: 1,
+        lanes: { ...state.players.a.lanes, b: [attacker, null, null] } },
+      b: { ...state.players.b, turnsTaken: 1,
+        lanes: { ...state.players.b.lanes, a: [defender, null, null] } },
+    } };
+    state = reduceTriad(state, { type: "ROLL", seat: "a" }, loadouts);
+    expect(state.players.a.eliminated).toBe(true);
+    expect(state.active).toBe("b");
+    expect(state.phase).toBe("roll");
+  });
   it("uses the dedicated support slots for global cards", () => {
     const tsunami = card("tsunami", 0, 0);
     let state = ready();
