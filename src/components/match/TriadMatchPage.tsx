@@ -23,6 +23,7 @@ import { TriadCombatMotion, captureTriadFlight, type TriadFlightRequest } from "
 import { MatchPresentationLayer, type MatchRoulettePresentation } from "./MatchPresentationLayer";
 import "./triad-arena.css";
 import "./triad-arena-v3.css";
+import "./triad-arena-v4.css";
 
 const cardBack = "/cards/card-back.png";
 const catalog = loadCardDefinitions();
@@ -318,7 +319,7 @@ export default function TriadMatchPage() {
         {displayField(owner, owner === seat ? left : seat, "НА " + match.players[owner === seat ? left : seat].name, owner === seat)}
         {displayField(owner, owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!,
           "НА " + match.players[owner === seat ? right : triadRivals(owner).find((s) => s !== seat)!].name, owner === seat)}
-        {displayField(owner, "support", "СВОИ / ВСЕ", owner === seat)}
+        {displayField(owner, "support", "ПРЯМО / СВОИ", owner === seat)}
       </div>
       {match.players[owner].eliminated && <span className="triad-out">ВЫБЫЛ</span>}
     </div>
