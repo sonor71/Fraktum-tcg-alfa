@@ -28,7 +28,7 @@ export default function PlayModes() {
         <span className="playKicker">АРЕНА FRAKTUM</span>
         <h1 className="playTitle">Выбери матч</h1>
         <p className="playLead">
-          Без лишних режимов: быстрый тест против ИИ или реальный PvP.
+          Дуэль 1×1 или свободный бой трёх игроков 1×1×1.
         </p>
 
         <button
@@ -88,6 +88,30 @@ export default function PlayModes() {
             <button className="playActionBtn isOpen" type="button" onClick={() => openMatch("/match/online")}>
               НАЙТИ ИГРОКА
             </button>
+          </div>
+        </section>
+        <section className="playCard playCardV2 isOpen">
+          <div className="playCardGlow" aria-hidden="true" />
+          <div className="playCardInner">
+            <div className="playCardTop"><span className="playBadge isOpen">НОВЫЙ РЕЖИМ</span><span className="playModeLine" /></div>
+            <div className="playTextBlock">
+              <h2 className="playModeTitle">1×1×1 • БОТЫ</h2>
+              <div className="playModeSubtitle">три игрока, каждый сам за себя</div>
+              <p className="playModeDescription">Ты против двух ботов. Выбирай цель, играй направленными картами и побеждай в трёх боях.</p>
+            </div>
+            <button className="playActionBtn isOpen" type="button" onClick={() => openMatch("/match/triad/ai")}>ИГРАТЬ 1×1×1</button>
+          </div>
+        </section>
+        <section className="playCard playCardV2 isOpen is-ranked">
+          <div className="playCardGlow" aria-hidden="true" />
+          <div className="playCardInner">
+            <div className="playCardTop"><span className="playBadge isOpen">ПРИВАТНЫЙ МАТЧ</span><span className="playModeLine" /></div>
+            <div className="playTextBlock">
+              <h2 className="playModeTitle">1×1×1 • ДРУЗЬЯ</h2>
+              <div className="playModeSubtitle">комната по коду для троих</div>
+              <p className="playModeDescription">Создай комнату и передай код двум друзьям. Ходы и действия синхронизируются между участниками.</p>
+            </div>
+            <button className="playActionBtn isOpen" type="button" onClick={() => openMatch("/match/triad/private")}>КОМНАТА ПО КОДУ</button>
           </div>
         </section>
       </div>
