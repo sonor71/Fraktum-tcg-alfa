@@ -8,6 +8,8 @@ type D20ViewProps = {
   disabled?: boolean;
   /** Animate a remote/bot roll without sending another game action. */
   externalRollKey?: string | number;
+  /** More pronounced physical bounce for the large center-stage triad die. */
+  dramaticMotion?: boolean;
 };
 
 const ROLL_TICKS = 28;
@@ -46,7 +48,7 @@ function randomD20() {
   return Math.floor(Math.random() * 20) + 1;
 }
 
-function D20Mesh({ rolling, value }: { rolling: boolean; value?: number }) {
+function D20Mesh({ rolling, value, dramaticMotion = false }: { rolling: boolean; value?: number; dramaticMotion?: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const wireRef = useRef<THREE.LineSegments>(null);
 
@@ -77,7 +79,9 @@ function D20Mesh({ rolling, value }: { rolling: boolean; value?: number }) {
       group.rotation.x += delta * 7.8;
       group.rotation.y += delta * 9.1;
       group.rotation.z += delta * 6.4;
-      group.position.y = Math.sin(performance.now() * 0.012) * 0.08;
+      group.position.y = dramaticMotion
+        ? Math.abs(Math.sin(performance.now() * 0.013)) * 0.62 - 0.18
+        : Math.sin(performance.now() * 0.012) * 0.08;
     } else {
       group.position.y = THREE.MathUtils.damp(group.position.y, 0, 7, delta);
       group.quaternion.slerp(targetQuaternion, 1 - Math.exp(-7 * delta));
@@ -128,7 +132,7 @@ function D20Mesh({ rolling, value }: { rolling: boolean; value?: number }) {
   );
 }
 
-export function D20View({ value, onRoll, disabled = false, externalRollKey }: D20ViewProps) {
+export function D20View({ value, onRoll, disabled = false, externalRollKey, dramaticMotion = false }: D20ViewProps) {
   const [rolling, setRolling] = useState(false);
   const [externalRolling, setExternalRolling] = useState(false);
   const [rollingValue, setRollingValue] = useState<number | undefined>();
@@ -230,7 +234,7 @@ export function D20View({ value, onRoll, disabled = false, externalRollKey }: D2
           <directionalLight position={[2.6, 3.6, 3.2]} intensity={2.0} castShadow />
           <directionalLight position={[-2.5, -1.2, 2.2]} intensity={0.45} color="#8b55ff" />
           <pointLight position={[0, 0, 2.4]} intensity={1.4} color="#ffd18a" />
-          <D20Mesh rolling={rolling || externalRolling} value={displayValue} />
+          <D20Mesh rolling={rolling || externalRolling} value={displayValue} dramaticMotion={dramaticMotion} />
         </Canvas>
       </span>
 
