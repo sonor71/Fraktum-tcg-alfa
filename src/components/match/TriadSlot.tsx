@@ -31,7 +31,7 @@ type TriadSlotProps = {
 };
 
 /** Reuses the actual 1×1 slot (runes, HP, temporary and status effects). */
-export function TriadSlot({ card, seat, lane, index, playable, isOwn = false, onActivate }: TriadSlotProps) {
+export function TriadSlot({ card, seat, lane, index, playable, isOwn = playable, onActivate }: TriadSlotProps) {
   return (
     <div
       className={`triad-combat-slot${playable ? " is-targetable" : ""}`}
