@@ -27,7 +27,7 @@ describe("1x1x1 reference geometry", () => {
   it("keeps every slot in the central combat board and clear of the dice center", () => {
     const slots = Object.values(TRIAD_SLOT_GEOMETRY).flatMap((groups) => groups.flat());
     expect(slots).toHaveLength(27);
-    expect(new Set(slots.map((p) => p.x + ":" + p.y))).toHaveSize(27);
+    expect(new Set(slots.map((p) => p.x + ":" + p.y)).size).toBe(27);
     for (const p of slots) {
       expect(p.x).toBeGreaterThan(500);
       expect(p.x).toBeLessThan(1100);
