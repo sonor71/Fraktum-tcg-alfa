@@ -345,3 +345,30 @@
     animation-duration:.01ms!important;transition-duration:.01ms!important;
   }
 }
+
+/* The four bonus sockets are real BonusSlots from 1×1 and sit beside each hero. */
+.triad-character-bonuses{
+  position:absolute;z-index:10;
+  width:5.6cqw;max-width:110px;
+  padding:3px;border:1px solid #a17f61;
+  background:#171022c9;pointer-events:auto!important;
+}
+.triad-bonus-title{
+  display:block;margin:0 0 3px;
+  font-size:clamp(7px,.5cqw,10px);text-align:center;
+  color:#f2d198;font-weight:900;white-space:nowrap;
+}
+.triad-character-bonuses .matchBonusSlots{
+  display:grid;grid-template-columns:repeat(2,1fr)!important;
+  gap:.2cqw;width:100%;padding:0;margin:0;
+}
+.triad-character-bonuses .matchBonusSlot{
+  width:100%;aspect-ratio:3/4;min-width:0;min-height:0;
+  padding:0;border-radius:2px;
+  background:#251b35;border:1px solid #a48b6b;
+}
+.triad-character-bonuses .matchBonusSlot img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.triad-character-bonuses .matchBonusSlot b{font-size:7px;padding:1px}
+.triad-player-block.is-left .triad-character-bonuses{left:29%;top:30%}
+.triad-player-block.is-right .triad-character-bonuses{right:29%;top:30%}
+.triad-player-block.is-bottom .triad-character-bonuses{left:40.5%;top:74%}
