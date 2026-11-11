@@ -1,3 +1,4 @@
+import { SEASON_CARD_ARTWORK } from "../data/seasonCardArtwork";
 export type CardIdentity = {
   definitionId: string;
   ruName: string;
@@ -650,6 +651,19 @@ Stun_Gun: {
     number: 72,
   },
 
+
+  // Series SNV: provisional serial identities for this new season.
+  // Different card numbers (101–138) prevent collisions, including when
+  // all 38 cards are purchased or pulled from boosters in one session.
+  ...Object.fromEntries(SEASON_CARD_ARTWORK.map((card, index) => [card.id, {
+    definitionId: card.id,
+    ruName: card.title,
+    enName: card.title,
+    image: card.image,
+    rarity: card.sourceRarity ?? "common",
+    code: "SNV",
+    number: 101 + index,
+  } satisfies CardIdentity])),
 };
 
 
