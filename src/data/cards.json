@@ -1378,7 +1378,8 @@
     "description": "ТЕСТОВЫЕ ПАРАМЕТРЫ: базовый удар 1, здоровье карты 3 HP, без уникальной способности. Редкость «забытая» подтверждена автором FRAKTUM.",
     "image": "/cards/fraktum-new/Ray of Creation.png",
     "effectKey": "season_basic_v1",
-    "collection": "Fraktum Season — Core"
+    "collection": "Fraktum Season — Core",
+    "ruTitle": "Луч мироздания"
   },
   {
     "id": "wardens_hourglass",
