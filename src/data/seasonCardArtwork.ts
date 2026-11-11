@@ -12,7 +12,7 @@
  */
 import type { CardRarity } from "../game/types";
 
-export type SeasonPackCandidate = "flame" | "ice" | "electric" | "desert" | "void" | "normal";
+export type SeasonPackCandidate = "flame" | "ice" | "electric" | "egypt" | "void" | "normal";
 
 export type SeasonCardArtwork = {
   id: string;
@@ -56,14 +56,14 @@ export const SEASON_CARD_ARTWORK: readonly SeasonCardArtwork[] = [
   { id: "storm_raptor", title: "Storm Raptor", image: "/cards/fraktum-new/Storm Raptor.png", proposedPack: "electric", sourceRarity: null, sourceRow: null, visualRarity: "epic", rarityEvidence: "art_border", status: "playable_temporary_balance" },
   { id: "stormborn_crown", title: "Stormborn Crown", image: "/cards/fraktum-new/Stormborn Crown.png", proposedPack: "electric", sourceRarity: null, sourceRow: null, visualRarity: "legendary", rarityEvidence: "art_border", status: "playable_temporary_balance" },
   { id: "stormglass_relay", title: "Stormglass Relay", image: "/cards/fraktum-new/Stormglass Relay.png", proposedPack: "electric", sourceRarity: "epic", sourceRow: 125, visualRarity: "epic", rarityEvidence: "primary_sheet", status: "playable_temporary_balance" },
-  { id: "buried_obelisk", title: "Buried Obelisk", image: "/cards/fraktum-new/Buried Obelisk.png", proposedPack: "desert", sourceRarity: null, sourceRow: null, visualRarity: "legendary", rarityEvidence: "art_border", status: "playable_temporary_balance" },
-  { id: "caravan_of_the_last_night", title: "Caravan of the Last Night", image: "/cards/fraktum-new/Caravan of the Last Night.png", proposedPack: "desert", sourceRarity: null, sourceRow: null, visualRarity: "epic", rarityEvidence: "art_border", status: "playable_temporary_balance" },
-  { id: "devouring_dune", title: "Devouring Dune", image: "/cards/fraktum-new/Devouring Dune.png", proposedPack: "desert", sourceRarity: null, sourceRow: null, visualRarity: "rare", rarityEvidence: "art_border", status: "playable_temporary_balance" },
-  { id: "dune_scout", title: "Dune Scout", image: "/cards/fraktum-new/Dune Scout.png", proposedPack: "desert", sourceRarity: null, sourceRow: null, visualRarity: "common", rarityEvidence: "art_border", status: "playable_temporary_balance" },
-  { id: "glass_scorpion", title: "Glass Scorpion", image: "/cards/fraktum-new/Glass Scorpion.png", proposedPack: "desert", sourceRarity: null, sourceRow: null, visualRarity: "rare", rarityEvidence: "art_border", status: "playable_temporary_balance" },
-  { id: "king_of_sand_tombs", title: "King of Sand Tombs", image: "/cards/fraktum-new/King of Sand Tombs.png", proposedPack: "desert", sourceRarity: null, sourceRow: null, visualRarity: "legendary", rarityEvidence: "art_border", status: "playable_temporary_balance" },
-  { id: "mirage_well", title: "Mirage Well", image: "/cards/fraktum-new/Mirage Well.png", proposedPack: "desert", sourceRarity: null, sourceRow: null, visualRarity: "rare", rarityEvidence: "art_border", status: "playable_temporary_balance" },
-  { id: "sun_scarab", title: "Sun Scarab", image: "/cards/fraktum-new/Sun Scarab.png", proposedPack: "desert", sourceRarity: null, sourceRow: null, visualRarity: "common", rarityEvidence: "art_border", status: "playable_temporary_balance" },
+  { id: "buried_obelisk", title: "Buried Obelisk", image: "/cards/fraktum-new/Buried Obelisk.png", proposedPack: "egypt", sourceRarity: null, sourceRow: null, visualRarity: "legendary", rarityEvidence: "art_border", status: "playable_temporary_balance" },
+  { id: "caravan_of_the_last_night", title: "Caravan of the Last Night", image: "/cards/fraktum-new/Caravan of the Last Night.png", proposedPack: "egypt", sourceRarity: null, sourceRow: null, visualRarity: "epic", rarityEvidence: "art_border", status: "playable_temporary_balance" },
+  { id: "devouring_dune", title: "Devouring Dune", image: "/cards/fraktum-new/Devouring Dune.png", proposedPack: "egypt", sourceRarity: null, sourceRow: null, visualRarity: "rare", rarityEvidence: "art_border", status: "playable_temporary_balance" },
+  { id: "dune_scout", title: "Dune Scout", image: "/cards/fraktum-new/Dune Scout.png", proposedPack: "egypt", sourceRarity: null, sourceRow: null, visualRarity: "common", rarityEvidence: "art_border", status: "playable_temporary_balance" },
+  { id: "glass_scorpion", title: "Glass Scorpion", image: "/cards/fraktum-new/Glass Scorpion.png", proposedPack: "egypt", sourceRarity: null, sourceRow: null, visualRarity: "rare", rarityEvidence: "art_border", status: "playable_temporary_balance" },
+  { id: "king_of_sand_tombs", title: "King of Sand Tombs", image: "/cards/fraktum-new/King of Sand Tombs.png", proposedPack: "egypt", sourceRarity: null, sourceRow: null, visualRarity: "legendary", rarityEvidence: "art_border", status: "playable_temporary_balance" },
+  { id: "mirage_well", title: "Mirage Well", image: "/cards/fraktum-new/Mirage Well.png", proposedPack: "egypt", sourceRarity: null, sourceRow: null, visualRarity: "rare", rarityEvidence: "art_border", status: "playable_temporary_balance" },
+  { id: "sun_scarab", title: "Sun Scarab", image: "/cards/fraktum-new/Sun Scarab.png", proposedPack: "egypt", sourceRarity: null, sourceRow: null, visualRarity: "common", rarityEvidence: "art_border", status: "playable_temporary_balance" },
   { id: "entropy", title: "Entropy", image: "/cards/fraktum-new/Entropy.png", proposedPack: "void", sourceRarity: "exotic", sourceRow: 113, visualRarity: "exotic", rarityEvidence: "primary_sheet", status: "playable_temporary_balance" },
   { id: "king_nem", title: "King NEM", image: "/cards/fraktum-new/King NEM.png", proposedPack: "void", sourceRarity: null, sourceRow: null, visualRarity: "legendary", rarityEvidence: "art_border", status: "playable_temporary_balance" },
   { id: "ray_of_creation", title: "Ray of Creation", image: "/cards/fraktum-new/Ray of Creation.png", proposedPack: "normal", sourceRarity: null, sourceRow: null, visualRarity: "forgotten", rarityEvidence: "user_confirmed", status: "playable_temporary_balance" },
@@ -74,7 +74,7 @@ export const SEASON_CANDIDATE_POOLS: Readonly<Record<SeasonPackCandidate, readon
   flame: SEASON_CARD_ARTWORK.filter((card) => card.proposedPack === "flame").map((card) => card.id),
   ice: SEASON_CARD_ARTWORK.filter((card) => card.proposedPack === "ice").map((card) => card.id),
   electric: SEASON_CARD_ARTWORK.filter((card) => card.proposedPack === "electric").map((card) => card.id),
-  desert: SEASON_CARD_ARTWORK.filter((card) => card.proposedPack === "desert").map((card) => card.id),
+  egypt: SEASON_CARD_ARTWORK.filter((card) => card.proposedPack === "egypt").map((card) => card.id),
   void: SEASON_CARD_ARTWORK.filter((card) => card.proposedPack === "void").map((card) => card.id),
   normal: SEASON_CARD_ARTWORK.filter((card) => card.proposedPack === "normal").map((card) => card.id),
 };
