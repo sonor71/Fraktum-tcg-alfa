@@ -35,11 +35,18 @@ describe("2026 uploaded season art integrity", () => {
     expect(new Set(poolIds)).toEqual(new Set(SEASON_CARD_ARTWORK.map((card) => card.id)));
   });
 
-  it("never makes cards with unapproved gameplay specs purchasable by accident", () => {
+  it("registers all season art in the live catalog with explicitly temporary mechanics", () => {
     for (const art of SEASON_CARD_ARTWORK) {
-      expect(art.status).toBe("art_uploaded_pending_gameplay_specs");
-      expect(CARDS_BY_ID[art.id]).toBeUndefined();
-      if (art.sourceRow == null) expect(art.sourceRarity).toBeNull();
+      const gameplayCard = CARDS_BY_ID[art.id];
+      expect(art.status).toBe("playable_temporary_balance");
+      expect(gameplayCard).toBeDefined();
+      expect(gameplayCard.image).toBe(art.image);
+      expect(gameplayCard.description).toContain("ТЕСТОВЫЕ ПАРАМЕТРЫ");
+      expect(gameplayCard.effectKey).toBe("season_basic_v1");
+      if (art.sourceRow == null) {
+        expect(art.sourceRarity).toBeNull();
+        expect(gameplayCard.rarity).toBe("common");
+      } else expect(gameplayCard.rarity).toBe(art.sourceRarity);
     }
   });
 

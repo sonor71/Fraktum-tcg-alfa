@@ -35,8 +35,8 @@ export default function SeasonCardsPreview() {
         <div>
           <span>FRAKTUM TCG • ГАЛЕРЕЯ НОВОГО СЕЗОНА</span>
           <h1>38 новых карт</h1>
-          <p>Предпросмотр загруженных изображений и предлагаемых паков.
-            Характеристики и эффекты ещё не утверждены. Карты пока не выпадают и не участвуют в матчах.</p>
+          <p>Все карты доступны в маркете и выпадают из паков.
+            Сейчас используются временные базовые характеристики без уникальных способностей — окончательный баланс ещё не утверждён.</p>
         </div>
       </header>
       <nav className="seasonPreviewFilters" aria-label="Предлагаемый пак">
@@ -56,7 +56,7 @@ export default function SeasonCardsPreview() {
             <strong>{card.title}</strong>
             <span>{CANDIDATE_PACK_LABELS[card.proposedPack]} · {card.sourceRarity
               ? RARITY_LABELS[card.sourceRarity]
-              : "Редкость не утверждена"}</span>
+              : "Временная редкость: обычная"}</span>
           </button>,
         )}
       </section>
@@ -67,11 +67,11 @@ export default function SeasonCardsPreview() {
             aria-label="Закрыть">×</button>
           <img src={selected.image} alt={selected.title} draggable={false} />
           <div><h2>{selected.title}</h2>
-            <p>Пак (предложение): {CANDIDATE_PACK_LABELS[selected.proposedPack]}</p>
+            <p>Пак: {CANDIDATE_PACK_LABELS[selected.proposedPack]}</p>
             <p>Редкость по первичной таблице: {selected.sourceRarity
               ? RARITY_LABELS[selected.sourceRarity]
               : "не подтверждена"}</p>
-            <p>Игровые характеристики: ожидают утверждения.</p>
+            <p>Игровые характеристики: временные. В матчах используется базовая атака 1 и 3 HP; Феликс Призма — персонаж с временными 20 HP. Уникальные способности пока не реализованы.</p>
           </div>
         </section>
       </div>}
