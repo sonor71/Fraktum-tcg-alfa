@@ -1,0 +1,26 @@
+.seasonPreview{min-height:100%;padding:28px clamp(12px,3vw,42px) 70px;color:#f9dda8;background:radial-gradient(ellipse at 50% 0,#43304c 0,#191423 63%,#0b0a12 100%)}
+.seasonPreview *{box-sizing:border-box}
+.seasonPreviewHeader{max-width:1320px;margin:0 auto 24px;display:flex;gap:28px;align-items:flex-start}
+.seasonPreviewHeader>button,.seasonPreviewFilters button,.seasonPreviewClose{flex:none;background:#302238;border:2px solid #c18e52;color:#fbd9a2;box-shadow:3px 3px 0 #0d0815;padding:10px 15px;cursor:pointer;font:inherit}
+.seasonPreviewHeader>div{max-width:850px}
+.seasonPreviewHeader span{font-size:12px;letter-spacing:.16em;color:#d5b887;font-weight:900}
+.seasonPreviewHeader h1{margin:10px 0 8px;font-size:clamp(26px,3.2vw,48px);color:#ffcd79;text-shadow:3px 4px #0b0914}
+.seasonPreviewHeader p{font-size:14px;line-height:1.6;color:#d7c8ce;margin:0}
+.seasonPreviewFilters{max-width:1320px;margin:0 auto 24px;display:flex;flex-wrap:wrap;gap:8px}
+.seasonPreviewFilters button{display:flex;align-items:center;gap:10px;padding:8px 11px;font-size:13px;font-weight:900}
+.seasonPreviewFilters button b{color:#fff3bd;border:1px solid #705365;padding:2px 5px}
+.seasonPreviewFilters button[aria-pressed="true"]{background:#68423b;border-color:#ffe0a0;box-shadow:0 0 15px #ffbf5a66,2px 3px 0 #0e0914}
+.seasonPreviewGrid{max-width:1320px;margin:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(154px,1fr));gap:17px}
+.seasonPreviewItem{display:flex;flex-direction:column;gap:8px;align-items:center;padding:13px 9px 12px;min-width:0;color:#f4d2a2;border:2px solid #775466;background:#191320da;box-shadow:3px 4px #0d0917;cursor:pointer;font:inherit;transition:transform .12s ease-out,border-color .12s}
+.seasonPreviewItem:hover,.seasonPreviewItem:focus-visible{transform:translateY(-4px);border-color:#ffd188;outline:none}
+.seasonPreviewArt{width:100%;height:180px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.seasonPreviewArt img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(1px 3px 3px #09060c)}
+.seasonPreviewItem strong{font-size:13px;text-align:center;line-height:1.35;overflow-wrap:anywhere}
+.seasonPreviewItem>span{font-size:11px;text-align:center;line-height:1.3;color:#bca9ae}
+.seasonPreviewModal{position:fixed;z-index:11000;inset:0;background:#07050bdd;display:grid;place-items:center;padding:20px}
+.seasonPreviewModal section{position:relative;display:flex;align-items:center;gap:30px;max-width:710px;width:100%;padding:26px;border:3px solid #bc8e5f;background:#25182c;color:#fce4bf;box-shadow:8px 10px #07050e}
+.seasonPreviewModal section>img{max-width:43%;max-height:68vh;object-fit:contain;image-rendering:pixelated}
+.seasonPreviewModal h2{font-size:23px;color:#ffda8e;overflow-wrap:anywhere}
+.seasonPreviewModal p{font-size:13px;line-height:1.5;color:#d5bec6}
+.seasonPreviewClose{position:absolute;top:5px;right:5px;padding:4px 10px;font-size:20px}
+@media(max-width:680px){.seasonPreviewHeader{display:block}.seasonPreviewHeader>button{margin-bottom:18px}.seasonPreviewGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.seasonPreviewArt{height:155px}.seasonPreviewModal section{display:block;text-align:center}.seasonPreviewModal section>img{max-width:72%;max-height:50vh}}
