@@ -15,6 +15,7 @@ import PlayModes from "./screens/PlayModes";
 import Profile from "./screens/Profile";
 import Settings from "./screens/Settings";
 import Shop from "./screens/Shop";
+import SeasonCardsPreview from "./screens/SeasonCardsPreview";
 import { syncSupabaseSessionFromLauncher } from "./services/supabaseClient";
 import Shell from "./ui/shell";
 
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/" element={<Menu />} />
           <Route path="/play" element={<PlayModes />} />
           <Route path="/inventory" element={<Inventory />} />
+          <Route path="/season-preview" element={<SeasonCardsPreview />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/deck" element={<Deck />} />
           <Route path="/deck-builder" element={<Navigate to="/deck" replace />} />
