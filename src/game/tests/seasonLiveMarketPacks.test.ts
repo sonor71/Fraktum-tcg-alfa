@@ -6,12 +6,12 @@ import { CARD_IDENTITIES, createUniqueCardId, getDefinitionIdByUniqueId } from "
 import { getWillCostByRarity } from "../rarityWillCost";
 import { matchesMarketCardSearch } from "../marketCatalog";
 import { loadCardDefinitions } from "../data/cards";
-import { PACKS } from "../../data/packs";
+import { PACKS, getPackById } from "../../data/packs";
 import { SEASON_CARD_ARTWORK } from "../../data/seasonCardArtwork";
 import { useGameStore } from "../../useGameStore";
 
 const ART = [...SEASON_CARD_ARTWORK];
-const PACK_GROUPS = ["flame", "ice", "electric", "desert", "void", "normal"] as const;
+const PACK_GROUPS = ["flame", "ice", "electric", "egypt", "void", "normal"] as const;
 
 describe("38 new FRAKTUM season cards: live market, booster and match registration", () => {
   afterEach(() => useGameStore.getState().resetProgress());
@@ -51,9 +51,10 @@ describe("38 new FRAKTUM season cards: live market, booster and match registrati
   it("distributes every artwork to its thematic booster and the mixed normal pack", () => {
     const all = PACKS.find(pack => pack.id === "normal");
     expect(all).toBeDefined();
-    const desert = PACKS.find(pack => pack.id === "desert");
-    expect(desert?.title).toBe("Пустынный пак");
-    expect(desert?.cardPool.length).toBeGreaterThanOrEqual(8);
+    const egypt = PACKS.find(pack => pack.id === "egypt");
+    expect(egypt?.title).toBe("Египетский пак");
+    expect(egypt?.cardPool.length).toBeGreaterThanOrEqual(15);
+    expect(PACKS.some(pack => String(pack.id) === "desert")).toBe(false);
 
     for (const pack of PACKS) {
       expect(new Set(pack.cardPool).size).toBe(pack.cardPool.length);
@@ -85,20 +86,48 @@ describe("38 new FRAKTUM season cards: live market, booster and match registrati
     expect(useGameStore.getState().ownedCards).toHaveLength(38);
   });
 
-  it("sells and opens a Desert booster, delivering five matching cards", () => {
-    const desert = PACKS.find(pack => pack.id === "desert")!;
-    const chosen = desert.cardPool.slice(0, 5);
+  it("sells and opens a Egyptian booster, delivering five matching cards", () => {
+    const egypt = PACKS.find(pack => pack.id === "egypt")!;
+    const chosen = egypt.cardPool.slice(0, 5);
     useGameStore.setState({ coins: 1000, free: 1000, cardSerials: {},
       ownedCards: [], pendingPackPurchases: {}, packOpenHistory: {} });
-    const session = useGameStore.getState().purchasePack("desert", desert.price);
+    const session = useGameStore.getState().purchasePack("egypt", egypt.price);
     expect(session).toBeTruthy();
-    const earned = useGameStore.getState().openPurchasedPack(session!, "desert", chosen);
+    const earned = useGameStore.getState().openPurchasedPack(session!, "egypt", chosen);
     expect(earned?.map(card => card.baseId)).toEqual(chosen);
     expect(earned).toHaveLength(5);
     for (const card of earned ?? []) {
-      expect(card.packId).toBe("desert");
+      expect(card.packId).toBe("egypt");
       expect(getDefinitionIdByUniqueId(card.instanceId)).toBe(card.baseId);
     }
     expect(useGameStore.getState().ownedCards).toHaveLength(5);
   });
+  it("maps legacy Desert links to Egypt without presenting duplicate packs", () => {
+    const egypt = getPackById("egypt");
+    expect(egypt.title).toBe("Египетский пак");
+    expect(getPackById("desert")).toBe(egypt);
+    expect(PACKS.filter(pack => pack.id === "egypt")).toHaveLength(1);
+    expect(PACKS.some(pack => String(pack.id) === "desert")).toBe(false);
+    for (const card of ART.filter(card => card.proposedPack === "egypt")) {
+      expect(egypt.cardPool).toContain(card.id);
+    }
+  });
+
+  it("honours a pre-merger Desert purchase after pack renaming", () => {
+    const egypt = getPackById("egypt");
+    useGameStore.setState({ coins: 1000, free: 1000, cardSerials: {},
+      ownedCards: [], pendingPackPurchases: {}, packOpenHistory: {} });
+    // A session bought on the old build still says "desert".
+    const session = useGameStore.getState().purchasePack("desert", egypt.price);
+    expect(session).toBeTruthy();
+    const ids = egypt.cardPool.slice(0, 5);
+    const issued = useGameStore.getState().openPurchasedPack(session!, "egypt", ids);
+    expect(issued?.map(card => card.baseId)).toEqual(ids);
+    expect(issued?.every(card => card.packId === "egypt")).toBe(true);
+    expect(useGameStore.getState().pendingPackPurchases[session!]).toBeUndefined();
+    // The same session cannot grant duplicate cards.
+    const repeated = useGameStore.getState().openPurchasedPack(session!, "egypt", ids);
+    expect(repeated?.map(card => card.instanceId)).toEqual(issued?.map(card => card.instanceId));
+  });
+
 });
