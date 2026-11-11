@@ -1028,7 +1028,11 @@ export const useGameStore = create<GameState>()(
         }
 
         const purchase = get().pendingPackPurchases[sessionId];
-        if (!purchase || purchase.packId !== packId || baseIds.length === 0) return null;
+        if (!purchase || baseIds.length === 0) return null;
+        // Legacy "desert" purchases remain redeemable after the Desert/Egypt merger.
+        // Other pack IDs still have to match exactly.
+        const isLegacyEgyptPurchase = purchase.packId === "desert" && packId === "egypt";
+        if (purchase.packId !== packId && !isLegacyEgyptPurchase) return null;
 
         const validBaseIds = baseIds.filter((baseId) => Boolean(CARDS_BY_ID[baseId]));
         if (validBaseIds.length !== baseIds.length) return null;
