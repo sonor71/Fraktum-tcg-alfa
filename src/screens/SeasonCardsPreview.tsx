@@ -54,9 +54,8 @@ export default function SeasonCardsPreview() {
           <button key={card.id} type="button" className="seasonPreviewItem" onClick={() => setSelected(card)}>
             <div className="seasonPreviewArt"><img src={card.image} alt={card.title} loading="lazy" draggable={false}/></div>
             <strong>{card.title}</strong>
-            <span>{CANDIDATE_PACK_LABELS[card.proposedPack]} · {card.sourceRarity
-              ? RARITY_LABELS[card.sourceRarity]
-              : "Временная редкость: обычная"}</span>
+            <span>{CANDIDATE_PACK_LABELS[card.proposedPack]} · {RARITY_LABELS[card.visualRarity]}
+              {card.rarityEvidence === "art_border" ? " · по рамке" : ""}</span>
           </button>,
         )}
       </section>
@@ -68,9 +67,10 @@ export default function SeasonCardsPreview() {
           <img src={selected.image} alt={selected.title} draggable={false} />
           <div><h2>{selected.title}</h2>
             <p>Пак: {CANDIDATE_PACK_LABELS[selected.proposedPack]}</p>
-            <p>Редкость по первичной таблице: {selected.sourceRarity
-              ? RARITY_LABELS[selected.sourceRarity]
-              : "не подтверждена"}</p>
+            <p>Редкость: {RARITY_LABELS[selected.visualRarity]}</p>
+            <p>Источник: {selected.rarityEvidence === "primary_sheet"
+              ? "исходная таблица FRAKTUM" : selected.rarityEvidence === "user_confirmed"
+              ? "подтверждение автора" : "цвет рамки PNG (предварительно)"}</p>
             <p>Игровые характеристики: временные. В матчах используется базовая атака 1 и 3 HP; Феликс Призма — персонаж с временными 20 HP. Уникальные способности пока не реализованы.</p>
           </div>
         </section>

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { CARDS, CARDS_BY_ID, getRandomCards } from "./game/cards";
+import { SEASON_CARD_ARTWORK } from "./data/seasonCardArtwork";
 import { createUniqueCardId, getDefinitionIdByUniqueId } from "./game/cardIdentity";
 import { getWillCostByRarity } from "./game/rarityWillCost";
 import { sanitizeDeckIds } from "./game/deckRules";
@@ -82,6 +83,8 @@ export type WillUpgradePreview = {
   maxWillCanUpgrade: boolean;
   regenCanUpgrade: boolean;
 };
+
+const SEASON_CARD_IDS = new Set(SEASON_CARD_ARTWORK.map((card) => card.id));
 
 const STARTER_COINS = 300;
 const WIN_MATCH_XP = 120;
@@ -712,10 +715,12 @@ function normalizePersistedState(persisted: unknown): ReturnType<typeof createIn
         edition: isFoil ? "foil_serial" : "serial",
         isFoil,
         isNew: rawCard.isNew,
-        marketValue:
-          typeof rawCard.marketValue === "number"
-            ? rawCard.marketValue
-            : calculateCardMarketValue(definition.rarity, isFoil),
+        // Correct earlier season cards bought when their rarity was provisionally common.
+        marketValue: SEASON_CARD_IDS.has(definition.id)
+          ? calculateCardMarketValue(definition.rarity, isFoil)
+          : (typeof rawCard.marketValue === "number"
+              ? rawCard.marketValue
+              : calculateCardMarketValue(definition.rarity, isFoil)),
       })
     );
   }

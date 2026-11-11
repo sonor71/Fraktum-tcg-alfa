@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { CARDS_BY_ID } from "../cards";
+import { getWillCostByRarity } from "../rarityWillCost";
 import { SEASON_CARD_ARTWORK, SEASON_CANDIDATE_POOLS } from "../../data/seasonCardArtwork";
 
 const cardFolder = resolve(process.cwd(), "public/cards/fraktum-new");
@@ -45,8 +46,14 @@ describe("2026 uploaded season art integrity", () => {
       expect(gameplayCard.effectKey).toBe("season_basic_v1");
       if (art.sourceRow == null) {
         expect(art.sourceRarity).toBeNull();
-        expect(gameplayCard.rarity).toBe("common");
-      } else expect(gameplayCard.rarity).toBe(art.sourceRarity);
+        expect(art.rarityEvidence).toBe(art.id === "ray_of_creation" ? "user_confirmed" : "art_border");
+        expect(gameplayCard.rarity).toBe(art.visualRarity);
+      } else {
+        expect(art.rarityEvidence).toBe("primary_sheet");
+        expect(gameplayCard.rarity).toBe(art.sourceRarity);
+      }
+      expect(gameplayCard.rarity).toBe(art.visualRarity);
+      expect(gameplayCard.cost).toBe(getWillCostByRarity(art.visualRarity));
     }
   });
 
