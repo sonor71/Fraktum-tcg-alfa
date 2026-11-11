@@ -10,7 +10,7 @@ const CANDIDATE_PACK_LABELS: Record<SeasonPackCandidate, string> = {
   flame: "Огонь",
   ice: "Лёд",
   electric: "Молния",
-  desert: "Пустыня",
+  egypt: "Египетский",
   void: "Бездна",
   normal: "Общий",
 };
@@ -20,7 +20,7 @@ const RARITY_LABELS: Record<string, string> = {
   exotic: "Экзотическая", divine: "Божественная",
   forgotten: "Забытая", archaic: "Архаичная",
 };
-const PACK_ORDER: readonly SeasonPackCandidate[] = ["flame", "ice", "electric", "desert", "void", "normal"];
+const PACK_ORDER: readonly SeasonPackCandidate[] = ["flame", "ice", "electric", "egypt", "void", "normal"];
 
 export default function SeasonCardsPreview() {
   const navigate = useNavigate();

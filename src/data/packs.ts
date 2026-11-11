@@ -1,4 +1,4 @@
-export type PackId = "egypt" | "ice" | "void" | "electric" | "flame" | "desert" | "normal";
+export type PackId = "egypt" | "ice" | "void" | "electric" | "flame" | "normal";
 
 export type PackMeta = {
   id: PackId;
@@ -14,11 +14,11 @@ export const PACKS: PackMeta[] = [
   {
     id: "egypt",
     title: "Египетский пак",
-    description: "Карты древних символов, пророчеств и артефактов.",
+    description: "Карты древних символов, песков, гробниц, миражей и артефактов. Египетский и пустынный пак — один набор.",
     artSrc: "/packs/egypt.png",
     fallbackArtSrc: "/packs/normal.png",
     price: 100,
-    cardPool: ["oracle", "caduceus", "sandstorm", "dragon_eye", "amulet_of_old_sage", "time_of_reckoning", "book_knowledge"],
+    cardPool: ["oracle", "caduceus", "sandstorm", "dragon_eye", "amulet_of_old_sage", "time_of_reckoning", "book_knowledge", "buried_obelisk", "caravan_of_the_last_night", "devouring_dune", "dune_scout", "glass_scorpion", "king_of_sand_tombs", "mirage_well", "sun_scarab"],
   },
   {
     id: "ice",
@@ -57,15 +57,6 @@ export const PACKS: PackMeta[] = [
     cardPool: ["fire", "excalibur", "phoenix_feather", "hand_of_god", "legendary_messenger", "valkyrie", "ashen_blade", "ashen_halo", "ember_imp", "fire_raven", "furnace_breath", "heart_of_the_caldera", "lava", "reliquary_of_the_war_sun", "volcano"],
   },
   {
-    id: "desert",
-    title: "Пустынный пак",
-    description: "Карты песков, древних гробниц и миражей. Новые карты пока используют тестовые боевые параметры.",
-    artSrc: "/packs/egypt.png",
-    fallbackArtSrc: "/packs/normal.png",
-    price: 100,
-    cardPool: ["buried_obelisk","caravan_of_the_last_night","devouring_dune","dune_scout","glass_scorpion","king_of_sand_tombs","mirage_well","sun_scarab"],
-  },
-  {
     id: "normal",
     title: "Обычный пак",
     description: "Смешанный набор карт для пополнения инвентаря и колоды.",
@@ -77,6 +68,6 @@ export const PACKS: PackMeta[] = [
 ];
 
 export function getPackById(id?: string | null) {
-  const normalizedId = id === "abyss" ? "void" : id;
+  const normalizedId = id === "abyss" ? "void" : id === "desert" ? "egypt" : id;
   return PACKS.find((pack) => pack.id === normalizedId) ?? PACKS.find((pack) => pack.id === "normal") ?? PACKS[0];
 }
