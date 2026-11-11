@@ -657,7 +657,7 @@ Stun_Gun: {
   // all 38 cards are purchased or pulled from boosters in one session.
   ...Object.fromEntries(SEASON_CARD_ARTWORK.map((card, index) => [card.id, {
     definitionId: card.id,
-    ruName: card.title,
+    ruName: card.id === "ray_of_creation" ? "Луч мироздания" : card.title,
     enName: card.title,
     image: card.image,
     rarity: ({
