@@ -136,6 +136,9 @@ export default function Inventory() {
           <span>КОЛЛЕКЦИЯ FRAKTUM</span>
           <h1>Инвентарь</h1>
         </div>
+        <button className="invDeckBtn" type="button" onClick={() => nav("/season-preview")}>
+          НОВЫЙ СЕЗОН · 38 КАРТ
+        </button>
         <button className="invDeckBtn" type="button" onClick={() => nav("/deck")}>
           КОЛОДА <span className="invDeckCount">{deckIds.length}</span>
         </button>
