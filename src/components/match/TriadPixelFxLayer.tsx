@@ -1,6 +1,6 @@
 import type { RefObject, CSSProperties } from "react";
 import { PixelVfxSprite, cardVfxKind, statusVfxKind, type PixelVfxKind } from "./PixelVfxSprite";
-import type { TriadSeat, TriadLane, TriadState, TriadCard } from "../../game/triad/triadEngine";
+import type { TriadLane, TriadState, TriadCard } from "../../game/triad/triadEngine";
 import { TRIAD_SEATS } from "../../game/triad/triadEngine";
 
 export type TriadVisualEvent = {
