@@ -127,7 +127,7 @@ export default function TriadMatchPage() {
       const ids = new Set(created.map((event) => event.id));
       setVisualEvents((current) => current.filter((event) => !ids.has(event.id)));
       visualTimers.current = visualTimers.current.filter((value) => value !== timer);
-    }, 820);
+    }, 2360);
     visualTimers.current.push(timer);
   }, [match]);
 
