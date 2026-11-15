@@ -1,0 +1,299 @@
+/* FRAKTUM: REFORGED — wooden pixel-art visual layer.
+ * UI textures go to public/ui/fraktum/{buttons,panels,icons,battle}.
+ * CSS-color fallbacks work even before installing the PNG pack.
+ * Visual-only: no changes to card rules, networking or engine state.
+ */
+
+:root {
+  --fr-bg: #120d0b;
+  --fr-bg-deep: #080605;
+  --fr-panel: #24170f;
+  --fr-panel-2: #382416;
+  --fr-panel-warm: #3a2416;
+  --fr-border: #765031;
+  --fr-border-soft: #56391e;
+  --fr-violet: #b99562;
+  --fr-violet-soft: #e3c28b;
+  --fr-gold: #caa15c;
+  --fr-gold-soft: #ffe8b1;
+  --fr-text: #f6e5c9;
+  --fr-muted: #d0bda0;
+  --fr-shadow: #070402;
+  --fr-font: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fr-wood: repeating-linear-gradient(0deg, transparent 0 19px, rgba(14,7,4,.25) 20px 22px, transparent 23px 45px), linear-gradient(115deg, #472b1b, #281810 46%, #3c2619);
+}
+html, body { background: #120d0b; color: var(--fr-text); }
+img { image-rendering: pixelated; }
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible { outline-color: #ffe1a0; outline-offset: 3px; }
+.coreShell, .coreShell--match { background: #120d0b !important; color: var(--fr-text); }
+.coreShellHeader {
+  background: linear-gradient(180deg,#392318,#170d09) !important;
+  border-bottom: 3px solid #8d613b !important;
+  box-shadow: inset 0 -2px 0 #130905, 0 5px 0 #090503 !important;
+}
+.coreBrand { color:#ffdc92 !important; text-shadow:2px 2px #231206; }
+.coreBrand span { color:#cfad76 !important; }
+.coreShellContent:not(.coreShellContent--match) {
+  background: radial-gradient(ellipse at 50% 0, rgba(141,93,50,.16), transparent 50%), var(--fr-wood) !important;
+  background-attachment: fixed;
+}
+.coreNavButton, .coreSettings {
+  display: inline-flex; gap: 7px; align-items: center; justify-content: center;
+  border: 2px solid #624126 !important; color:#e8d1aa !important;
+  background:linear-gradient(#3d281a,#26180f) !important;
+  box-shadow: inset 0 1px #8c6437, 2px 3px #0b0603 !important;
+  transition: transform 130ms ease, filter 130ms ease, border-color 130ms ease;
+}
+.coreNavButton:hover, .coreSettings:hover, .coreNavButton.is-active, .coreSettings.is-active {
+  border-color:#e6b66a !important; background:linear-gradient(#684628,#392415) !important;
+  color:#ffedc0 !important; filter:brightness(1.12);
+}
+.coreNavButton[data-icon]::before, .coreMenuAction[data-icon]::before {
+  content:""; display:inline-block; flex:none; width:19px; height:19px;
+  background-repeat:no-repeat; background-position:center; background-size:contain; image-rendering:pixelated;
+}
+.coreNavButton[data-icon="home"]::before { background-image:url("/ui/fraktum/icons/icon_scroll.png"); }
+.coreNavButton[data-icon="play"]::before, .coreMenuAction[data-icon="play"]::before { background-image:url("/ui/fraktum/icons/icon_sword.png"); }
+.coreNavButton[data-icon="inventory"]::before, .coreMenuAction[data-icon="inventory"]::before { background-image:url("/ui/fraktum/icons/icon_bag.png"); }
+.coreNavButton[data-icon="market"]::before, .coreMenuAction[data-icon="market"]::before { background-image:url("/ui/fraktum/icons/icon_coin.png"); }
+.coreNavButton[data-icon="shop"]::before, .coreMenuAction[data-icon="shop"]::before { background-image:url("/ui/fraktum/icons/icon_chest.png"); }
+.coreNavButton[data-icon="clubs"]::before, .coreMenuAction[data-icon="clubs"]::before { background-image:url("/ui/fraktum/icons/icon_shield.png"); }
+.coreNavButton[data-icon="profile"]::before, .coreMenuAction[data-icon="profile"]::before { background-image:url("/ui/fraktum/icons/icon_star.png"); }
+.coreMenuAction[data-icon]::before { float:left; width:32px; height:32px; margin:1px 15px 0 0; }
+
+.coreMenuRoot {
+  background:radial-gradient(ellipse at 50% 20%,#52331f 0,#26170f 56%,#100907 100%) !important;
+  isolation:isolate;
+}
+.coreMenuBackdrop {
+  opacity:.38 !important;
+  background-image: repeating-linear-gradient(90deg,rgba(22,11,5,.05) 0 2px,transparent 2px 22px), var(--fr-wood) !important;
+  background-size:auto !important;
+}
+.coreMenuPanel {
+  border: 5px solid #94673e !important;
+  background:linear-gradient(140deg,rgba(55,33,19,.98),rgba(24,13,8,.99)) !important;
+  box-shadow:inset 0 0 0 3px #29170c,inset 0 0 35px #0e0905,9px 10px 0 #0c0603 !important;
+}
+.coreMenuHeading p { color:#dbb16b !important; }
+.coreMenuHeading h1 { color:#ffe5a4 !important; text-shadow:3px 4px #482612 !important; }
+.coreMenuHeading span { color:#ddc6a4 !important; }
+.coreMenuAction {
+  position:relative; overflow:hidden;
+  border:3px solid #926034 !important;
+  background: repeating-linear-gradient(0deg,transparent 0 22px,rgba(13,6,2,.18) 23px 25px), linear-gradient(140deg,#5b3923,#342015) !important;
+  box-shadow:inset 0 2px #a77a49, inset 0 -3px #1b0d06, 4px 5px #0a0503 !important;
+  color:#ffebcb !important;
+  transition:transform .16s ease,filter .16s ease,box-shadow .16s ease !important;
+}
+.coreMenuAction.is-primary {
+  border-color:#e4ae57 !important;
+  background:linear-gradient(115deg,#754827,#4b2917) !important;
+  box-shadow:inset 0 2px #f1bd75,4px 5px #1d0f06 !important;
+}
+.coreMenuAction:hover {
+  transform:translate(-2px,-3px) !important; filter:brightness(1.18);
+  border-color:#f4cc80 !important; box-shadow:inset 0 2px #f1bd75,6px 7px #0a0503 !important;
+}
+.coreMenuAction:active {transform:translate(1px,1px) !important;}
+.coreMenuAction strong { color:#fff0bc !important; text-shadow:1px 2px #281408; }
+.coreMenuAction span { color:#e5cda9 !important; }
+.coreMenuSettings { border:2px solid #8d623b !important; background:#342014 !important; color:#f1d3a4 !important; }
+
+/* Panels: use CSS 9-slice-style borders without distorting the 32px art. */
+.glass-panel,.invTabletV2,.invCraftPanelV2,.deckLeft,.deckRight,.shopCard,
+.marketHero,.marketStats,.marketInventoryPanel,.marketCreatePanel,.marketAuctionsPanel,
+.marketBackendNote,.clubsHeader,.clubsPanel,.playCardV2,.profileSyncBanner,.profile-card,
+.invCardSheet,.marketSelectedCard,.marketInventoryCard,.auctionRow,.onlineMatchmakingCard,
+.demo-page .glass-panel {
+  border:3px solid #765031 !important; border-radius:2px !important;
+  background:linear-gradient(145deg,rgba(56,34,20,.98),rgba(22,13,9,.98)) !important;
+  box-shadow:inset 0 0 0 2px rgba(188,132,67,.15),5px 6px 0 #0c0603 !important;
+  backdrop-filter:none !important;
+}
+.invV2Header h1,.playTitle,.page-head h1,.marketHero h1,.clubsHeader h1,
+.coreMenuHeading h1 { color:#ffe0a1 !important; text-shadow:2px 3px #41220e !important; }
+.invV2Header>div>span,.playKicker,.page-head p,.marketKicker,.clubsHeader p {
+  color:#edbd79 !important;
+}
+.invV2Tabs button,.marketTabs button,.clubsTab,.playDeckStatus,
+.invDeckBtn,.deckBtn,.shopBack,.buyBtn,.marketGhostBtn,.marketPrimaryBtn,
+.marketDangerBtn,.demo-page button,.page-head button,.playActionBtn,
+.invCraftRowV2 button,.invSheetActions button {
+  border:2px solid #82552f !important; border-radius:0 !important;
+  background:linear-gradient(#684426,#342114) !important; color:#ffebc2 !important;
+  box-shadow:inset 0 2px rgba(255,223,163,.16),2px 3px #100903 !important;
+  text-shadow:1px 1px #29170b; transition:filter .15s ease,transform .15s ease;
+}
+.invV2Tabs button:hover,.marketTabs button:hover,.clubsTab:hover,
+.playDeckStatus:hover,.invDeckBtn:hover,.deckBtn:hover,.buyBtn:hover,
+.playActionBtn:hover,.marketPrimaryBtn:hover,.marketGhostBtn:hover,
+.demo-page button:hover:not(:disabled) { filter:brightness(1.18); transform:translateY(-1px); }
+.playActionBtn,.invSheetActions button.is-primary,.marketPrimaryBtn,
+.matchGoldButton,.matchPlayerActionZone .is-end-turn:not(:disabled) {
+  border:2px solid #ffdb89 !important;
+  color:#281607 !important; text-shadow:none !important;
+  background:linear-gradient(#ffe59b,#d4a454 62%,#9d6731) !important;
+}
+button:disabled { filter:saturate(.55); }
+.invV2Tabs button.is-active,.marketTabs button.is-active,.clubsTab.is-active {
+  border-color:#f3cc80 !important; color:#ffe8a2 !important;
+  background:linear-gradient(#936536,#4f301a) !important;
+}
+.invSearch input,.invRarityFilter select,.marketFilters input,.marketFilters select,
+.marketField input,.marketField select,.demo-page input,.demo-page select,.demo-page textarea,
+.profile-card input,.onlineFriendJoin input,.triad-chat input,.triad-lobby input {
+  border:2px solid #825830 !important; background:#1a100b !important;
+  color:#ffead0 !important; border-radius:0 !important;
+}
+.invSearch input:focus,.marketFilters input:focus,.marketField input:focus,
+.demo-page input:focus,.onlineFriendJoin input:focus { border-color:#f3bd71 !important; }
+.shopBalance,.shopNotice,.marketNotice,.marketEmpty,.marketBackendNote,.shopCard {
+  color:#f0dbbd !important;
+}
+.shopBalance::before {
+  content:"";display:inline-block;width:19px;height:19px;vertical-align:middle;
+  margin-right:6px;background:url("/ui/fraktum/icons/icon_coin.png") center / contain no-repeat;
+  image-rendering:pixelated;
+}
+.packArt img,.invCardImg,.marketInventoryCard img,.deckRoot img { image-rendering:pixelated; }
+
+/* Match 1v1: clean, warm wooden tabletop; card and hero overlays stay legible. */
+.matchPage {
+  color:#f6e7c9 !important;
+  background:radial-gradient(ellipse at top,#51311f,#1b110b 70%,#090603) !important;
+}
+.matchBackdrop {opacity:0 !important;pointer-events:none;}
+.matchArenaShell {
+  border:5px solid #8b5b31 !important;
+  background:linear-gradient(rgba(24,13,6,.15),rgba(24,13,6,.27)),
+    url("/ui/fraktum/battle/arena_1v1.png") center / 100% 100% no-repeat,
+    var(--fr-wood) !important;
+  box-shadow:inset 0 0 0 4px #241308,0 16px 0 #100804,0 28px 45px #080403 !important;
+}
+.matchArenaFrame {opacity:.12 !important;}
+.matchArenaFrame::after {display:none !important;}
+.matchArenaTopbar,.matchOpponentProfile,.matchHeroPanel,.matchWillStrip,.matchActionStatus,
+.matchD20Help,.matchWinnerCard,.fateRoulettePanel,.matchBattleLog,.matchBonusSlot,
+.matchContextBanner,.matchRouletteNotice,.matchBattleClock {
+  border:2px solid #8d613d !important; border-radius:2px !important;
+  background:linear-gradient(160deg,rgba(56,33,18,.98),rgba(20,12,8,.97)) !important;
+  box-shadow:inset 0 1px rgba(255,221,150,.20),3px 4px 0 rgba(13,6,3,.8) !important;
+}
+.matchBoardPanel {
+  border:2px solid rgba(183,135,76,.45) !important;
+  background:rgba(33,18,9,.13) !important;
+  box-shadow:inset 0 0 22px rgba(22,9,3,.20) !important;
+  border-radius:2px !important;
+}
+.matchBoardPanel::before {border-color:rgba(232,189,110,.11) !important;border-radius:0 !important;box-shadow:none !important;}
+.matchBoardSlot {
+  border:2px solid #8f6742 !important;
+  border-radius:2px !important;
+  background:repeating-linear-gradient(45deg,rgba(255,229,165,.03) 0 3px,transparent 3px 6px), rgba(18,9,5,.39) !important;
+  box-shadow:inset 0 0 0 2px rgba(13,6,2,.6),inset 0 0 18px rgba(5,2,1,.32) !important;
+  transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease !important;
+}
+.matchBoardSlot:hover,.matchBoardSlot.is-valid,.matchBoardSlot.is-drag-over {
+  border-color:#ffd989 !important;transform:translateY(-1px);
+  box-shadow:inset 0 0 0 2px rgba(242,189,96,.20),0 0 13px rgba(255,211,118,.35) !important;
+}
+.matchBoardSlot.has-status-alpha_frozen { border-color:#a9e6fa !important;box-shadow:0 0 14px rgba(95,208,250,.30) !important; }
+.matchSlotRune {display:none !important;}
+.matchSlotNumber,.matchSlotHint {color:#c2a27b !important;}
+.matchSlotStateTag {
+  border:1px solid #bf8d50 !important; border-radius:2px !important;
+  background:rgba(25,14,8,.95) !important;color:#ffe8b8 !important;
+}
+.matchPlayerActionZone .is-end-turn:not(:disabled):hover,.matchGoldButton:hover:not(:disabled) {filter:brightness(1.12);}
+.matchBackButton,.matchGhostButton,.matchD20HelpButton,.matchPlayerActionZone button,
+.matchWinnerActions button {
+  border:2px solid #8b623b !important; border-radius:2px !important;
+  background:linear-gradient(#55341e,#2a170e) !important; color:#ffedcd !important;
+  box-shadow:inset 0 1px #b2844b,2px 3px #110804 !important;
+}
+.matchPlayerActionZone .is-end-turn:not(:disabled),.matchGoldButton {
+  color:#261607 !important;background:linear-gradient(#ffe29b,#cf994f) !important;
+}
+.matchHeroPortrait {border-color:#bf8c4d !important; border-radius:2px !important;}
+.matchVerticalHpFill {background:linear-gradient(180deg,#ffc0a5,#e64a49 30%,#8b1e1d) !important;box-shadow:0 0 10px rgba(215,60,50,.25) !important;}
+.matchShieldMeter span {background:linear-gradient(180deg,#e4fbff,#73bde9 35%,#305a9a) !important;}
+.matchWillTrack {border-radius:2px !important;background:#1a100a !important;}
+.matchWillFill {border-radius:1px !important;background:linear-gradient(90deg,#a36d28,#ffdb7c) !important;}
+.matchPhaseBadge,.matchContextBanner,.matchRouletteNotice {color:#ffe2a6 !important;border-color:#a27043 !important;}
+.matchSeriesHud {
+  left:1.8% !important;top:2.1% !important;transform:none !important;
+  width:min(19%,320px) !important;z-index:18 !important;
+  border-color:#986d43 !important;background:rgba(35,19,10,.96) !important;
+  box-shadow:3px 4px #0c0603 !important;
+}
+.matchSeriesHud span,.matchSeriesHud small {color:#d1b08a !important;}
+.matchD20Zone {background:radial-gradient(ellipse,rgba(254,193,100,.15),transparent 72%) !important;}
+.matchD20.fraktumD20 {
+  border-color:#bb874b !important;
+  background:radial-gradient(circle,#7c4f27,#271409 72%) !important;
+  box-shadow:0 0 16px rgba(230,166,73,.25),inset 0 0 18px #1b0d06 !important;
+}
+.matchBattleLog li,.matchBattleLog .matchPanelTitle {color:#e7cfad !important;}
+.matchEnemyArcLine {border-top-color:rgba(202,152,87,.32) !important;}
+.matchHandZone,.matchPlayerHandZone {color:#f7e5c7;}
+.matchCardView,.playerHandCard,.enemyHandCard img {image-rendering:pixelated;}
+
+/* Triad: preserve slots/turn logic; replace only materials, lines and controls. */
+.triad-page {
+  color:#f9e5bc !important;
+  background:radial-gradient(ellipse at 50% 10%,#4b2c1a,#120b07 72%) !important;
+}
+.triad-arena {
+  border:5px solid #95643c !important;outline:3px solid #241307 !important;
+  background:linear-gradient(rgba(35,18,7,.09),rgba(35,18,7,.24)),
+    url("/ui/fraktum/battle/arena_1v1.png") center / 100% 100% no-repeat,
+    var(--fr-wood) !important;
+  box-shadow:inset 0 0 0 4px #27170c,0 12px 0 #100804 !important;
+}
+.triad-arena::before {border-color:rgba(226,179,107,.25) !important;background:none !important;}
+.triad-arena::after {border-color:rgba(226,179,107,.17) !important;box-shadow:none !important;}
+.triad-player-block,.triad-deck-zone,.triad-discard-zone,.triad-controls,
+.triad-log,.triad-chat,.triad-lobby {
+  border:2px solid #9a6e42 !important;
+  background:linear-gradient(150deg,rgba(68,42,25,.93),rgba(25,14,8,.94)) !important;
+  box-shadow:inset 0 0 0 2px #2a170b,3px 4px #110905 !important;
+}
+.triad-player-block.is-active {border-color:#ffe1a0 !important;box-shadow:0 0 15px #ffa94b65 !important;}
+.triad-player-title {color:#ffe3ab !important;}
+.triad-player-title b {color:#ffeaca !important;background:#382315 !important;border-color:#8a653f !important;}
+.triad-slot {
+  border:2px solid #936a43 !important;
+  background:rgba(22,12,6,.55) !important;
+  box-shadow:inset 0 0 0 2px #281507 !important;
+}
+.triad-slot.is-ready {border-color:#ffdd8b !important;box-shadow:0 0 11px #ffd2748c !important;}
+.triad-slot.is-filled {border-color:#c99d68 !important;}
+.triad-back,.triad-hand-card {
+  border-color:#b18b59 !important;background:#392316 !important;
+  box-shadow:3px 3px #140a05 !important;
+}
+.triad-hand-card.is-selected {border-color:#ffe39a !important;transform:translateY(-9px);}
+.triad-fate-triangle {background:linear-gradient(150deg,#9e7439,#503017) !important;border-top-color:#ffd98a !important;filter:none !important;}
+.triad-d20 {background:linear-gradient(140deg,#ffe0a1,#a8793d,#523016) !important;color:#241609 !important;text-shadow:none !important;}
+.triad-topbar button,.triad-controls button,.triad-lobby button,.triad-chat button {
+  border-color:#c79a5b !important;background:linear-gradient(#694526,#332015) !important;color:#ffefcb !important;
+}
+.triad-topbar button:hover,.triad-controls button:hover,.triad-lobby button:hover,.triad-chat button:hover {filter:brightness(1.15);}
+.triad-center-device small,.triad-center-device b {border-color:#b78a56 !important;background:rgba(34,20,12,.95) !important;}
+
+/* Keep interface accessible on touch and compact screens. */
+@media (max-width:760px) {
+  .coreMenuPanel {padding:18px !important;}
+  .coreMenuAction {min-height:92px !important;}
+  .coreMenuAction[data-icon]::before {width:26px;height:26px;margin-right:10px;}
+  .coreNavButton[data-icon]::before {width:16px;height:16px;}
+  .matchSeriesHud {display:none !important;}
+  .matchBoardPanel {padding:6px !important;}
+  .matchBoardSlot {border-width:1px !important;}
+  .triad-player-block,.triad-slot,.triad-controls {border-width:1px !important;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .coreMenuAction,.coreNavButton,.coreSettings,.matchBoardSlot,
+  .triad-hand-card {transition:none !important;}
+}
