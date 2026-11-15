@@ -1,0 +1,750 @@
+/* FRAKTUM UI REFORGED V2 — consistent pixel design and contrast.
+ * Loaded AFTER fraktum-reforged.css.
+ * Key fix: the original pixel border-image used "fill"; this made the entire
+ * panel/button bright yellow and left pale captions unreadable.
+ * Sprite borders still render, but center pixels are NOT copied.
+ * No state/engine changes. All backgrounds, controls and health bars are CSS.
+ */
+/* Press Start 2P: SIL Open Font License 1.1; includes Russian Cyrillic.
+ * External CSS is optional: offline users retain a readable monospace fallback. */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+:root {
+  --fr-bg:#100e12;
+  --fr-bg-deep:#09090c;
+  --fr-panel:#1c1a22;
+  --fr-panel-2:#27252e;
+  --fr-panel-warm:#30251e;
+  --fr-border:#84654b;
+  --fr-border-soft:#624c3f;
+  --fr-violet:#679b97;
+  --fr-violet-soft:#9ed8cf;
+  --fr-gold:#c09b65;
+  --fr-gold-soft:#f4d6a5;
+  --fr-text:#f3e5d5;
+  --fr-muted:#c7b5a5;
+  --fr-shadow:#08070a;
+  --fr-font:"Press Start 2P", "Courier New", monospace;
+  --fr-body: "Courier New", Consolas, monospace;
+  --fr-title: "Press Start 2P", Consolas, monospace;
+  --fr-wood:repeating-linear-gradient(0deg, transparent 0 23px, rgba(8,6,8,.19) 24px 26px, transparent 27px 48px), linear-gradient(115deg,#30241f,#181519 50%,#292020);
+  --ref-paper:#f2dcb9;
+  --ref-soft:#c9b7a8;
+  --ref-teal:#80d7ca;
+  --ref-teal-dark:#2b5d5b;
+  --ref-shadow:#09090d;
+  --ref-panel:linear-gradient(145deg,#27232a 0%,#17151d 100%);
+  --ref-button:linear-gradient(180deg,#343039 0%,#211e27 100%);
+  --ref-button-active:linear-gradient(180deg,#345453,#24413f 100%);
+}
+html,body,#root,.coreShell,.coreShell--match {
+  background:#100e12 !important;
+  color:var(--ref-paper) !important;
+}
+html,body,.coreShell,
+.coreShellContent,.coreShellContent *,.matchPage,.triad-page,.hpo-root,
+.fraktumPassport {font-family:var(--fr-body);}
+button,input,select,textarea {font-family:var(--fr-body);}
+input,select,textarea {font-size:14px;letter-spacing:.01em;}
+p,small,label,span {text-wrap:pretty;}
+img,.coreShell button,.matchPage button,.triad-page button {
+  image-rendering:pixelated;
+}
+/* Restore proper nine-slice behaviour without filling with yellow sheet interior. */
+.coreMenuPanel,.shopCard,.glass-panel,.invTabletV2,.deckLeft,.deckRight,
+.playCardV2,.clubsPanel,.clubsHeader,.profile-card,.marketHero,.marketStats,
+.matchHeroPanel,.matchOpponentProfile,.matchArenaTopbar,.matchActionStatus,
+.matchWinnerCard,.matchBattleLog,.matchWillStrip,.triad-player-block,
+.triad-log,.triad-chat,.triad-lobby {
+  border-image-slice:7 !important;
+}
+.coreMenuAction,.coreNavButton,.coreSettings,.coreMenuSettings,
+.playActionBtn,.buyBtn,.marketPrimaryBtn,.marketGhostBtn,.invDeckBtn,.deckBtn,
+.matchGhostButton,.matchGoldButton,.matchBackButton,.matchD20HelpButton,
+.triad-topbar button,.triad-controls button,.triad-lobby button {
+  border-image-slice:5 8 5 8 !important;
+}
+/* Non-intrusive sprite borders, no painted center; distinct dark/active surfaces. */
+.coreMenuPanel,.glass-panel,.invTabletV2,.invCraftPanelV2,.deckLeft,.deckRight,
+.shopCard,.marketHero,.marketStats,.marketInventoryPanel,.marketCreatePanel,
+.marketAuctionsPanel,.marketBackendNote,.clubsHeader,.clubsPanel,
+.playCardV2,.profileSyncBanner,.profile-card,.invCardSheet,
+.marketInventoryCard,.auctionRow,.onlineMatchmakingCard,
+.matchHeroPanel,.matchArenaTopbar,.matchBoardPanel,.matchActionStatus,
+.matchBattleLog,.matchWillStrip,.matchWinnerCard,.matchOpponentProfile,
+.fateRoulettePanel,.triad-player-block,.triad-lobby,.triad-log,.triad-chat,
+.hpo-brandBlock,.hpo-progressBlock,.fraktumPassport {
+  background:var(--ref-panel) !important;
+  color:var(--ref-paper) !important;
+  border-color:var(--fr-border) !important;
+  box-shadow:inset 0 0 0 1px rgba(211,171,118,.08),4px 5px 0 var(--ref-shadow) !important;
+}
+.coreShellContent:not(.coreShellContent--match) {
+  color:var(--ref-paper) !important;
+  background:radial-gradient(ellipse at 50% -18%,rgba(81,65,62,.3),transparent 56%),
+  repeating-linear-gradient(0deg,transparent 0 44px,rgba(5,5,8,.13) 45px 47px),
+  linear-gradient(125deg,#231e21 0%,#100e14 80%) !important;
+  background-attachment:fixed !important;
+}
+.coreShellHeader {
+  border-bottom:3px solid #86644a !important;
+  background:linear-gradient(#2d2525,#16141a) !important;
+  box-shadow:0 4px 0 #09070a !important;
+}
+.coreBrand {
+  font-family:var(--fr-title) !important;
+  font-size:clamp(12px,1.2vw,17px) !important;
+  color:#f4d7a7 !important;
+  background:#201b20 !important;
+  border:2px solid #83624b !important;
+  text-shadow:2px 2px #09070b !important;
+}
+.coreBrand span {font-family:var(--fr-body) !important;font-size:9px !important;color:#cfb9a5 !important;}
+.coreNavButton,.coreSettings {
+  font:400 clamp(9px,.72vw,11px)/1.5 var(--fr-body) !important;
+  background:var(--ref-button) !important;
+  border:2px solid #775d4b !important;
+  color:#ecd9c5 !important;
+  box-shadow:inset 0 1px #4f4140,2px 3px #09080c !important;
+  text-shadow:none !important;
+}
+.coreNavButton:hover,.coreSettings:hover,
+.coreNavButton.is-active,.coreSettings.is-active {
+  background:var(--ref-button-active) !important;
+  border-color:#a8d2bb !important;
+  color:#f7ffe9 !important;
+  box-shadow:inset 0 1px #72aba3,2px 3px #07090b !important;
+}
+.coreNavButton[data-icon]::before {width:18px;height:18px;}
+.coreSettings {color:#eac58d !important;}
+/* Home screen: dark wooden frame, teal primary, muted brass icons. */
+.coreMenuRoot {
+  background:radial-gradient(ellipse at center top,rgba(90,65,51,.33),transparent 58%),
+  linear-gradient(135deg,#261d1b,#0f1016) !important;
+}
+.coreMenuBackdrop {
+  opacity:.22 !important;
+  background:repeating-linear-gradient(90deg,transparent 0 36px,#4f3a2a14 37px 38px),
+  repeating-linear-gradient(0deg,transparent 0 36px,#382e2b18 37px 38px) !important;
+}
+.coreMenuPanel {
+  border:4px solid #85634d !important;
+  border-image-source:url("/ui/fraktum/panels/panel_main.png") !important;
+  border-image-slice:7 !important;
+  border-image-width:8px !important;
+  background:linear-gradient(145deg,#252026,#17141a) !important;
+  box-shadow:inset 0 0 0 3px #332b2d,8px 10px #08070a !important;
+}
+.coreMenuHeading p {
+  color:#be9e76 !important;font:400 10px/1.5 var(--fr-title) !important;
+  letter-spacing:1.5px !important;
+}
+.coreMenuHeading h1 {
+  color:#f0ddc5 !important;
+  font:400 clamp(15px,2vw,25px)/1.5 var(--fr-title) !important;
+  letter-spacing:0 !important;text-shadow:3px 3px #0c0b0e !important;
+  overflow-wrap:anywhere;
+}
+.coreMenuHeading span {
+  color:#c8b8aa !important;
+  font:400 clamp(12px,1.05vw,14px)/1.65 var(--fr-body) !important;
+}
+.coreMenuAction,.coreMenuAction.is-primary {
+  position:relative;
+  border:3px solid #806348 !important;
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_idle.png") !important;
+  border-image-slice:5 8 5 8 !important;
+  background:linear-gradient(135deg,#343037,#211e26) !important;
+  color:#f0e3d0 !important;
+  box-shadow:inset 0 0 0 1px #4e4038,4px 5px #07070b !important;
+}
+.coreMenuAction.is-primary {
+  border-color:#77b6ab !important;
+  background:linear-gradient(120deg,#2f5251,#1c3134) !important;
+  box-shadow:inset 0 0 0 1px #568e86,4px 5px #07070b !important;
+}
+.coreMenuAction:hover {
+  transform:translate(-2px,-2px) !important;
+  border-color:#cda77e !important;
+  background:linear-gradient(135deg,#484047,#2c2931) !important;
+  box-shadow:inset 0 0 0 1px #6f5b4a,6px 7px #07070b !important;
+}
+.coreMenuAction.is-primary:hover {
+  border-color:#b5f3e7 !important;
+  background:linear-gradient(135deg,#3b6a65,#244340) !important;
+}
+.coreMenuAction strong {
+  font:400 clamp(11px,1vw,14px)/1.6 var(--fr-title) !important;
+  color:#fff0da !important;text-shadow:2px 2px #100d12 !important;
+  letter-spacing:0 !important;
+}
+.coreMenuAction span {
+  font:400 clamp(12px,1vw,14px)/1.5 var(--fr-body) !important;
+  color:#d7c7b8 !important;text-shadow:none !important;
+}
+.coreMenuAction[data-icon]::before {filter:drop-shadow(2px 2px #0d0d13);width:32px;height:32px;}
+.coreMenuSettings {
+  font:400 10px var(--fr-title) !important;
+  padding:13px 17px !important;
+  border:2px solid #887057 !important;
+  background:#2c282e !important;color:#f0e4d3 !important;
+  text-shadow:none !important;
+}
+/* All reusable actions now use one dark, high-contrast pixel shape. */
+:where(.invRoot,.playRoot,.deckRoot,.shopRoot,.marketRoot,.demo-page,.profilePage,.clubsPage) button,
+.marketPrimaryBtn,.marketGhostBtn,.marketDangerBtn,.playActionBtn,.deckBtn,
+.shopBack,.buyBtn,.invDeckBtn,.invCraftRowV2 button,.invSheetActions button {
+  border-radius:2px !important;
+  border:2px solid #947454 !important;
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_idle.png") !important;
+  border-image-slice:5 8 5 8 !important;
+  border-image-width:5px 7px !important;
+  background:var(--ref-button) !important;
+  color:#f1e2ce !important;
+  text-shadow:1px 1px #101014 !important;
+  box-shadow:inset 0 1px rgba(210,169,112,.1),2px 3px var(--ref-shadow) !important;
+  transition:background .15s ease,filter .15s ease,transform .15s ease !important;
+}
+:where(.invRoot,.playRoot,.deckRoot,.shopRoot,.marketRoot,.demo-page,.profilePage,.clubsPage) button:hover:not(:disabled),
+.marketPrimaryBtn:hover:not(:disabled),.marketGhostBtn:hover:not(:disabled),
+.playActionBtn:hover:not(:disabled),.deckBtn:hover:not(:disabled),
+.shopBack:hover:not(:disabled),.buyBtn:hover:not(:disabled) {
+  background:linear-gradient(180deg,#464047,#28262e) !important;
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_hover.png") !important;
+  color:#fff3dd !important;filter:brightness(1.07);
+}
+:where(.invRoot,.playRoot,.deckRoot,.shopRoot,.marketRoot,.demo-page,.profilePage,.clubsPage) button:active:not(:disabled) {
+  transform:translateY(2px) !important;
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_pressed.png") !important;
+}
+:where(.invRoot,.playRoot,.deckRoot,.shopRoot,.marketRoot,.demo-page,.profilePage,.clubsPage) button:disabled {
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_disabled.png") !important;
+  opacity:.55 !important;cursor:not-allowed !important;
+}
+.playActionBtn,.marketPrimaryBtn,.invSheetActions button.is-primary,
+.playDeckStatus.is-ready,.marketBuyButton:not(:disabled) {
+  border-color:#80c5b5 !important;
+  background:var(--ref-button-active) !important;
+  color:#f1f9e9 !important;
+}
+.playActionBtn:hover:not(:disabled),.marketPrimaryBtn:hover:not(:disabled),
+.marketBuyButton:hover:not(:disabled) {
+  background:linear-gradient(#426e69,#284846) !important;
+}
+:where(.invRoot,.playRoot,.deckRoot,.shopRoot,.marketRoot,.demo-page,.profilePage,.clubsPage)
+:is(h1,h2,h3),.page-head h1,.playModeTitle,.marketHero h1,.clubsHeader h1 {
+  color:#efdbbc !important;text-shadow:2px 2px #0b0b10 !important;
+  font-family:var(--fr-title) !important;
+  font-weight:400 !important;
+  line-height:1.55 !important;
+  letter-spacing:0 !important;
+}
+:where(.invRoot,.playRoot,.deckRoot,.shopRoot,.marketRoot,.demo-page,.profilePage,.clubsPage)
+:is(h1) {font-size:clamp(17px,2vw,25px) !important;}
+:where(.invRoot,.playRoot,.deckRoot,.shopRoot,.marketRoot,.demo-page,.profilePage,.clubsPage)
+:is(h2,h3) {font-size:clamp(12px,1.35vw,17px) !important;}
+.playKicker,.marketKicker,.invV2Header>div>span,.page-head p,.clubsHeader p {
+  color:#8dd4c7 !important;font:400 10px/1.5 var(--fr-title) !important;
+  letter-spacing:1px !important;
+}
+.playLead,.playModeDescription,.marketHero p,.clubsHeader span,.clubsPanel p,
+.page-head p,.profilePage small,.profilePage label {
+  color:#cabbb0 !important;font-family:var(--fr-body) !important;
+  font-size:13px !important;line-height:1.6 !important;
+}
+.playCardV2 {
+  background:linear-gradient(150deg,#2b2932,#1b1a22) !important;
+  border:3px solid #81654e !important;
+  box-shadow:4px 5px #08080d !important;
+}
+.playCardV2.is-ranked {border-color:#5e938f !important;}
+.playCardGlow {opacity:.09 !important;}
+.playModeTitle {font-size:clamp(12px,1.3vw,16px) !important;}
+.playModeSubtitle {color:#a5d6cd !important;}
+.playBadge {color:#e8d2b6 !important;border-color:#7c6147 !important;background:#29242a !important;}
+.playModeLine {background:#8b735d !important;}
+.playDeckStatus,.playTutorialToggle {color:#e0cdb3 !important;}
+/* Inventory and collection: dark tiles, gold stroke, sharp corners. */
+.invTabletV2,.invCraftPanelV2,.invCardSheet,.invCraftRowV2,.invV2Toolbar,
+.invCardVisual,.invCardV2,.invCraftPanel,.invGridV2,
+.deckLeft,.deckRight,.deckLeftBlock,.deckMainSlot,.deckBoostSlot,.deckCharSlot,
+.deckMiniCard,.deckDemoRow,.deckMainGrid {
+  border-radius:2px !important;
+}
+.invCardV2 {
+  background:linear-gradient(160deg,#2b2730,#17161d) !important;
+  border-color:#685448 !important;
+  box-shadow:2px 3px #09090c !important;
+}
+.invCardV2:hover {border-color:#9bc8bd !important;background:#292931 !important;}
+.invV2Tabs button,.marketTabs button,.clubsTab {
+  color:#f0ddc8 !important;
+  background:#282530 !important;
+  border:2px solid #7e624b !important;
+}
+.invV2Tabs button.is-active,.marketTabs button.is-active,.clubsTab.is-active {
+  border-color:#8ad2c5 !important;
+  background:#2b4b4a !important;
+  color:#f2fbed !important;
+}
+.invCraftRowV2,.deckLeftBlock,.deckMainSlot,.deckBoostSlot,.deckCharSlot {
+  border:2px solid #6f5845 !important;
+  background:linear-gradient(#302a30,#19171d) !important;
+  box-shadow:inset 0 0 0 2px #161318 !important;
+}
+.invSearch input,.invRarityFilter select,.marketFilters input,.marketFilters select,
+.marketField input,.marketField select,.demo-page input,
+.demo-page select,.demo-page textarea,.profile-card input {
+  background:#131319 !important;
+  color:#f5e9d7 !important;
+  border:2px solid #7f6450 !important;
+  border-radius:2px !important;
+  box-shadow:inset 2px 2px #07070a !important;
+}
+.invSearch input:focus,.marketFilters input:focus,.marketField input:focus,
+.demo-page input:focus,.profile-card input:focus {
+  outline:2px solid #7bc9bb !important;outline-offset:1px;
+}
+/* Shop and market: controls and panels match the same image-based UI. */
+.shopRoot,.marketRoot,.invRoot,.deckRoot,.playRoot,.clubsPage,.profilePage {
+  color:var(--ref-paper) !important;
+}
+.shopCard,.shopBalance,.shopNotice,.shopCurrencyButtons,.packArt,.marketInventoryCard,
+.marketSelectedCard,.marketPurchasePanel,.marketPurchaseEstimate,
+.marketAuctionsPanel,.auctionRow,.marketNotice,.marketEmpty,.marketEstimate {
+  border:2px solid #82674e !important;
+  border-radius:2px !important;
+  background:linear-gradient(150deg,#2c2629,#18171e) !important;
+  box-shadow:inset 0 0 0 1px rgba(222,175,116,.12),3px 4px #09080b !important;
+  color:#e9d9c6 !important;
+}
+.packArt {background:#15141a !important;}
+.packArtImg {filter:drop-shadow(2px 3px 0 #0d0b0a);}
+.packName,.packPrice,.marketPanelHead strong,.marketHero h1 {color:#f1d9b4 !important;}
+.shopCurrencyButtons button,.shopBack,.buyBtn {font:400 11px/1.5 var(--fr-body) !important;}
+.shopBalance::before {
+  width:22px !important;height:22px !important;
+  background-image:url("/ui/fraktum/icons/icon_coin.png") !important;
+}
+.marketInventoryCard.is-selected,.auctionRow:hover,.marketInventoryCard:hover {
+  border-color:#8acbbd !important;
+  box-shadow:inset 0 0 0 1px #4d7f78,4px 5px #08080d !important;
+}
+.marketSubmitBtn,.marketBuyButton {
+  background:var(--ref-button-active) !important;color:#f4f7e9 !important;
+}
+/* Clubs: no feature claims; visuals improve even if section is placeholder. */
+.clubsHeader,.clubsPanel {padding:22px !important;}
+.clubsPanel h2 {font-size:clamp(13px,1.5vw,18px) !important;}
+.clubsPlaceholder {
+  background:repeating-linear-gradient(90deg,transparent 0 15px,#40514b17 16px),
+  repeating-linear-gradient(0deg,transparent 0 15px,#40514b17 16px),
+  #181920 !important;
+  border:2px dashed #6d877b !important;
+  color:#9ed2bd !important;text-shadow:none !important;
+  font:400 10px/1.8 var(--fr-title) !important;
+  letter-spacing:0 !important;
+}
+.clubsTabs {gap:10px !important;}
+/* Profile: distinct pixel frames and more legible information widgets. */
+.profileIdentityCard,.profileSyncBanner,.profileStatCards,.profileLevelBlock,
+.profileMiniCard,.profileShowcaseGrid,.profileRecentGrid,.profileStatsGrid span,
+.profileMiniList,.profileGridFixed .glass-panel {
+  border-radius:2px !important;
+  border-color:#7b6250 !important;
+  background:linear-gradient(135deg,#2b262c,#19161d) !important;
+  color:#efdfca !important;
+}
+.profileIdentityCard>img,.profile-card>img {
+  border:4px solid #aa8456 !important;border-radius:2px !important;
+  image-rendering:pixelated;box-shadow:3px 4px #0a090c !important;
+}
+.profileMiniCard,.profileStatsGrid span {
+  border:2px solid #68574d !important;
+  padding:8px !important;
+}
+.profileXpBar {
+  border:2px solid #82705b !important;
+  background:#121318 !important;
+  border-radius:0 !important;
+  overflow:hidden !important;
+  box-shadow:inset 0 0 0 2px #0b0c0f !important;
+}
+.profileXpBar i {
+  background:repeating-linear-gradient(90deg,transparent 0 11px,#0f2c291e 12px 14px),
+  linear-gradient(180deg,#a3ead2,#42847b) !important;
+  border-radius:0 !important;
+}
+.profileStatsGrid b,.profileLevelBlock b,.profileMiniCard strong {color:#f4d6a0 !important;}
+/* The match: readable HUD and actual pixel-meter visuals. */
+.matchPage {background:radial-gradient(ellipse at top,#322424,#0e0d12 76%) !important;
+  font-family:var(--fr-body) !important;color:var(--ref-paper) !important;}
+.matchArenaShell {
+  background:linear-gradient(rgba(11,10,12,.21),rgba(11,10,12,.36)),
+  url("/ui/fraktum/battle/arena_1v1.png") center/100% 100% no-repeat,
+  #292124 !important;
+  border:4px solid #88694b !important;
+  box-shadow:inset 0 0 0 4px #19151a,0 13px 0 #09090c !important;
+}
+.matchArenaTopbar,.matchHeroPanel,.matchActionStatus,.matchBattleLog,
+.matchWillStrip,.matchWinnerCard,.matchRoulettePresentationCard,
+.matchD20Help,.matchBonusSlot,.matchOpponentProfile,.matchBattleClock,
+.matchSeriesHud,.matchContextBanner,.matchRouletteNotice {
+  border:2px solid #8b6d50 !important;border-radius:2px !important;
+  background:linear-gradient(150deg,rgba(38,34,40,.97),rgba(18,17,23,.98)) !important;
+  box-shadow:inset 0 0 0 1px rgba(213,173,115,.1),3px 4px rgba(7,7,10,.82) !important;
+  color:#efddc8 !important;
+}
+.matchBoardPanel {
+  background:rgba(16,14,19,.25) !important;
+  border:2px solid rgba(176,140,91,.32) !important;
+  border-radius:2px !important;box-shadow:inset 0 0 15px #07080b33 !important;
+}
+.matchBoardPanel::before {display:none !important;}
+.matchBoardRow {gap:clamp(5px,.6cqw,10px) !important;}
+.matchBoardSlot {
+  background:linear-gradient(150deg,rgba(31,29,35,.72),rgba(11,11,15,.58)) !important;
+  border:2px solid #77624e !important;border-radius:1px !important;
+  box-shadow:inset 0 0 0 2px rgba(8,7,10,.68) !important;
+}
+.matchBoardSlot.is-empty {background:linear-gradient(155deg,rgba(39,35,37,.57),rgba(13,13,18,.48)) !important;}
+.matchBoardSlot:hover,.matchBoardSlot.is-valid,.matchBoardSlot.is-drag-over {
+  border-color:#9bd4c7 !important;
+  background:linear-gradient(150deg,rgba(43,68,67,.62),rgba(17,34,36,.63)) !important;
+  box-shadow:0 0 0 2px #547e713c,0 0 16px #6db6ad35 !important;
+}
+.matchBoardSlot.has-status-alpha_frozen {
+  border-color:#83c6e5 !important;
+  box-shadow:0 0 0 2px #40799a5f,0 0 13px #83d0f255 !important;
+}
+.matchBoardSlot.is-temporary {border-style:dashed !important;}
+.matchSlotRune {display:none !important;}
+.matchSlotHint,.matchSlotNumber {color:#9d8974 !important;}
+.matchSlotStateTag {
+  background:#19171e !important;border:1px solid #806f5c !important;
+  color:#f5e2c2 !important;border-radius:1px !important;
+  font-family:var(--fr-body) !important;letter-spacing:0 !important;
+}
+.matchHeroRank,.matchHeroIdentity h2,.matchPhaseBadge,.matchPanelTitle,
+.matchWillLabel,.matchBonusLabel,.matchTurnBlock strong {
+  font-family:var(--fr-body) !important;
+  color:#f2dbc1 !important;
+  text-shadow:1px 1px #09090b;
+}
+.matchHeroPortrait {
+  border:3px solid #aa8660 !important;border-radius:2px !important;
+  box-shadow:2px 3px #0a090c !important;
+}
+.matchHeroPortrait img {image-rendering:pixelated;object-fit:cover;}
+.matchHeroStatRow span,.matchShieldPip,.matchHeroNameplate {
+  background:rgba(17,16,22,.9) !important;
+  border:1px solid #78644f !important;border-radius:0 !important;
+  color:#eedbc5 !important;
+}
+.matchShieldPip span {font-size:0 !important;display:inline-block;width:14px;height:14px;
+  background:url("/ui/fraktum/icons/icon_shield.png") center / contain no-repeat !important;}
+/* HP, shield, will bars: segmented pixel fills; old rounded gradient removed. */
+.matchStatusBar,.matchStatusBarMeta {color:#e6d5c0 !important;font-family:var(--fr-body) !important;}
+.matchStatusBarMeta>span {display:flex;align-items:center;gap:5px;}
+.matchStatusBarMeta i {font-size:0 !important;display:inline-block;flex:none;width:15px;height:15px;background:center/contain no-repeat;}
+.matchStatusBar.is-hp .matchStatusBarMeta i {background-image:url("/ui/fraktum/icons/icon_hp.png");}
+.matchStatusBar.is-shield .matchStatusBarMeta i {background-image:url("/ui/fraktum/icons/icon_shield.png");}
+.matchStatusBar.is-will .matchStatusBarMeta i {background-image:url("/ui/fraktum/icons/icon_gem.png");}
+.matchStatusBar .matchStatusTrack,.matchVerticalHp,.matchShieldMeter,.matchWillTrack {
+  border:2px solid #6e5949 !important;border-radius:1px !important;
+  background:#0a0b10 !important;
+  box-shadow:inset 0 0 0 1px #161317 !important;
+}
+.matchStatusBar .matchStatusFill {
+  border-radius:0 !important;
+  background-size:100% 100% !important;
+  transition:height .3s steps(8,end),width .3s steps(8,end) !important;
+  box-shadow:none !important;
+}
+.matchStatusBar.is-hp .matchStatusFill,.matchVerticalHpFill {
+  background:repeating-linear-gradient(0deg,transparent 0 10px,#4f0f1735 11px 12px),
+  linear-gradient(90deg,#bf3448,#ff6871) !important;
+  box-shadow:none !important;border-radius:0 !important;
+}
+.matchStatusBar.is-shield .matchStatusFill,.matchShieldMeter span {
+  background:repeating-linear-gradient(0deg,transparent 0 10px,#10335d50 11px 12px),
+  linear-gradient(90deg,#497ab6,#9bcff1) !important;
+  box-shadow:none !important;border-radius:0 !important;
+}
+.matchStatusBar.is-will .matchStatusFill,.matchWillFill,.matchHeroMiniWillTrack i {
+  background:repeating-linear-gradient(90deg,transparent 0 11px,#54300e35 12px 13px),
+  linear-gradient(90deg,#a66c37,#ebbd72) !important;
+  box-shadow:none !important;border-radius:0 !important;
+}
+.matchHeroMeterGroup .matchHeroMeterValue {
+  background:#121219 !important;color:#fff0de !important;
+  border:1px solid #876c52 !important;border-radius:0 !important;
+  text-shadow:1px 1px #000 !important;
+}
+.matchHeroMeterGroup.is-hp-meter .matchHeroMeterValue::before {
+  background-image:url("/ui/fraktum/icons/icon_hp.png") !important;
+}
+.matchHeroMeterGroup.is-shield-meter .matchHeroMeterValue::before {
+  content:"";display:inline-block;width:11px;height:11px;vertical-align:-2px;
+  margin-right:2px;background:url("/ui/fraktum/icons/icon_shield.png") center / contain no-repeat;
+  image-rendering:pixelated;
+}
+.matchWillStrip {background:#232029 !important;}
+.matchWillTrack {height:clamp(13px,1.2cqw,17px) !important;}
+.matchBonusSlot {
+  border-color:#7e6d59 !important;background:#19181f !important;border-radius:1px !important;
+}
+.matchPile,.matchPileStack,.matchPileLayer {
+  border-radius:1px !important;border-color:#987453 !important;
+}
+.matchCardView,.enemyHandCardInner,.enemyHandCard img {border-radius:2px !important;}
+.matchCardView.is-board {width:100% !important;height:100% !important;}
+.matchCardView.is-board .matchCardImage {object-fit:contain !important;}
+.matchCardBadge,.matchSlotStateTag {
+  border-radius:1px !important;box-shadow:1px 2px #09080c !important;
+}
+.matchCardBadge.is-cost {background:#c4a071 !important;color:#181317 !important;}
+.matchCardBadge.is-hp {background:#233f51 !important;color:#f6eff0 !important;border-color:#75abc8 !important;}
+.matchD20.fraktumD20 {
+  border:3px solid #a58156 !important;
+  background:radial-gradient(ellipse at center,#3c3337,#181419 72%) !important;
+  box-shadow:0 0 0 3px #181318,0 0 16px rgba(119,166,153,.14) !important;
+}
+.matchD20HelpButton,.matchGhostButton,.matchBackButton,.matchGoldButton,
+.matchPlayerActionZone .is-end-turn:not(:disabled),.matchWinnerActions button {
+  border:2px solid #9c785a !important;border-image-slice:5 8 5 8 !important;
+  background:var(--ref-button) !important;
+  color:#f2e0c8 !important;border-radius:2px !important;text-shadow:none !important;
+}
+.matchPlayerActionZone .is-end-turn:not(:disabled),.matchGoldButton {
+  border-color:#75baad !important;
+  background:var(--ref-button-active) !important;
+  color:#f2f9ee !important;
+}
+.matchBackButton:hover,.matchGhostButton:hover,.matchGoldButton:hover:not(:disabled),
+.matchPlayerActionZone .is-end-turn:hover:not(:disabled) {
+  background:#375752 !important;
+  border-color:#abe5d5 !important;
+}
+.matchBattleLog {color:#dbc7af !important;}
+.matchLogText {color:#dac8b8 !important;}
+.matchBattleClock {color:#f4daac !important;}
+.matchBattleClock.is-critical {border-color:#e26871 !important;color:#ffb0b2 !important;}
+.matchPhaseBadge,.matchContextBanner {color:#d8f7e6 !important;background:#28433f !important;border-color:#5a988a !important;}
+.matchWinnerOverlay,.matchPresentationOverlay {background:rgba(7,7,11,.76) !important;}
+.matchTurnAnnouncementCard,.matchRoulettePresentationCard,.matchTacticalRevealPanel {
+  border:3px solid #98724e !important;border-radius:2px !important;
+  background:linear-gradient(135deg,#312932,#16141c) !important;
+  box-shadow:7px 8px #09080c !important;
+}
+.matchTurnAnnouncementCard h2,.matchRoulettePresentationCard h2 {
+  color:#f7ddad !important;
+  font:400 clamp(18px,2.5cqw,34px)/1.5 var(--fr-title) !important;
+  text-shadow:2px 3px #06070b !important;
+}
+.matchRouletteSigil {color:#f6ce91 !important;font-family:var(--fr-title) !important;}
+/* Triad: desktop & mobile lane cards stay readable, not overpainted by frames. */
+.triad-page {background:radial-gradient(ellipse at top,#302425,#0e0d14 75%) !important;}
+.triad-arena {border-color:#8c684b !important;
+  background:linear-gradient(#1110153b,#11101561),
+  url("/ui/fraktum/battle/arena_1v1.png") center/100% 100% no-repeat,
+  #2c2325 !important;
+}
+.triad-player-block,.triad-controls,.triad-log,.triad-chat,
+.triad-deck-zone,.triad-discard-zone,.triad-lobby {
+  background:linear-gradient(140deg,rgba(42,36,42,.97),rgba(19,18,25,.97)) !important;
+  color:#f0dcc5 !important;border:2px solid #8a6f58 !important;
+}
+.triad-player-block.is-active {border-color:#8fddc9 !important;box-shadow:0 0 13px #54aa9870 !important;}
+.triad-player-title {color:#f3dfc7 !important;}
+.triad-player-title b {color:#fff0d7 !important;border-color:#786655 !important;background:#242129 !important;}
+.triad-slot {background:rgba(17,17,22,.61) !important;
+  border:2px solid #7d6954 !important;box-shadow:inset 0 0 0 2px #18161c !important;}
+.triad-slot.is-ready {border-color:#9fdcce !important;box-shadow:0 0 10px #5bb6a16b !important;}
+.triad-slot.is-filled {border-color:#b89b77 !important;}
+.triad-slot-hp {
+  color:#fff0e6 !important;background:#481f2c !important;font-size:10px !important;
+  text-shadow:1px 1px #0d0b12 !important;
+}
+.triad-rival-hand,.triad-hand {filter:none !important;}
+.triad-back,.triad-hand-card {
+  border:2px solid #9c8060 !important;background:#25222b !important;
+  box-shadow:2px 3px #08080c !important;
+}
+.triad-hand-card.is-selected {border-color:#93d6c4 !important;box-shadow:0 0 13px #7ed3c266 !important;}
+.triad-d20 {
+  background:linear-gradient(130deg,#e3c389,#97744f) !important;color:#21171c !important;
+  font:400 clamp(11px,1.1vw,17px) var(--fr-title) !important;
+}
+.triad-fate-triangle {background:#6e4a38 !important;}
+.triad-controls button,.triad-topbar button,.triad-lobby button,.triad-chat button {
+  color:#f1e6d5 !important;
+  background:var(--ref-button) !important;
+  border-image-slice:5 8 5 8 !important;
+}
+.triad-controls button:not(:disabled):hover,.triad-topbar button:hover {
+  background:var(--ref-button-active) !important;color:#f4fcef !important;
+}
+.triad-field-label {color:#cbb7a0 !important;}
+.triad-center-device small,.triad-center-device b {background:#27232a !important;color:#f3d8b7 !important;border-color:#8f745c !important;}
+.triad-slot-empty {color:#93806d !important;}
+/* Open pack and card passport as pixel UI, without changing animation. */
+.hpo-root {
+  font-family:var(--fr-body) !important;
+  color:#f2dec8 !important;
+  background:linear-gradient(155deg,#211c23,#0c0d13) !important;
+}
+.hpo-background {
+  background:radial-gradient(ellipse at center,rgba(103,85,64,.3),transparent 46%),
+  linear-gradient(135deg,#252025,#111017) !important;
+}
+.hpo-brandBlock,.hpo-progressBlock,.hpo-revealMeta,.hpo-screenContinueHint,
+.hpo-summary,.hpo-packPrompt,.hpo-summaryCard {
+  background:linear-gradient(#2c2730,#19171e) !important;
+  border:2px solid #8c6d52 !important;
+  border-radius:2px !important;color:#efdfcd !important;
+}
+.hpo-exitButton,.hpo-actionButton {
+  background:var(--ref-button) !important;color:#f0e3d1 !important;
+  border:2px solid #957455 !important;border-radius:2px !important;
+  font-family:var(--fr-body) !important;
+}
+.hpo-actionButtonPrimary {background:var(--ref-button-active) !important;color:#f7ffef !important;border-color:#a2dacc !important;}
+.hpo-brandBlock strong,.hpo-rarityTitleBlock h2,.hpo-summaryHeading {
+  font-family:var(--fr-title) !important;color:#f8e5cd !important;
+}
+.hpo-rarityTitleBlock h2 {font-size:clamp(17px,3vw,38px) !important;line-height:1.45 !important;}
+.hpo-revealCardFace {border:3px solid #957356 !important;border-radius:2px !important;}
+.fraktumPassport {
+  background:linear-gradient(145deg,#28242d,#15141a) !important;
+  border:3px solid #947054 !important;border-radius:2px !important;
+}
+.fraktumPassport__topbar {
+  background:#24222a !important;border-bottom:2px solid #7a6654 !important;
+}
+.fraktumPassport__identity h2 {font:400 clamp(13px,1.6vw,23px)/1.4 var(--fr-title) !important;}
+.fraktumPassport__section {border-color:#796756 !important;color:#ebddcb !important;}
+.fraktumPassport__close {color:#f4e4d0 !important;background:var(--ref-button) !important;}
+/* Avoid bright badges and white-on-gold in any route. */
+:where(.invRoot,.playRoot,.deckRoot,.shopRoot,.marketRoot,.demo-page,.profilePage,.clubsPage)
+:is(small,span,p,label) {text-shadow:none;}
+:where(.invRoot,.playRoot,.deckRoot,.shopRoot,.marketRoot,.demo-page,.profilePage,.clubsPage)
+:is(.playBadge,.invNewBadge,.marketFoilBadge,.deckFoilBadge) {
+  color:#f8e9da !important;background:#364543 !important;border-color:#6ea69b !important;
+}
+/* Touch screens: keep font readable without labels overflowing their tiles. */
+@media(max-width:960px) {
+  .coreBrand {font-size:13px !important;}
+  .coreNavButton {font-size:11px !important;padding:8px 10px !important;}
+  .coreMenuHeading h1 {font-size:clamp(14px,2.5vw,20px) !important;}
+  .coreMenuAction strong {font-size:11px !important;}
+  .matchTurnAnnouncementCard h2 {font-size:clamp(14px,2.4cqw,25px) !important;}
+}
+@media(max-width:650px) {
+  .coreMenuPanel {padding:16px !important;border-width:3px !important;}
+  .coreMenuRoot {padding:22px 12px 32px !important;}
+  .coreMenuHeading {margin-bottom:15px !important;}
+  .coreMenuHeading h1 {font-size:14px !important;line-height:1.75 !important;}
+  .coreMenuHeading span {font-size:12px !important;}
+  .coreMenuGrid {gap:10px !important;}
+  .coreMenuAction {min-height:86px !important;padding:11px 12px !important;}
+  .coreMenuAction[data-icon]::before {width:25px !important;height:25px !important;margin-right:8px !important;}
+  .coreMenuAction strong {font-size:10px !important;}
+  .coreMenuAction span {font-size:12px !important;}
+  .coreNavButton {font-size:10px !important;}
+  .clubsTabs {grid-template-columns:1fr !important;}
+  .clubsPage {width:100% !important;}
+  .matchBoardSlot {border-width:1px !important;}
+  .triad-slot {border-width:1px !important;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .matchStatusFill,.profileXpBar i,.coreMenuAction,
+  .matchBoardSlot {transition:none !important;}
+}
+
+/* Pixel icon coverage: market, clubs, decks, packs, profile and battle resources. */
+.playCardTop::before,.invV2Tabs button::before,.marketTabs button::before,
+.clubsTabs button::before,.profileStatsGrid>span::before,
+.marketStats>div::before,.matchHeroStatRow>span::before,
+.matchWillLabel::before,.shopCurrencyButtons::before {
+  content:"";display:inline-block;flex:none;
+  width:20px;height:20px;
+  background-position:center;background-repeat:no-repeat;background-size:contain;
+  image-rendering:pixelated;vertical-align:middle;
+}
+.playCardTop {display:flex;align-items:center;gap:8px;}
+.playCardTop::before {width:24px;height:24px;background-image:url("/ui/fraktum/icons/icon_sword.png");}
+.playCardV2:nth-child(2) .playCardTop::before {background-image:url("/ui/fraktum/icons/icon_shield.png");}
+.playCardV2:nth-child(3) .playCardTop::before,.playCardV2:nth-child(4) .playCardTop::before {background-image:url("/ui/fraktum/icons/icon_skull.png");}
+.invV2Tabs button,.marketTabs button,.clubsTabs button {
+  display:inline-flex !important;justify-content:center;align-items:center;gap:9px;
+}
+.invV2Tabs button:nth-child(1)::before {background-image:url("/ui/fraktum/icons/icon_book.png");}
+.invV2Tabs button:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_key.png");}
+.marketTabs button:nth-child(1)::before {background-image:url("/ui/fraktum/icons/icon_coin.png");}
+.marketTabs button:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_chest.png");}
+.marketTabs button:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_scroll.png");}
+.marketTabs button:nth-child(4)::before {background-image:url("/ui/fraktum/icons/icon_key.png");}
+.clubsTabs button:nth-child(1)::before {background-image:url("/ui/fraktum/icons/icon_scroll.png");}
+.clubsTabs button:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_sword.png");}
+.clubsTabs button:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_shield.png");}
+.profileStatsGrid>span {display:flex;flex-wrap:wrap;align-items:center;gap:7px;}
+.profileStatsGrid>span::before {width:21px;height:21px;}
+.profileStatsGrid>span:nth-child(1)::before {background-image:url("/ui/fraktum/icons/icon_coin.png");}
+.profileStatsGrid>span:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_gem.png");}
+.profileStatsGrid>span:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_chest.png");}
+.profileStatsGrid>span:nth-child(4)::before {background-image:url("/ui/fraktum/icons/icon_book.png");}
+.profileStatsGrid>span:nth-child(5)::before {background-image:url("/ui/fraktum/icons/icon_bag.png");}
+.marketStats>div::before {background-image:url("/ui/fraktum/icons/icon_coin.png");}
+.marketStats>div:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_scroll.png");}
+.marketStats>div:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_chest.png");}
+.marketStats>div:nth-child(4)::before {background-image:url("/ui/fraktum/icons/icon_gem.png");}
+.marketStats>div {border-right:1px solid #625347;background:#201e25 !important;}
+.matchHeroStatRow>span::before {width:12px;height:12px;background-image:url("/ui/fraktum/icons/icon_hp.png");}
+.matchHeroStatRow>span:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_shield.png");}
+.matchHeroStatRow>span:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_gem.png");}
+.matchWillLabel::before {width:15px;height:15px;margin-right:6px;background-image:url("/ui/fraktum/icons/icon_gem.png");}
+.matchHeroMiniWillLabel::before {content:"";display:inline-block;vertical-align:-2px;margin-right:4px;width:14px;height:14px;background:url("/ui/fraktum/icons/icon_gem.png") center / contain no-repeat;}
+.shopCurrencyButtons::before {width:25px;height:25px;background-image:url("/ui/fraktum/icons/icon_coin.png");}
+/* Pixel bar frames: the source textures decorate only the BORDER (no yellow fill). */
+.matchStatusBar .matchStatusTrack,.profileXpBar,.matchWillTrack {
+  border-image-source:url("/ui/fraktum/panels/panel_inset.png") !important;
+  border-image-slice:4 !important;
+  border-image-width:3px !important;
+  border-image-repeat:stretch !important;
+}
+.matchStatusBar .matchStatusFill,.profileXpBar i,.matchWillFill {
+  image-rendering:pixelated;
+  filter:saturate(.92);
+}
+.matchHeroStatRow>span small {color:#c7ada0 !important;}
+.matchHeroStatRow>span b {color:#fce3c9 !important;}
+.matchSlotStatusStack>span,.matchHeroActiveEffects>span {
+  border:1px solid #8e7056 !important;
+  border-radius:1px !important;
+  background:rgba(23,20,26,.93) !important;
+  color:#fff0d5 !important;
+  font-family:var(--fr-body) !important;
+}
+.matchSlotStatusStack>span.is-frozen {border-color:#7ac1e3 !important;color:#d7faff !important;}
+.matchPileCount,.matchD20Hint,.matchD20Label,.matchBattleClock,.matchHeroMeterValue {
+  font-family:var(--fr-body) !important;
+}
+/* Thin pixel frames instead of oversized soft modern-glass curves. */
+.playCardInner,.marketHeroActions,.marketPanelHead,.profileShowcaseGrid,
+.profileRecentCards,.profileMiniList {border-radius:2px !important;}
+.marketHero::before {display:none !important;}
+.deckMainSlot,.deckCharSlot,.deckBoostSlot,.marketInventoryArt {
+  image-rendering:pixelated;
+}
+.deckMainSlot.is-empty,.deckCharSlot.is-empty,.deckBoostSlot.is-empty {
+  background:repeating-linear-gradient(45deg,#18181d 0 5px,#26232a 6px 7px) !important;
+}
+@media(max-width:700px) {
+  .playCardTop::before,.invV2Tabs button::before,.marketTabs button::before,
+  .clubsTabs button::before {width:17px;height:17px;}
+  .invV2Tabs button,.marketTabs button,.clubsTabs button {gap:5px;}
+  .profileStatsGrid>span {gap:4px;}
+  .profileStatsGrid>span::before {width:15px;height:15px;}
+  .marketStats>div::before {width:14px;height:14px;}
+}
