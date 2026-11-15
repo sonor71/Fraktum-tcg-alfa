@@ -363,3 +363,61 @@ button:disabled { filter:saturate(.55); }
   .hpo-brandBlock,.hpo-progressBlock {padding:6px 9px !important;}
   .hpo-header {gap:7px !important;}
 }
+
+/* Actual asset texture integration — nine-slice keeps pixel corners intact. */
+.coreMenuPanel,.coreMenuAction,.coreNavButton,.coreSettings,.coreMenuSettings,
+.shopCard,.glass-panel,.invTabletV2,.deckLeft,.deckRight,.playCardV2,
+.clubsPanel,.clubsHeader,.profile-card,.marketHero,.marketStats,
+.matchHeroPanel,.matchOpponentProfile,.matchArenaTopbar,.matchActionStatus,
+.matchWinnerCard,.matchBattleLog,.matchWillStrip,.triad-player-block,
+.triad-log,.triad-chat,.triad-lobby {
+  image-rendering: pixelated;
+}
+.coreMenuPanel,.shopCard,.glass-panel,.invTabletV2,.deckLeft,.deckRight,
+.playCardV2,.clubsPanel,.clubsHeader,.profile-card,.marketHero,.marketStats,
+.matchHeroPanel,.matchOpponentProfile,.matchArenaTopbar,.matchActionStatus,
+.matchWinnerCard,.matchBattleLog,.matchWillStrip,.triad-player-block,
+.triad-log,.triad-chat,.triad-lobby {
+  border-image-source:url("/ui/fraktum/panels/panel_main.png") !important;
+  border-image-slice:7 fill !important;
+  border-image-width:8px !important;
+  border-image-repeat:stretch !important;
+}
+.coreMenuAction,.coreNavButton,.coreSettings,.coreMenuSettings,
+.playActionBtn,.buyBtn,.marketPrimaryBtn,.marketGhostBtn,.invDeckBtn,.deckBtn,
+.matchGhostButton,.matchGoldButton,.matchBackButton,.matchD20HelpButton,
+.triad-topbar button,.triad-controls button,.triad-lobby button {
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_idle.png") !important;
+  border-image-slice:5 8 5 8 fill !important;
+  border-image-width:6px 9px !important;
+  border-image-repeat:stretch !important;
+}
+.coreMenuAction:hover,.coreNavButton:hover,.coreSettings:hover,.coreMenuSettings:hover,
+.playActionBtn:hover,.buyBtn:hover,.marketPrimaryBtn:hover,.marketGhostBtn:hover,
+.invDeckBtn:hover,.deckBtn:hover,.matchGhostButton:hover,.matchGoldButton:hover,
+.matchBackButton:hover,.triad-controls button:hover {
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_hover.png") !important;
+}
+.coreMenuAction:active,.coreNavButton:active,.playActionBtn:active,
+.buyBtn:active,.matchGhostButton:active,.matchGoldButton:active {
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_pressed.png") !important;
+}
+.coreMenuAction:disabled,.coreNavButton:disabled,.playActionBtn:disabled,
+.buyBtn:disabled,.matchGhostButton:disabled,.matchGoldButton:disabled {
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_disabled.png") !important;
+}
+.matchShieldPip::before {
+  content:"";display:inline-block;vertical-align:middle;width:15px;height:15px;margin-right:3px;
+  background:url("/ui/fraktum/icons/icon_shield.png") center / contain no-repeat;
+  image-rendering:pixelated;
+}
+.matchHeroMeterGroup.is-hp-meter .matchHeroMeterValue::before {
+  content:"";display:inline-block;width:13px;height:13px;margin-right:3px;vertical-align:-2px;
+  background:url("/ui/fraktum/icons/icon_hp.png") center / contain no-repeat;
+  image-rendering:pixelated;
+}
+.matchHeroPortrait {border-image-source:url("/ui/fraktum/panels/panel_portrait.png") !important;border-image-slice:7 fill !important;border-image-width:5px !important;}
+@media (max-width:680px) {
+  .coreMenuAction,.coreNavButton {border-image-width:4px 6px !important;}
+  .matchHeroMeterGroup.is-hp-meter .matchHeroMeterValue::before {width:10px;height:10px;}
+}
