@@ -661,3 +661,90 @@ img,.coreShell button,.matchPage button,.triad-page button {
   .matchStatusFill,.profileXpBar i,.coreMenuAction,
   .matchBoardSlot {transition:none !important;}
 }
+
+/* Pixel icon coverage: market, clubs, decks, packs, profile and battle resources. */
+.playCardTop::before,.invV2Tabs button::before,.marketTabs button::before,
+.clubsTabs button::before,.profileStatsGrid>span::before,
+.marketStats>div::before,.matchHeroStatRow>span::before,
+.matchWillLabel::before,.shopCurrencyButtons::before {
+  content:"";display:inline-block;flex:none;
+  width:20px;height:20px;
+  background-position:center;background-repeat:no-repeat;background-size:contain;
+  image-rendering:pixelated;vertical-align:middle;
+}
+.playCardTop {display:flex;align-items:center;gap:8px;}
+.playCardTop::before {width:24px;height:24px;background-image:url("/ui/fraktum/icons/icon_sword.png");}
+.playCardV2:nth-child(2) .playCardTop::before {background-image:url("/ui/fraktum/icons/icon_shield.png");}
+.playCardV2:nth-child(3) .playCardTop::before,.playCardV2:nth-child(4) .playCardTop::before {background-image:url("/ui/fraktum/icons/icon_skull.png");}
+.invV2Tabs button,.marketTabs button,.clubsTabs button {
+  display:inline-flex !important;justify-content:center;align-items:center;gap:9px;
+}
+.invV2Tabs button:nth-child(1)::before {background-image:url("/ui/fraktum/icons/icon_book.png");}
+.invV2Tabs button:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_key.png");}
+.marketTabs button:nth-child(1)::before {background-image:url("/ui/fraktum/icons/icon_coin.png");}
+.marketTabs button:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_chest.png");}
+.marketTabs button:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_scroll.png");}
+.marketTabs button:nth-child(4)::before {background-image:url("/ui/fraktum/icons/icon_key.png");}
+.clubsTabs button:nth-child(1)::before {background-image:url("/ui/fraktum/icons/icon_scroll.png");}
+.clubsTabs button:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_sword.png");}
+.clubsTabs button:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_shield.png");}
+.profileStatsGrid>span {display:flex;flex-wrap:wrap;align-items:center;gap:7px;}
+.profileStatsGrid>span::before {width:21px;height:21px;}
+.profileStatsGrid>span:nth-child(1)::before {background-image:url("/ui/fraktum/icons/icon_coin.png");}
+.profileStatsGrid>span:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_gem.png");}
+.profileStatsGrid>span:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_chest.png");}
+.profileStatsGrid>span:nth-child(4)::before {background-image:url("/ui/fraktum/icons/icon_book.png");}
+.profileStatsGrid>span:nth-child(5)::before {background-image:url("/ui/fraktum/icons/icon_bag.png");}
+.marketStats>div::before {background-image:url("/ui/fraktum/icons/icon_coin.png");}
+.marketStats>div:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_scroll.png");}
+.marketStats>div:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_chest.png");}
+.marketStats>div:nth-child(4)::before {background-image:url("/ui/fraktum/icons/icon_gem.png");}
+.marketStats>div {border-right:1px solid #625347;background:#201e25 !important;}
+.matchHeroStatRow>span::before {width:12px;height:12px;background-image:url("/ui/fraktum/icons/icon_hp.png");}
+.matchHeroStatRow>span:nth-child(2)::before {background-image:url("/ui/fraktum/icons/icon_shield.png");}
+.matchHeroStatRow>span:nth-child(3)::before {background-image:url("/ui/fraktum/icons/icon_gem.png");}
+.matchWillLabel::before {width:15px;height:15px;margin-right:6px;background-image:url("/ui/fraktum/icons/icon_gem.png");}
+.matchHeroMiniWillLabel::before {content:"";display:inline-block;vertical-align:-2px;margin-right:4px;width:14px;height:14px;background:url("/ui/fraktum/icons/icon_gem.png") center / contain no-repeat;}
+.shopCurrencyButtons::before {width:25px;height:25px;background-image:url("/ui/fraktum/icons/icon_coin.png");}
+/* Pixel bar frames: the source textures decorate only the BORDER (no yellow fill). */
+.matchStatusBar .matchStatusTrack,.profileXpBar,.matchWillTrack {
+  border-image-source:url("/ui/fraktum/panels/panel_inset.png") !important;
+  border-image-slice:4 !important;
+  border-image-width:3px !important;
+  border-image-repeat:stretch !important;
+}
+.matchStatusBar .matchStatusFill,.profileXpBar i,.matchWillFill {
+  image-rendering:pixelated;
+  filter:saturate(.92);
+}
+.matchHeroStatRow>span small {color:#c7ada0 !important;}
+.matchHeroStatRow>span b {color:#fce3c9 !important;}
+.matchSlotStatusStack>span,.matchHeroActiveEffects>span {
+  border:1px solid #8e7056 !important;
+  border-radius:1px !important;
+  background:rgba(23,20,26,.93) !important;
+  color:#fff0d5 !important;
+  font-family:var(--fr-body) !important;
+}
+.matchSlotStatusStack>span.is-frozen {border-color:#7ac1e3 !important;color:#d7faff !important;}
+.matchPileCount,.matchD20Hint,.matchD20Label,.matchBattleClock,.matchHeroMeterValue {
+  font-family:var(--fr-body) !important;
+}
+/* Thin pixel frames instead of oversized soft modern-glass curves. */
+.playCardInner,.marketHeroActions,.marketPanelHead,.profileShowcaseGrid,
+.profileRecentCards,.profileMiniList {border-radius:2px !important;}
+.marketHero::before {display:none !important;}
+.deckMainSlot,.deckCharSlot,.deckBoostSlot,.marketInventoryArt {
+  image-rendering:pixelated;
+}
+.deckMainSlot.is-empty,.deckCharSlot.is-empty,.deckBoostSlot.is-empty {
+  background:repeating-linear-gradient(45deg,#18181d 0 5px,#26232a 6px 7px) !important;
+}
+@media(max-width:700px) {
+  .playCardTop::before,.invV2Tabs button::before,.marketTabs button::before,
+  .clubsTabs button::before {width:17px;height:17px;}
+  .invV2Tabs button,.marketTabs button,.clubsTabs button {gap:5px;}
+  .profileStatsGrid>span {gap:4px;}
+  .profileStatsGrid>span::before {width:15px;height:15px;}
+  .marketStats>div::before {width:14px;height:14px;}
+}
