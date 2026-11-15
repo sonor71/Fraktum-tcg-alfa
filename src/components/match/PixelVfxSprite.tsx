@@ -1,23 +1,24 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import type { CardDefinition } from "../../game/core/types";
 
-/** PVFX Foundry CC0 (legacy/0.10.0). Frames: 64px, five-column grid. */
+/** PVFX Foundry CC0 (legacy/0.10.0). Frames: 32px, five-column atlas with 34 rows. */
 export type PixelVfxKind =
   | "slash" | "fire" | "ice" | "lightning" | "heal" | "shield"
   | "void" | "summon" | "destroy" | "arcane" | "poison";
-type SpriteInfo = { frames: number; rows: number; frameMs: number };
+type SpriteInfo = { frames: number; startRow: number; frameMs: number };
+const TOTAL_ROWS = 34;
 const SHEETS: Record<PixelVfxKind, SpriteInfo> = {
-  slash: { frames: 10, rows: 2, frameMs: 50 },
-  fire: { frames: 14, rows: 3, frameMs: 50 },
-  ice: { frames: 13, rows: 3, frameMs: 50 },
-  lightning: { frames: 14, rows: 3, frameMs: 50 },
-  heal: { frames: 14, rows: 3, frameMs: 50 },
-  shield: { frames: 16, rows: 4, frameMs: 50 },
-  void: { frames: 14, rows: 3, frameMs: 50 },
-  summon: { frames: 16, rows: 4, frameMs: 50 },
-  destroy: { frames: 15, rows: 3, frameMs: 50 },
-  arcane: { frames: 12, rows: 3, frameMs: 50 },
-  poison: { frames: 14, rows: 3, frameMs: 50 },
+  slash: { frames: 10, startRow: 0, frameMs: 50 },
+  fire: { frames: 14, startRow: 2, frameMs: 50 },
+  ice: { frames: 13, startRow: 5, frameMs: 50 },
+  lightning: { frames: 14, startRow: 8, frameMs: 50 },
+  heal: { frames: 14, startRow: 11, frameMs: 50 },
+  shield: { frames: 16, startRow: 14, frameMs: 50 },
+  void: { frames: 14, startRow: 18, frameMs: 50 },
+  summon: { frames: 16, startRow: 21, frameMs: 50 },
+  destroy: { frames: 15, startRow: 25, frameMs: 50 },
+  arcane: { frames: 12, startRow: 28, frameMs: 50 },
+  poison: { frames: 14, startRow: 31, frameMs: 50 },
 };
 
 export function cardVfxKind(card: CardDefinition): PixelVfxKind {
@@ -72,12 +73,12 @@ export function PixelVfxSprite({ kind, style, className = "" }: Props) {
   }, [spec]);
 
   const col = frame % 5;
-  const row = Math.floor(frame / 5);
+  const row = spec.startRow + Math.floor(frame / 5);
   const spriteStyle: CSSProperties = {
     ...style,
-    backgroundImage: 'url("/ui/fraktum/vfx/' + kind + '.png")',
-    backgroundSize: '500% ' + (spec.rows * 100) + '%',
-    backgroundPosition: (col * 25) + '% ' + (spec.rows > 1 ? row / (spec.rows - 1) * 100 : 0) + '%',
+    backgroundImage: 'url("/ui/fraktum/vfx/battle_vfx_atlas.png")',
+    backgroundSize: '500% ' + (TOTAL_ROWS * 100) + '%',
+    backgroundPosition: (col * 25) + '% ' + (row / (TOTAL_ROWS - 1) * 100) + '%',
   };
   return <span className={"fraktumPixelVfx is-" + kind + " " + className} style={spriteStyle} aria-hidden="true" />;
 }
