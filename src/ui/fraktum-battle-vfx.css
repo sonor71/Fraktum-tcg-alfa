@@ -1,0 +1,51 @@
+/* FRAKTUM - animated pixel-art VFX. Source: PVFX Foundry CC0. */
+.fraktumPixelVfx {
+  position:absolute;z-index:0;top:50%;left:50%;
+  width:clamp(76px,9cqw,148px);height:clamp(76px,9cqw,148px);
+  transform:translate(-50%,-50%);display:block;background-repeat:no-repeat;
+  image-rendering:pixelated;pointer-events:none;opacity:.98;
+  filter:drop-shadow(0 0 5px #0006);
+}
+.fraktumPixelVfx.is-slash {width:clamp(84px,8.5cqw,138px);height:clamp(84px,8.5cqw,138px);}
+.fraktumPixelVfx.is-summon {width:clamp(78px,8cqw,135px);height:clamp(78px,8cqw,135px);opacity:.88;}
+.matchFxGroup {
+  position:absolute;display:block;width:1px;height:1px;
+  pointer-events:none;transform:translate(-50%,-50%);z-index:0;
+}
+.matchFxLayer .matchFxGroup .matchFxText {
+  position:absolute;z-index:2;left:0;top:0;pointer-events:none;
+  border-radius:1px !important;font-family:var(--fr-body,Consolas,monospace) !important;
+  font-size:clamp(12px,.76cqw,16px) !important;
+  font-weight:900;letter-spacing:0 !important;color:#f8eee1;
+  border:1px solid #745c50;background:rgba(17,16,21,.87);
+  text-shadow:1px 1px #07060a;box-shadow:2px 2px #0a090d;
+}
+.matchFxLayer .matchFxText.is-damage {color:#ff9b99;border-color:#ad4c53;}
+.matchFxLayer .matchFxText.is-heal {color:#aeefc0;border-color:#538d65;}
+.matchFxLayer .matchFxText.is-shield {color:#bcd9ff;border-color:#6d92bc;}
+.matchFxLayer .matchFxText.is-will {color:#ffdc97;border-color:#b1834a;}
+.matchFxLayer .matchFxText.is-discard {color:#dbc2fa;border-color:#816398;}
+.matchFxLayer .matchFxText.is-play {color:#e9edcb;border-color:#79996d;}
+.triad-vfx-layer {position:absolute;inset:0;z-index:16;pointer-events:none;overflow:hidden;}
+.triad-vfx-anchor {position:absolute;width:1px;height:1px;transform:translate(-50%,-50%);pointer-events:none;}
+.triad-vfx-anchor .fraktumPixelVfx {width:clamp(66px,8.5vw,130px);height:clamp(66px,8.5vw,130px);}
+.triad-vfx-text {
+  position:absolute;top:-42px;left:50%;transform:translateX(-50%);
+  white-space:nowrap;padding:3px 6px;border:1px solid #7e6351;
+  background:rgba(20,17,22,.95);color:#fff0d3;box-shadow:2px 2px #07060a;
+  font:900 12px Consolas,monospace;text-shadow:1px 1px #000;
+  animation:fraktumTriadFxFloat 820ms ease-out both;
+}
+.triad-vfx-text.is-damage {color:#ffaaaa;border-color:#c06a72;}
+.triad-vfx-text.is-heal {color:#b9ffd0;border-color:#71b28b;}
+.triad-vfx-text.is-shield {color:#bedaff;border-color:#6c99b2;}
+.triad-vfx-text.is-will {color:#ffe2a5;border-color:#bea16c;}
+@keyframes fraktumTriadFxFloat {
+  0%{opacity:0;transform:translate(-50%,5px) scale(.8)}
+  25%{opacity:1;transform:translate(-50%,-15px) scale(1.04)}
+  70%{opacity:1;transform:translate(-50%,-35px)}
+  100%{opacity:0;transform:translate(-50%,-54px)}
+}
+@media(prefers-reduced-motion:reduce) {
+ .matchFxLayer .matchFxText,.triad-vfx-text {animation:none !important;opacity:1 !important;}
+}

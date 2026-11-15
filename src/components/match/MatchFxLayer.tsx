@@ -1,83 +1,56 @@
 import type { CSSProperties } from "react";
+import { PixelVfxSprite, type PixelVfxKind } from "./PixelVfxSprite";
 
 type MatchFxTone = "damage" | "heal" | "will" | "shield" | "play" | "discard" | "sys";
-
-type MatchFxAnchor =
-  | "player-hero"
-  | "enemy-hero"
-  | "player-will"
-  | "enemy-will"
-  | "d20"
-  | `slot-player-${number}`
-  | `slot-enemy-${number}`;
+type MatchFxAnchor = "player-hero" | "enemy-hero" | "player-will" | "enemy-will" | "d20"
+  | `slot-player-${number}` | `slot-enemy-${number}`;
 
 export type MatchFxEvent = {
   id: string;
   text: string;
   tone: MatchFxTone;
   anchor: MatchFxAnchor;
+  visual?: PixelVfxKind;
 };
 
-type MatchFxLayerProps = {
-  events: MatchFxEvent[];
-};
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
-}
-
-function getSlotPosition(anchor: string): CSSProperties | undefined {
-  const match = /^slot-(player|enemy)-(\d+)$/.exec(anchor);
-  if (!match) return undefined;
-
-  const side = match[1];
-  const index = clamp(Number(match[2]), 0, 4);
-
-  const fieldLeft = 22.6;
-  const fieldWidth = 55.2;
-  const slotWidth = fieldWidth / 5;
-  const left = fieldLeft + slotWidth * (index + 0.5);
-  const top = side === "enemy" ? 31.5 : 52.7;
-
-  return {
-    left: `${left}%`,
-    top: `${top}%`,
-  };
-}
-
+type MatchFxLayerProps = { events: MatchFxEvent[] };
+const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
 function getAnchorStyle(anchor: MatchFxAnchor): CSSProperties {
-  const slotPosition = getSlotPosition(anchor);
-  if (slotPosition) return slotPosition;
-
+  const m = /^slot-(player|enemy)-(\d+)$/.exec(anchor);
+  if (m) {
+    const index = clamp(Number(m[2]), 0, 4);
+    return {
+      left: (22.6 + 55.2 / 5 * (index + 0.5)) + "%",
+      top: m[1] === "enemy" ? "31.5%" : "52.7%",
+    };
+  }
   switch (anchor) {
-    case "player-hero":
-      return { left: "11.8%", top: "39%" };
-    case "enemy-hero":
-      return { left: "88.2%", top: "39%" };
-    case "player-will":
-      return { left: "50%", top: "72.6%" };
-    case "enemy-will":
-      return { left: "50%", top: "18.9%" };
-    case "d20":
-      return { left: "8.2%", top: "79.5%" };
-    default:
-      return { left: "50%", top: "50%" };
+    case "player-hero": return { left: "11.8%", top: "39%" };
+    case "enemy-hero": return { left: "88.2%", top: "39%" };
+    case "player-will": return { left: "50%", top: "72.6%" };
+    case "enemy-will": return { left: "50%", top: "18.9%" };
+    case "d20": return { left: "8.2%", top: "79.5%" };
+    default: return { left: "50%", top: "50%" };
   }
 }
-
+function toneVisual(tone: MatchFxTone): PixelVfxKind {
+  switch (tone) {
+    case "damage": return "slash";
+    case "heal": return "heal";
+    case "will": return "arcane";
+    case "shield": return "shield";
+    case "discard": return "destroy";
+    default: return "summon";
+  }
+}
 export function MatchFxLayer({ events }: MatchFxLayerProps) {
-  if (events.length === 0) return null;
-
+  if (!events.length) return null;
   return (
     <div className="matchFxLayer" aria-hidden="true">
       {events.map((event) => (
-        <span
-          className={`matchFxText is-${event.tone}`}
-          data-anchor={event.anchor}
-          key={event.id}
-          style={getAnchorStyle(event.anchor)}
-        >
-          {event.text}
+        <span className="matchFxGroup" key={event.id} style={getAnchorStyle(event.anchor)}>
+          <PixelVfxSprite kind={event.visual ?? toneVisual(event.tone)} />
+          <span className={"matchFxText is-" + event.tone} data-anchor={event.anchor}>{event.text}</span>
         </span>
       ))}
     </div>
