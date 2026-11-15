@@ -30,3 +30,11 @@ are the CrispPixel-derived 26 bitmaps already committed before v3.
 The code uses original PNGs as 9-slice edges and tile fills.
 It specifically avoids `border-image-slice: fill` to prevent the prior
 yellow-background / white-text contrast problem.
+
+Additional original combat bar sprites from `FRAKTUM_UI_STARTER_2026-11-15.zip`:
+- `05_BATTLE/bars/hp_bar_bg.png` -> `battle/hp_bar_bg.png`
+- `05_BATTLE/bars/hp_bar_fill.png` -> `battle/hp_bar_fill.png`
+- `05_BATTLE/bars/will_bar_fill.png` -> `battle/will_bar_fill.png`
+
+These are **the supplied bitmap textures**, not an approximation drawn in CSS.
+The game still computes the meter's numeric progress from its normal state.
