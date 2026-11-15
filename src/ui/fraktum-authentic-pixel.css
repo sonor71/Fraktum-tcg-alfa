@@ -237,3 +237,79 @@ html,body,#root,.coreShell{
 @media (prefers-reduced-motion:reduce){
   .matchStatusFill,.matchWillFill {transition:none !important;}
 }
+
+/* FRAKTUM v3 real icon atlas: 32 original sprites supplied with the game art. */
+.coreNavButton[data-icon='home']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:0.00000% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreNavButton[data-icon='play']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:71.42857% 33.33333% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreNavButton[data-icon='inventory']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:57.14286% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreNavButton[data-icon='shop']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:42.85714% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreNavButton[data-icon='clubs']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:100.00000% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreNavButton[data-icon='profile']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:28.57143% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreMenuAction[data-icon='play']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:71.42857% 33.33333% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreMenuAction[data-icon='inventory']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:57.14286% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreMenuAction[data-icon='shop']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:42.85714% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreMenuAction[data-icon='clubs']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:100.00000% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.coreMenuAction[data-icon='profile']::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:28.57143% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.playCardV2:nth-child(1) .playCardTop::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:71.42857% 33.33333% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.playCardV2:nth-child(2) .playCardTop::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:57.14286% 33.33333% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.playCardV2:nth-child(3) .playCardTop::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:100.00000% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.invV2Tabs button:nth-child(1)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:71.42857% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.invV2Tabs button:nth-child(2)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:85.71429% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.marketTabs button:nth-child(1)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:42.85714% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.marketTabs button:nth-child(2)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:57.14286% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.marketTabs button:nth-child(3)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:0.00000% 33.33333% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.clubsTabs button:nth-child(1)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:14.28571% 33.33333% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.clubsTabs button:nth-child(2)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:100.00000% 0.00000% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.clubsTabs button:nth-child(3)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:0.00000% 33.33333% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.profileStatsGrid>span:nth-child(1)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:100.00000% 66.66667% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.profileStatsGrid>span:nth-child(2)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:0.00000% 66.66667% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.profileStatsGrid>span:nth-child(3)::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:0.00000% 33.33333% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.shopCurrencyButtons::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:100.00000% 66.66667% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+.matchWillLabel::before{content:"" !important;display:inline-block;flex:none;background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;background-size:800% 400% !important;background-position:0.00000% 66.66667% !important;background-repeat:no-repeat !important;image-rendering:pixelated !important;}
+
+.coreMenuSettings::before,.coreSettings::before {
+  content:"";display:inline-block;flex:none;vertical-align:middle;margin-right:6px;
+  width:18px;height:18px;
+  background:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") 14.28571% 0 / 800% 400% no-repeat;
+  image-rendering:pixelated;
+}
+.clubsPlaceholder {display:flex !important;align-items:center;justify-content:center;gap:10px;}
+.clubsPlaceholder::before {content:"";display:inline-block;width:28px;height:28px;flex:none;
+ background:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") 14.28571% 33.33333% / 800% 400% no-repeat;image-rendering:pixelated;}
+.clubsPanel:nth-child(2) .clubsPlaceholder::before {background-position:100% 0;}
+.profileIdentityCard::before {
+  content:"";display:block;position:absolute;right:16px;top:14px;opacity:.70;
+  width:36px;height:36px;pointer-events:none;
+  background:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") 0% 100% / 800% 400% no-repeat;image-rendering:pixelated;
+}
+.shopCard.skinsCard::before {
+  content:"";display:block;width:52px;height:52px;flex:none;
+  margin:6px auto 12px;
+  background:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") 28.57143% 100% / 800% 400% no-repeat;image-rendering:pixelated;
+}
+.shopCard.currencyCard::before {
+  content:"";position:absolute;top:12px;right:12px;display:block;
+  width:29px;height:29px;opacity:.8;pointer-events:none;
+  background:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") 14.28571% 100% / 800% 400% no-repeat;image-rendering:pixelated;
+}
+.matchShieldPip span {width:15px !important;height:15px !important;
+  background:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") 71.42857% 66.66667% / 800% 400% no-repeat !important;image-rendering:pixelated;}
+.matchHeroMeterGroup.is-shield-meter .matchHeroMeterValue::before {
+ background:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") 71.42857% 66.66667% / 800% 400% no-repeat !important;
+}
+.matchStatusBar.is-hp .matchStatusBarMeta i {width:15px;height:15px;}
+.matchStatusBar.is-will .matchStatusBarMeta i {
+ background:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") 0% 66.66667% / 800% 400% no-repeat !important;
+}
+.matchBonusSlot:not(.is-occupied)::before {
+ content:"";display:block;position:absolute;top:4px;left:4px;
+ width:18px;height:18px;opacity:.5;pointer-events:none;
+ background:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") 85.71429% 100% / 800% 400% no-repeat;
+ image-rendering:pixelated;
+}
+/* User-owned source pixels and the rules of the battle remain separate. */
+@media(max-width:650px){
+.coreSettings::before,.coreMenuSettings::before {width:14px;height:14px;}
+.profileIdentityCard::before{width:24px;height:24px;right:7px;top:7px;}
+.clubsPlaceholder::before{width:19px;height:19px;}
+}
