@@ -4,13 +4,13 @@ import { CloudAutoSync } from "../cloud/CloudAutoSync";
 import "./core-shell.css";
 
 const NAV_ITEMS = [
-  { label: "Главная", path: "/" },
-  { label: "Арена", path: "/play" },
-  { label: "Инвентарь", path: "/inventory" },
-  { label: "Маркет", path: "/market" },
-  { label: "Магазин", path: "/shop" },
-  { label: "Клубы", path: "/clubs" },
-  { label: "Профиль", path: "/profile" },
+  { label: "Главная", path: "/", icon: "home" },
+  { label: "Арена", path: "/play", icon: "play" },
+  { label: "Инвентарь", path: "/inventory", icon: "inventory" },
+  { label: "Маркет", path: "/market", icon: "market" },
+  { label: "Магазин", path: "/shop", icon: "shop" },
+  { label: "Клубы", path: "/clubs", icon: "clubs" },
+  { label: "Профиль", path: "/profile", icon: "profile" },
 ];
 
 export default function Shell({ children }: PropsWithChildren) {
@@ -40,6 +40,7 @@ export default function Shell({ children }: PropsWithChildren) {
                   key={item.path}
                   type="button"
                   className={active ? "coreNavButton is-active" : "coreNavButton"}
+                  data-icon={item.icon}
                   onClick={() => navigate(item.path)}
                 >
                   {item.label}
