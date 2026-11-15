@@ -1,49 +1,50 @@
-# FRAKTUM: REFORGED — installation of pixel UI assets
+# FRAKTUM: REFORGED — pixel-art UI assets in this branch
 
-This branch updates the visual design across menus and both match screens.
+## Asset installation
 
-## WHERE TO PUT IMAGES
+**The selected textures have already been uploaded on this PR branch.**
+No manual ZIP upload, file renaming, or copying is required.
 
-Only assets actually used by the interface belong in the repository:
-`public/ui/fraktum/` with subfolders `buttons/`, `panels/`,
-`icons/`, `battle/`. Example:
-`public/ui/fraktum/icons/icon_hp.png`
-`public/ui/fraktum/battle/arena_1v1.png`.
+The application loads textures directly from `public/ui/fraktum/`:
 
-The 47MB sorted archive is **not** intended to be committed. It contains
-thousands of source files, duplicate variants, fonts, audio and assets with
-incomplete licence documentation. Committing its ZIP will NOT make the images
-accessible to the frontend: Vite serves unpacked files in `public/`.
+- `buttons/` — button states,
+- `panels/` — pixel panels and window chrome,
+- `icons/` — hearts, shields, coins, sword, bag, etc.,
+- `battle/arena_1v1.png` — original, procedurally drawn warm wooden tabletop.
 
-The selected 27-image bundle was provided separately to the user as
-`FRAKTUM_REFORGED_UI_ASSETS_DROPIN.zip`. Unpack **only its public/ directory**
-into the repository root. Do not place assets under `src/` or rename the files.
+The same arena texture is currently used behind 1×1 and 1×1×1, so that
+both game modes share the wooden-board visual language. The triad-specific
+layout still uses its own scene components.
 
-## LICENSING BEFORE PUBLIC PUSH
+The CSS has a fallback wooden gradient if an image fails to load.
+Icons and other visual assets are independent of card art, network logic,
+and player progress.
 
-`CrispPixel_Sampler/LICENSE.txt` in the uploaded archive allows graphics
-in commercial/non-commercial games, but explicitly prohibits sharing the
-art itself as a standalone pack. **Check your intended public repository
-distribution and the asset author's licence before committing its PNGs.**
-The wooden arena's source-specific licence was not included in the upload;
-confirm you own rights to it or have permission.
+## Scope
 
-The CSS has gradient/color fallbacks and builds without optional assets.
-Do not publish the full sorted asset archive or any files with unverified rights.
+Updated home, navigation, existing shared menus, pack opening, card passport,
+1×1 match and triad match visual styling. Game rules, card costs, balances,
+online matchmaking and Supabase code are not changed by this update.
 
-## SCOPE OF THE UPDATE
+## License conditions
 
-- Wood/bronze global interface; shared navigation, home, modes, collection,
-  decks, inventory, shop, market, clubs, profile, settings.
-- Wooden 1v1 and 1v1v1 arenas, thin board slots, coloured HP/shield meters,
-  D20 pedestal styling, clearer turn and battle overlays.
-- Menu icons can be read from `public/ui/fraktum/icons/`.
-- Game mechanics, costs, authentication, matchmaking, bot logic, packs,
-  saved progress, and network sync remain unchanged.
+The 26 third-party UI textures came from **CrispPixel Sampler** and are
+used inside the game. See `public/ui/fraktum/THIRD_PARTY_ASSETS.md`.
+The included licence permits commercial/non-commercial use in games and apps
+but prohibits redistributing them as a standalone asset pack, UI kit, or
+template. Do not treat the PNGs as freely reusable files in another project
+or republish them as a pack.
 
-## TESTING
+The original user-uploaded `arena_1v1.png` was **not** committed because
+its source-specific copyright/licence could not be verified. A new, original
+wooden-board texture was created specifically for this game instead.
 
-Run `npm ci`, then `npm run build` and `npm test -- --run` if available.
-Manually inspect desktop and mobile layouts and online/triad matches before
-merging. This change was prepared without a local checkout; CI and manual
-review are required before production deployment.
+The large sorted resource archive (46MB) remains **outside** the public
+repository. It includes thousands of unused images and unverified licences.
+
+## Verify before merging
+
+The repository's GitHub Actions workflow runs the build and relevant tests.
+Also manually inspect 1×1 AI match, 1×1 online matchmaking and roulette,
+triad, card costs, store, pack opening, and the mobile layout. The PR
+does not claim to fix functional gameplay bugs that were already present.
