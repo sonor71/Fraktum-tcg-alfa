@@ -1,0 +1,239 @@
+
+/* FRAKTUM Reforged v3: actual bitmap UI chrome from the user's source archive.
+ * Use 9-slice image borders and repeated original PNG pixels, not gradients
+ * as the only design. No layout or gameplay state changes.
+ * Do not apply pixel frames to card art itself (preserve illustration).
+ */
+:root{
+  --fx-ink:#e8ddcb;
+  --fx-bronze:#b38b59;
+  --fx-glass:#211f26;
+  --fx-wood-sprite:url("/ui/fraktum/panels/panel_inset.png");
+  --fx-frame:url("/ui/fraktum/panels/panel_main.png");
+  --fx-window:url("/ui/fraktum/panels/panel_popup.png");
+  --fx-button:url("/ui/fraktum/buttons/btn_primary_idle.png");
+  --fx-button-hover:url("/ui/fraktum/buttons/btn_primary_hover.png");
+  --fx-button-pressed:url("/ui/fraktum/buttons/btn_primary_pressed.png");
+  --fx-button-disabled:url("/ui/fraktum/buttons/btn_primary_disabled.png");
+}
+html,body,#root,.coreShell{
+ background-image:var(--fx-wood-sprite) !important;
+ background-repeat:repeat !important;
+ background-size:32px 32px !important;
+ image-rendering:pixelated;
+}
+.coreMenuRoot,.coreShellContent:not(.coreShellContent--match),
+.playRoot,.invRoot,.deckRoot,.marketRoot,.shopRoot,
+.clubsPage,.profilePage,.demo-page{
+  background-image:
+    linear-gradient(180deg,rgba(15,14,18,.75),rgba(15,13,18,.87)),
+    url("/ui/fraktum/battle/arena_1v1.png") !important;
+  background-position:center center !important;
+  background-size:cover !important;
+  background-attachment:fixed !important;
+  image-rendering:pixelated;
+}
+/* Universal 9-slice: source assets provide the *pixel borders*,
+   inset bitmap supplies the centre, so white-on-yellow cannot recur. */
+:where(
+.coreMenuPanel,.glass-panel,.playCardV2,.invTabletV2,.invCraftPanelV2,
+.deckLeft,.deckRight,.deckLeftBlock,.deckDemoPool,.deckMainSlot,
+.deckCharSlot,.deckBoostSlot,.shopCard,.packInfoBlock,.currencyCard,
+.marketHero,.marketStats,.marketInventoryPanel,.marketCatalogPanel,
+.marketAuctionsPanel,.marketCreatePanel,.marketSelectedCard,.marketInventoryCard,
+.marketPurchasePanel,.marketPurchaseEstimate,.auctionRow,.marketBackendNote,
+.clubsPanel,.clubsHeader,.clubsPlaceholder,.profileSyncBanner,.profile-card,
+.profileIdentityCard,.profilePanelFixed,.profileMiniCard,.profileStatCards,
+.profileLevelBlock,.profileRecentCards,.profileShowcaseGrid,.profileMiniList,
+.invCardSheet,.invCardV2,.invCraftRowV2,.invSearch,.marketEmpty,
+.matchHeroPanel,.matchOpponentProfile,.matchArenaTopbar,.matchActionStatus,
+.matchWillStrip,.matchBattleLog,.matchBattleClock,.matchSeriesHud,
+.matchBonusSlot,.matchD20Help,.matchContextBanner,.fateRoulettePanel,
+.matchWinnerCard,.triad-player-block,.triad-deck-zone,.triad-discard-zone,
+.triad-controls,.triad-log,.triad-chat,.triad-lobby,.hpo-brandBlock,
+.hpo-progressBlock,.hpo-summary,.hpo-summaryCard,.hpo-revealMeta,
+.fraktumPassport,.fraktumPassport__topbar){
+  border-radius:1px !important;
+  border:4px solid #846246 !important;
+  border-image-source:var(--fx-frame) !important;
+  border-image-slice:7 !important;
+  border-image-width:7px !important;
+  border-image-repeat:stretch !important;
+  background-color:#211d23 !important;
+  background-image:var(--fx-wood-sprite) !important;
+  background-size:32px 32px !important;
+  color:var(--fx-ink) !important;
+  backdrop-filter:none !important;
+  box-shadow:4px 5px #0c0b10 !important;
+}
+:where(.coreMenuPanel,.profileIdentityCard,.marketHero,.shopCard,.matchWinnerCard,
+.hpo-summary,.fraktumPassport){
+  border-image-source:var(--fx-window) !important;
+  border-image-slice:8 !important;
+  border-image-width:8px !important;
+}
+/* Actual buttons PNGs with focus, hover, pressed and disabled states. */
+:where(.coreMenuAction,.coreNavButton,.coreSettings,.coreMenuSettings,
+.playActionBtn,.playDeckStatus,.invV2Tabs button,.invDeckBtn,.invCraftRowV2 button,
+.invSheetActions button,.deckBtn,.deckRemoveBtn,.shopBack,.buyBtn,
+.marketTabs button,.marketPrimaryBtn,.marketGhostBtn,.marketDangerBtn,
+.clubsTab,.profilePage button,.demo-page button,.matchBackButton,.matchGhostButton,
+.matchGoldButton,.matchD20HelpButton,.matchWinnerActions button,
+.triad-topbar button,.triad-lobby button,.triad-controls button,.triad-chat button,
+.hpo-actionButton,.hpo-exitButton,.fraktumPassport__close){
+  border:3px solid #9b724a !important;
+  border-image-source:var(--fx-button) !important;
+  border-image-slice:5 8 5 8 !important;
+  border-image-width:5px 9px !important;
+  border-image-repeat:stretch !important;
+  background-color:#302d35 !important;
+  background-image:var(--fx-wood-sprite) !important;
+  background-size:24px 24px !important;
+  color:#f7e8d0 !important;
+  text-shadow:1px 1px #121017 !important;
+  box-shadow:2px 3px #0b0a0f !important;
+  border-radius:0 !important;
+  image-rendering:pixelated;
+}
+:where(.coreMenuAction,.coreNavButton,.coreSettings,.coreMenuSettings,
+.playActionBtn,.playDeckStatus,.invV2Tabs button,.invDeckBtn,.invCraftRowV2 button,
+.invSheetActions button,.deckBtn,.shopBack,.buyBtn,.marketTabs button,
+.marketPrimaryBtn,.marketGhostBtn,.marketDangerBtn,.clubsTab,.profilePage button,
+.matchBackButton,.matchGhostButton,.matchGoldButton,.matchD20HelpButton,
+.triad-topbar button,.triad-lobby button,.triad-controls button,.triad-chat button,
+.hpo-actionButton,.hpo-exitButton):hover:not(:disabled){
+  border-image-source:var(--fx-button-hover) !important;
+  background-color:#3b423c !important;
+  color:#fff4dc !important;
+}
+:where(.coreMenuAction,.coreNavButton,.coreSettings,.playActionBtn,.invV2Tabs button,
+.invDeckBtn,.deckBtn,.buyBtn,.marketTabs button,.marketPrimaryBtn,.clubsTab,
+.triad-controls button):active:not(:disabled){
+  border-image-source:var(--fx-button-pressed) !important;
+}
+:where(.coreMenuAction,.coreNavButton,.playActionBtn,.deckBtn,.buyBtn,
+.marketPrimaryBtn,.triad-controls button):disabled{
+  border-image-source:var(--fx-button-disabled) !important;
+  filter:saturate(.55);opacity:.6;
+}
+:where(.coreMenuAction.is-primary,.coreNavButton.is-active,
+.playCardV2.is-ranked,.playActionBtn,.marketPrimaryBtn,
+.invV2Tabs button.is-active,.marketTabs button.is-active,.clubsTab.is-active){
+ border-color:#78c1b2 !important;
+ box-shadow:inset 0 0 0 1px #467970,2px 3px #0b0a0f !important;
+}
+/* Genuine pixel inventory slots and card backs. */
+:where(.invCardV2,.deckMiniCard,.deckMainSlot,.deckBoostSlot,.deckCharSlot,
+.profileMiniCard,.profileShowcaseGrid .slot-empty,.marketInventoryCard){
+ border-image-source:url("/ui/fraktum/panels/panel_portrait.png") !important;
+ border-image-slice:7 !important;border-image-width:5px !important;
+ background-color:#1d1a22 !important;
+ background-image:var(--fx-wood-sprite) !important;
+ background-size:32px 32px !important;
+}
+/* Inputs and controls: pixel-edged and focus-visible on all scenes. */
+:where(.invSearch input,.invRarityFilter select,.marketField input,
+.marketField select,.marketFilters input,.marketFilters select,
+.demo-page input,.demo-page select,.demo-page textarea,.profile-card input,
+.triad-chat input,.triad-lobby input){
+  border:4px solid #806649 !important;
+  border-image-source:url("/ui/fraktum/panels/panel_tooltip.png") !important;
+  border-image-slice:5 !important;
+  border-image-width:4px !important;
+  background:#121218 !important;
+  color:#f2e5d4 !important;
+  border-radius:0 !important;
+}
+/* Match battle overlays, field zones and statuses anchored on real textures */
+.matchArenaShell,.triad-arena{
+  background-image:
+    linear-gradient(rgba(16,15,19,.13),rgba(16,13,18,.18)),
+    url("/ui/fraktum/battle/arena_1v1.png") !important;
+  background-size:100% 100% !important;
+  background-position:center !important;
+  image-rendering:pixelated;
+}
+.matchBoardPanel,.matchPile,.matchD20Zone,.triad-field-cards,.triad-fate-triangle{
+ background-image:var(--fx-wood-sprite) !important;
+ background-size:32px 32px !important;
+ border-color:#8b684b !important;
+}
+.matchBoardSlot,.triad-slot{
+  border:5px solid #8c6f53 !important;
+  border-image-source:url("/ui/fraktum/panels/panel_portrait.png") !important;
+  border-image-slice:7 !important;
+  border-image-width:5px !important;
+  border-image-repeat:stretch !important;
+  border-radius:0 !important;
+  background-image:var(--fx-wood-sprite) !important;
+  background-size:32px 32px !important;
+  background-color:#191920 !important;
+  box-shadow:inset 0 0 0 1px #110f14 !important;
+}
+.matchBoardSlot.is-valid,.matchBoardSlot:hover,.triad-slot.is-ready{
+ border-color:#b7e5d6 !important;
+ box-shadow:0 0 0 2px rgba(145,211,194,.42) !important;
+}
+.matchBoardSlot.has-status-alpha_frozen,.triad-slot.is-frozen{
+ border-color:#8ccff0 !important;
+ box-shadow:0 0 0 2px rgba(79,174,239,.38) !important;
+}
+.matchStatusTrack,.matchVerticalHp,.matchShieldMeter,
+.matchWillTrack,.matchHeroMiniWillTrack,.profileXpBar,
+.triad-player-title b{
+ border:3px solid #8f7051 !important;
+ border-image-source:url("/ui/fraktum/panels/panel_inset.png") !important;
+ border-image-slice:4 !important;
+ border-image-width:3px !important;
+ border-radius:0 !important;
+ background:#121116 !important;
+}
+.matchStatusFill,.matchVerticalHpFill,.matchShieldMeter span,.matchWillFill,
+.profileXpBar i{
+  image-rendering:pixelated;
+  border-radius:0 !important;
+  transition-timing-function:steps(8,end) !important;
+}
+.matchStatusBar.is-hp .matchStatusFill,.matchVerticalHpFill{
+  background-image:repeating-linear-gradient(90deg,transparent 0 11px,#1d090832 12px 13px),
+    url("/ui/fraktum/icons/icon_hp.png") !important;
+  background-size:auto,18px 18px !important;
+  background-color:#c34c5d !important;
+}
+.matchStatusBar.is-shield .matchStatusFill,.matchShieldMeter span{
+ background-color:#5c91c7 !important;
+ background-image:url("/ui/fraktum/icons/icon_shield.png") !important;
+ background-size:16px 16px !important;
+}
+.matchStatusBar.is-will .matchStatusFill,.matchWillFill,.profileXpBar i{
+ background-color:#ab7e48 !important;
+ background-image:url("/ui/fraktum/icons/icon_gem.png") !important;
+ background-size:18px 18px !important;
+}
+.matchHeroPortrait,.matchHeroNameplate,.matchSlotStateTag,
+.triad-back,.triad-hand-card{
+ border-image-source:url("/ui/fraktum/panels/panel_portrait.png") !important;
+ border-image-slice:7 !important;border-image-width:4px !important;
+ border-radius:0 !important;
+}
+.matchFxText,.triad-vfx-text,.matchBattleLog li{
+ font-family:var(--fr-body,Consolas,monospace) !important;
+}
+.hpo-background{
+ background-image:linear-gradient(#141218ac,#141218eb),
+   url("/ui/fraktum/battle/arena_1v1.png") !important;
+ background-size:cover !important;
+}
+.hpo-summaryCard,.hpo-revealMeta,.hpo-brandBlock,.hpo-progressBlock{
+  background-image:var(--fx-wood-sprite) !important;
+  background-size:32px 32px !important;
+}
+.fraktumPassport__topbar { border-image-source:var(--fx-frame) !important; }
+@media (max-width:700px){
+ .matchBoardSlot,.triad-slot{border-image-width:3px !important;border-width:3px !important;}
+ .matchHeroPanel,.triad-player-block {border-image-width:4px !important;}
+ .coreMenuAction{border-image-width:4px 6px !important;}
+}
+@media (prefers-reduced-motion:reduce){
+  .matchStatusFill,.matchWillFill {transition:none !important;}
+}
