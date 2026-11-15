@@ -136,6 +136,7 @@ type Props = { kind: PixelVfxKind; style?: CSSProperties; className?: string };
 export function PixelVfxSprite({ kind, style, className = "" }: Props) {
   const spec = SHEETS[kind];
   const [frame, setFrame] = useState(0);
+  const [finished, setFinished] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
@@ -143,14 +144,22 @@ export function PixelVfxSprite({ kind, style, className = "" }: Props) {
       return () => window.clearTimeout(timer);
     }
     let raf = 0;
+    let hide = 0;
     const begin = performance.now();
     const advance = (now: number) => {
       const next = Math.min(spec.frames - 1, Math.floor((now - begin) / spec.frameMs));
       setFrame((current) => current === next ? current : next);
-      if (next < spec.frames - 1) raf = window.requestAnimationFrame(advance);
+      if (next < spec.frames - 1) {
+        raf = window.requestAnimationFrame(advance);
+      } else {
+        hide = window.setTimeout(() => setFinished(true), spec.frameMs);
+      }
     };
     raf = window.requestAnimationFrame(advance);
-    return () => window.cancelAnimationFrame(raf);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.clearTimeout(hide);
+    };
   }, [spec]);
 
   const col = frame % 5;
@@ -164,5 +173,5 @@ export function PixelVfxSprite({ kind, style, className = "" }: Props) {
     backgroundPosition: (col * 25) + '% ' +
       (row / ((spec.extra ? EXTRA_ROWS : TOTAL_ROWS) - 1) * 100) + '%',
   };
-  return <span className={"fraktumPixelVfx is-" + kind + " " + className} style={spriteStyle} aria-hidden="true" />;
+  return finished ? null : <span className={"fraktumPixelVfx is-" + kind + " " + className} style={spriteStyle} aria-hidden="true" />;
 }
