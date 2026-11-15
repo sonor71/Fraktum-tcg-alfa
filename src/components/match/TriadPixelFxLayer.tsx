@@ -41,11 +41,11 @@ export function buildTriadVisualEvents(previous: TriadState, next: TriadState): 
     const hero = "triad-hero-" + seat;
     if (after.hp !== before.hp) {
       const delta = after.hp - before.hp;
-      create(events, hero, delta < 0 ? "slash" : "heal", (delta > 0 ? "+" : "") + delta, delta < 0 ? "damage" : "heal");
+      create(events, hero, delta < 0 ? (delta <= -5 ? "crit" : "slash") : "heal", (delta > 0 ? "+" : "") + delta, delta < 0 ? "damage" : "heal");
     }
     if (after.shield !== before.shield) {
       const delta = after.shield - before.shield;
-      create(events, hero, "shield", (delta > 0 ? "+" : "") + delta + " SHD", "shield");
+      create(events, hero, delta < 0 ? "shield_break" : "shield", (delta > 0 ? "+" : "") + delta + " SHD", "shield");
     }
     if (after.will !== before.will && seat === next.active) {
       const delta = after.will - before.will;
@@ -61,7 +61,7 @@ export function buildTriadVisualEvents(previous: TriadState, next: TriadState): 
     }
   }
   if (previous.roll !== next.roll && next.roll !== null)
-    create(events, "triad-d20", "arcane", "D20: " + next.roll, "will");
+    create(events, "triad-d20", "fate", "D20: " + next.roll, "will");
 
   // Keep shared online render work bounded on a board wipe.
   return events.slice(0, 18);
