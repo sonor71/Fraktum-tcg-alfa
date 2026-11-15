@@ -1,9 +1,16 @@
-# FRAKTUM Reforged UI asset directory
+# FRAKTUM: Reforged UI textures
 
-Place unpacked selected PNGs here: `buttons/`, `panels/`, `icons/`, `battle/`.
+The selected pixel textures are **already included in this directory**.
+There is nothing for the user to upload.
 
-For example: `public/ui/fraktum/icons/icon_hp.png` and `public/ui/fraktum/battle/arena_1v1.png`.
+`buttons/` — wooden pixel button states; `panels/` — pixel panels;
+`icons/` — pixel symbols; `battle/arena_1v1.png` — a custom procedural
+pixel-wood tabletop background.
 
-Do **not** commit the entire 47MB resource archive or nested ZIP files: Vite does not unpack them. Confirm the licence for each asset before publishing to a public repository; some supplied samples prohibit redistribution as asset packs and the wooden arena's rights are unverified. The CSS provides fallbacks for missing files.
+The game uses these through `src/ui/fraktum-reforged.css`.
+Do not commit the complete sorted ZIP archive.
 
-See `FRAKTUM_REFORGED_ASSETS.md` at the repository root.
+**Licensing:** Third-party button/panel/icon PNGs are CrispPixel Sampler
+content, permitted for game use but not standalone redistribution. See
+`THIRD_PARTY_ASSETS.md`. The arena texture is a newly made game-specific
+asset, not the unverified original from the uploaded archive.
