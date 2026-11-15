@@ -9,6 +9,7 @@ import "./ui/match-mobile-final.css";
 import "./ui/fraktum-unified.css";
 import "./ui/fraktum-reforged.css";
 import "./ui/fraktum-reforged-v2.css";
+import "./ui/fraktum-battle-vfx.css";
 
 
 createRoot(document.getElementById('root')!).render(
