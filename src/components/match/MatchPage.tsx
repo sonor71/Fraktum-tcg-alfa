@@ -62,7 +62,7 @@ type OnlineQueueState = "idle" | "searching" | "matched" | "error";
 const UI_LOG_LIMIT = 18;
 const PLAY_COMMIT_DELAY_MS = 90;
 const AUTO_AI_DELAY_MS = 720;
-const FX_EVENT_TTL_MS = 920;
+const FX_EVENT_TTL_MS = 2360; // Longest imported one-shot is 14 frames x 160ms.
 const TRAVEL_EVENT_TTL_MS = 760;
 const TACTICAL_REVEAL_TTL_MS = 3200;
 const AUTO_PLAYER_PASS_EMPTY_MS = 860;
@@ -274,7 +274,7 @@ function collectSideFx(
 
   const shieldDelta = (after.shield ?? 0) - (before.shield ?? 0);
   if (shieldDelta > 0) pushFx(events, idSeed, "shield", heroAnchor, `+${shieldDelta} SHIELD`);
-  if (shieldDelta < 0) pushFx(events, idSeed, "shield", heroAnchor, `${shieldDelta} SHIELD`);
+  if (shieldDelta < 0) pushFx(events, idSeed, "shield", heroAnchor, `${shieldDelta} SHIELD`, "shield_break");
 
   const willDelta = after.will - before.will;
   if (willDelta > 0) pushFx(events, idSeed, "will", willAnchor, `+${willDelta} WILL`);
@@ -308,7 +308,7 @@ function collectBoardFx(
     if (!before || !card || before.instanceId !== card.instanceId) return;
 
     const hpDelta = getCardCurrentHp(card) - getCardCurrentHp(before);
-    if (hpDelta < 0) pushFx(events, idSeed, "damage", anchor, `${hpDelta}`);
+    if (hpDelta < 0) pushFx(events, idSeed, "damage", anchor, `${hpDelta}`, Math.abs(hpDelta) >= 5 ? "crit" : "slash");
     if (hpDelta > 0) pushFx(events, idSeed, "heal", anchor, `+${hpDelta}`);
     // Status effects fire once when a card acquires a new status.
     for (const status of card.statuses ?? []) {
@@ -329,7 +329,7 @@ function buildFxEvents(previous: MatchStateSnapshot, current: MatchStateSnapshot
   collectBoardFx(events, idSeed, previous, current, "enemy");
 
   if (previous.lastRoll !== current.lastRoll && typeof current.lastRoll === "number") {
-    pushFx(events, idSeed, "will", "d20", `${current.lastRoll}`, "arcane");
+    pushFx(events, idSeed, "will", "d20", `${current.lastRoll}`, "fate");
   }
 
   return {
