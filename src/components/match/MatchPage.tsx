@@ -22,6 +22,7 @@ import {
   type WillMatchStats,
 } from "../../useGameStore";
 import type { MatchFxEvent } from "./MatchFxLayer";
+import { cardVfxKind, statusVfxKind, type PixelVfxKind } from "./PixelVfxSprite";
 import type { CardTravelEvent } from "./CardTravelLayer";
 import type { TacticalRevealEvent } from "./TacticalRevealLayer";
 import type { MatchRoulettePresentation, MatchTurnAnnouncement } from "./MatchPresentationLayer";
@@ -244,12 +245,14 @@ function pushFx(
   tone: MatchFxEvent["tone"],
   anchor: MatchFxEvent["anchor"],
   text: string,
+  visual?: PixelVfxKind,
 ) {
   events.push({
     id: `fx_${Date.now()}_${idSeed.value++}`,
     tone,
     anchor,
     text,
+    visual,
   });
 }
 
@@ -293,12 +296,12 @@ function collectBoardFx(
     const anchor = `slot-${side}-${index}` as MatchFxEvent["anchor"];
 
     if (!before && card) {
-      pushFx(events, idSeed, card.temporaryUntilRoundEnd ? "play" : "sys", anchor, card.temporaryUntilRoundEnd ? "TEMP" : "PLAY");
+      pushFx(events, idSeed, "play", anchor, "КАРТА", cardVfxKind(card.definition));
       return;
     }
 
     if (before && !card) {
-      pushFx(events, idSeed, "discard", anchor, before.temporaryUntilRoundEnd ? "DISCARD" : "DESTROYED");
+      pushFx(events, idSeed, "discard", anchor, before.temporaryUntilRoundEnd ? "СБРОС" : "УНИЧТОЖЕНО", "destroy");
       return;
     }
 
@@ -307,6 +310,12 @@ function collectBoardFx(
     const hpDelta = getCardCurrentHp(card) - getCardCurrentHp(before);
     if (hpDelta < 0) pushFx(events, idSeed, "damage", anchor, `${hpDelta}`);
     if (hpDelta > 0) pushFx(events, idSeed, "heal", anchor, `+${hpDelta}`);
+    // Status effects fire once when a card acquires a new status.
+    for (const status of card.statuses ?? []) {
+      if ((before.statuses ?? []).includes(status)) continue;
+      const visual = statusVfxKind(status);
+      if (visual) pushFx(events, idSeed, "sys", anchor, status.replaceAll("_", " ").toUpperCase(), visual);
+    }
   });
 }
 
@@ -320,7 +329,7 @@ function buildFxEvents(previous: MatchStateSnapshot, current: MatchStateSnapshot
   collectBoardFx(events, idSeed, previous, current, "enemy");
 
   if (previous.lastRoll !== current.lastRoll && typeof current.lastRoll === "number") {
-    pushFx(events, idSeed, "will", "d20", `${current.lastRoll}`);
+    pushFx(events, idSeed, "will", "d20", `${current.lastRoll}`, "arcane");
   }
 
   return {
