@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { splitDeckSelection } from "../../game/deckRules";
 import { loadCardDefinitions } from "../../game/data/cards";
@@ -14,6 +14,7 @@ import {
   joinTriadRoom, roomTriadLoadouts, seatForTriadRoom, sendTriadAction,
   subscribeTriadRoom, type TriadEvent, type TriadRoom,
 } from "../../services/triadRooms";
+import { TriadPixelFxLayer, buildTriadVisualEvents, type TriadVisualEvent } from "./TriadPixelFxLayer";
 import "./triad-arena.css";
 
 const cardBack = "/cards/card-back.png";
@@ -50,12 +51,12 @@ function namesForSeats(state: TriadState) {
 const cardTitle = (card: TriadCard) => card.definition.ruTitle || card.definition.title;
 const cardImage = (card: TriadCard) => card.definition.image || cardBack;
 
-function Slot({ card, selected, disabled, onClick, label }: {
-  card: TriadCard | null; selected?: boolean; disabled?: boolean; onClick?: () => void; label: string;
+function Slot({ card, selected, disabled, onClick, label, vfxAnchor }: {
+  card: TriadCard | null; selected?: boolean; disabled?: boolean; onClick?: () => void; label: string; vfxAnchor?: string;
 }) {
   return (
     <button type="button" className={"triad-slot" + (selected ? " is-ready" : "") + (card ? " is-filled" : "")}
-      onClick={onClick} disabled={disabled} title={card ? cardTitle(card) + " · HP " + card.hp : label}>
+      onClick={onClick} disabled={disabled} data-vfx-anchor={vfxAnchor} title={card ? cardTitle(card) + " · HP " + card.hp : label}>
       {card ? <><img src={cardImage(card)} alt={cardTitle(card)} draggable={false} />
         {card.definition.health > 0 ? <span className="triad-slot-hp">{card.hp} HP</span> : null}</> :
         <span className="triad-slot-empty">✧</span>}
@@ -104,6 +105,37 @@ export default function TriadMatchPage() {
   const [flipped, setFlipped] = useState<string[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [chat, setChat] = useState<TriadEvent[]>([]);
+  // Visual-only effects: compare reducer snapshots. No game rules or online
+  // messages are modified; the same effects work for bot and private rooms.
+  const arenaRef = useRef<HTMLDivElement | null>(null);
+  const previousVisualState = useRef<TriadState | null>(null);
+  const visualNonce = useRef(0);
+  const visualTimers = useRef<number[]>([]);
+  const [visualEvents, setVisualEvents] = useState<TriadVisualEvent[]>([]);
+
+  useEffect(() => {
+    const previous = previousVisualState.current;
+    previousVisualState.current = match;
+    if (!previous || !match || previous.battle !== match.battle) return;
+    const built = buildTriadVisualEvents(previous, match);
+    if (built.length === 0) return;
+    const created: TriadVisualEvent[] = built.map((event) => ({
+      ...event, id: "triad_fx_" + visualNonce.current++,
+    }));
+    setVisualEvents((current) => [...current, ...created].slice(-18));
+    const timer = window.setTimeout(() => {
+      const ids = new Set(created.map((event) => event.id));
+      setVisualEvents((current) => current.filter((event) => !ids.has(event.id)));
+      visualTimers.current = visualTimers.current.filter((value) => value !== timer);
+    }, 820);
+    visualTimers.current.push(timer);
+  }, [match]);
+
+  useEffect(() => () => {
+    visualTimers.current.forEach((timer) => window.clearTimeout(timer));
+    visualTimers.current = [];
+  }, []);
+
   const seat: TriadSeat = privateMode && room && userId
     ? seatForTriadRoom(room, userId) ?? "a" : "a";
   const loadouts = privateMode && room ? roomTriadLoadouts(room) : botLoadouts;
@@ -247,6 +279,7 @@ export default function TriadMatchPage() {
           triadCanPlay(match, seat, selected, lane, slot));
         const permitted = healingTarget || regularTarget;
         return <Slot key={slot} card={card} label={label + " " + (slot + 1)}
+          vfxAnchor={"triad-slot-" + owner + "-" + lane + "-" + slot}
           selected={permitted} disabled={!permitted}
           onClick={() => {
             if (!selected) return;
@@ -267,7 +300,7 @@ export default function TriadMatchPage() {
   };
   const section = (owner: TriadSeat, side: "left" | "right" | "bottom") => (
     <div className={"triad-player-block is-" + side + (match.active === owner ? " is-active" : "")}>
-      <div className="triad-player-title">{match.players[owner].name} <b>HP {match.players[owner].hp}</b>
+      <div className="triad-player-title" data-vfx-anchor={"triad-hero-" + owner}>{match.players[owner].name} <b>HP {match.players[owner].hp}</b>
         <b>🛡 {match.players[owner].shield}</b>
         <b>ПОБЕДЫ {match.players[owner].victories}/{TRIAD_VICTORIES_TO_WIN}</b></div>
       {owner !== seat ? <BackHand cards={match.players[owner].hand}
@@ -290,11 +323,11 @@ export default function TriadMatchPage() {
       <span>БОЙ {match.battle} · {namesForSeats(match)}</span>
       {room && <span>КОД {room.invite_code}</span>}
     </header>
-    <div className="triad-arena">
+    <div className="triad-arena" ref={arenaRef}>
       <div className="triad-left-hand-side">{section(left, "left")}</div>
       <div className="triad-right-hand-side">{section(right, "right")}</div>
       <div className="triad-center-device">
-        <div className="triad-fate-triangle"><span className="triad-d20">D20</span></div>
+        <div className="triad-fate-triangle"><span className="triad-d20" data-vfx-anchor="triad-d20">D20</span></div>
         <small>{match.roll === null ? "РУЛЕТКА СУДЬБЫ" : "D20: " + match.roll}</small>
         {match.rouletteEvent && <small>СОБЫТИЕ: {match.rouletteEvent}</small>}
         <b>{match.phase === "ended" ? "ПОБЕДИТЕЛЬ: " + match.players[match.winner!].name :
@@ -352,6 +385,7 @@ export default function TriadMatchPage() {
           <small>{triadEffectiveCost(match, seat, card)}</small>
         </button>)}
       </div>
+      <TriadPixelFxLayer events={visualEvents} arenaRef={arenaRef} />
     </div>
     <div className="triad-info-panel">
       <div className="triad-log"><b>ЖУРНАЛ БОЯ</b>
