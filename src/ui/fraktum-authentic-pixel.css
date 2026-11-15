@@ -313,3 +313,50 @@ html,body,#root,.coreShell{
 .profileIdentityCard::before{width:24px;height:24px;right:7px;top:7px;}
 .clubsPlaceholder::before{width:19px;height:19px;}
 }
+
+/* Genuine FRAKTUM battle resource meter bitmaps from the uploaded UI ZIP.
+ * The fills tile the pixel texture, while the CSS width / height still
+ * comes from actual game HP and Will. No drawn gradient bars. */
+.matchStatusBar .matchStatusTrack,.matchVerticalHp,.matchWillTrack,
+.matchHeroMiniWillTrack,.profileXpBar {
+  background:#18131c url("/ui/fraktum/battle/hp_bar_bg.png") repeat-x center/auto 100% !important;
+}
+.matchStatusBar.is-hp .matchStatusFill,
+.matchVerticalHpFill {
+  background-color:#e0383e !important;
+  background-image:url("/ui/fraktum/battle/hp_bar_fill.png") !important;
+  background-repeat:repeat-x !important;
+  background-size:auto 100% !important;
+  transition:width .3s steps(10,end),height .3s steps(10,end) !important;
+}
+.matchVerticalHpFill {
+  background-repeat:repeat-y !important;
+  background-size:100% auto !important;
+}
+.matchStatusBar.is-will .matchStatusFill,
+.matchWillFill,.matchHeroMiniWillTrack i {
+  background-color:#3d8fe8 !important;
+  background-image:url("/ui/fraktum/battle/will_bar_fill.png") !important;
+  background-repeat:repeat-x !important;
+  background-size:auto 100% !important;
+}
+.matchStatusBar.is-shield .matchStatusFill,
+.matchShieldMeter span {
+  background-color:#4c83b8 !important;
+  background-image:url("/ui/fraktum/icons/ui_icon_atlas_extra.png") !important;
+  background-size:800% 400% !important;
+  background-position:71.42857% 66.66667% !important;
+  background-repeat:repeat-x !important;
+}
+/* Real PNG buttons for critical player controls and the triad D20. */
+.matchGhostButton.is-end-turn,.triad-controls button {
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_idle.png") !important;
+  border-image-slice:5 8 5 8 !important;
+}
+.matchGhostButton.is-end-turn:hover:not(:disabled),
+.triad-controls button:hover:not(:disabled) {
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_hover.png") !important;
+}
+.matchGhostButton.is-end-turn:disabled,.triad-controls button:disabled {
+  border-image-source:url("/ui/fraktum/buttons/btn_primary_disabled.png") !important;
+}
