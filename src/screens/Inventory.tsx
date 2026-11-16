@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import InventoryItems from "../features/InventoryItems";
 import { useGameStore, type OwnedCard } from "../useGameStore";
 import TiltCard from "../components/TiltCard";
 import type { CardEdition, CardRarity } from "../game/types";
 
 type CardItem = OwnedCard;
-type InventoryView = "collection" | "craft";
+type InventoryView = "collection" | "craft" | "items";
 
 let pendingMarkSeenTimer: number | null = null;
 const CRAFT_COST = 10;
@@ -152,16 +153,13 @@ export default function Inventory() {
         >
           КОЛЛЕКЦИЯ
         </button>
-        <button
-          type="button"
-          className={view === "craft" ? "is-active" : ""}
-          onClick={() => setView("craft")}
-        >
-          КРАФТ
-        </button>
+        <button type="button" className={view === "craft" ? "is-active" : ""}
+          onClick={() => setView("craft")}>КРАФТ</button>
+        <button type="button" className={view === "items" ? "is-active" : ""}
+          onClick={() => setView("items")}>ОБЩИЙ ИНВЕНТАРЬ</button>
       </nav>
 
-      {view === "collection" ? (
+      {view === "items" ? <InventoryItems /> : view === "collection" ? (
         <>
           <div className="invV2Toolbar">
             <label className="invSearch">
