@@ -2,7 +2,8 @@ import type { CSSProperties } from "react";
 import type { CardInstance, PlayerState } from "../../game/core/types";
 import { BonusSlots } from "./BonusSlots";
 import { StatusBar } from "./StatusBar";
-import { PlayerPortrait } from "../../features/PlayerIdentity";
+import { PlayerPortrait, useIdentity, TITLES, canUseTitle } from "../../features/PlayerIdentity";
+import { useGameStore } from "../../useGameStore";
 
 type HeroPanelProps = {
   player: PlayerState;
@@ -97,6 +98,12 @@ function getActiveHeroEffectLabel(id: string): string {
 }
 
 export function HeroPanel({ player, label, alignment = "left" }: HeroPanelProps) {
+  const selectedTitle = useIdentity((s) => s.title);
+  const level = useGameStore((s) => s.level);
+  const wins = useGameStore((s) => s.wins);
+  const cardCount = useGameStore((s) => s.ownedCards.length);
+  const unlockedTitle = canUseTitle(selectedTitle, level, wins, cardCount) ? selectedTitle : "wanderer";
+  const ownTitle = TITLES.find((item) => item.id === unlockedTitle)?.label ?? "Искатель";
   const hpMax = Math.max(1, player.maxHp);
   const hp = clamp(player.hp, 0, hpMax);
   const hpPct = percent(hp, hpMax);
@@ -146,7 +153,7 @@ export function HeroPanel({ player, label, alignment = "left" }: HeroPanelProps)
       <header className="matchHeroIdentity">
         {player.id === "player" ? <PlayerPortrait size="tiny" className="frMatchPlayerAvatar" /> : null}
         <div className="matchHeroIdentityText">
-          <span className="matchHeroRank">{getHeroSubtitle(player)}</span>
+          <span className="matchHeroRank">{player.id === "player" ? ownTitle : getHeroSubtitle(player)}</span>
           <h2>{label}</h2>
           <small>{heroTitle}</small>
         </div>
