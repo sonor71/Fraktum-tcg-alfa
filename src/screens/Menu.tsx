@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { PlayerIdentityChip } from "../features/PlayerIdentity";
 import "./core-menu.css";
 
 const MAIN_ACTIONS = [
@@ -18,6 +19,7 @@ export default function Menu() {
       <div className="coreMenuBackdrop" aria-hidden="true" />
       <div className="coreMenuPanel">
         <div className="coreMenuHeading">
+          <div className="frMenuIdentity"><PlayerIdentityChip /></div>
           <p>FRAKTUM TCG</p>
           <h1>Собери колоду. Выйди на арену.</h1>
           <span>Основная версия сфокусирована на карточных матчах и соревновательной игре.</span>
