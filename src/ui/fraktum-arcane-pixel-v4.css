@@ -1,0 +1,730 @@
+/* FRAKTUM / PIXEL PURGE v4 — NOV 17 2026
+   A unified original sprite-based skin replaces the scattered CSS-drawn
+   wood/gold/glass elements across gameplay, shops, profile, clubs and HUD.
+   Palette-recoloured real bitmaps: see public/ui/fraktum/arcane/LICENSE_AND_SOURCES.md.
+   Pixel art surfaces use true PNG 9-slice 'fill' from a dark kit, not yellow PNGs.
+   CSS still handles sizing, responsiveness, typography and game interactions. */
+:root {
+  --arc-bg:#0d111d;
+  --arc-surface:#161d30;
+  --arc-ink:#e5f4f5;
+  --arc-muted:#b0c5d5;
+  --arc-cyan:#91e7e6;
+  --arc-gold:#ffe4a4;
+  --arc-line:#628eac;
+  --arc-font:"Press Start 2P","Courier New",monospace;
+  --arc-body:"Courier New",Consolas,monospace;
+  --arc-panel:url("/ui/fraktum/arcane/panel_window.png");
+  --arc-inset:url("/ui/fraktum/arcane/panel_sunken.png");
+  --arc-button:url("/ui/fraktum/arcane/button_idle.png");
+  --arc-slot:url("/ui/fraktum/arcane/slot_idle.png");
+}
+html,body,#root{min-height:100%;background:#0d111d !important;color:var(--arc-ink) !important;}
+body{overscroll-behavior-y:none;}
+#root {isolation:isolate;}
+#root * {box-sizing:border-box;}
+#root :is(.coreShell,.coreMenuRoot,.coreShellContent:not(.coreShellContent--match),
+.playRoot,.invRoot,.deckRoot,.marketRoot,.shopRoot,.frProfilePage,.frClubsPage,.frItemsPage,
+.demo-page,.profilePage,.clubsPage,.matchPage,.triad-page,.hpo-root) {
+  background-image:url("/ui/fraktum/arcane/bg_tiles.png") !important;
+  background-repeat:repeat !important;
+  background-size:64px 64px !important;
+  background-color:#101625 !important;
+  background-attachment:scroll !important;
+  color:var(--arc-ink) !important;
+}
+#root :is(.frPlayerPortrait,.matchCardImage,.invCardArt,.packArtImg,.hpo-revealCardFace img,
+.shopCard img,.profile-card img,.frItemArt,.frStatusTag,
+.coreMenuAction::before,.coreNavButton::before){
+ image-rendering:pixelated !important;
+}
+#root :is(button,input,select,textarea) {font-family:var(--arc-body) !important;}
+#root :is(a,button,input,select,textarea):focus-visible {
+ outline:2px solid #a8f3e6 !important;outline-offset:3px !important;
+}
+
+#root :is(.coreMenuPanel,
+.glass-panel,
+.invTabletV2,
+.invCraftPanelV2,
+.invCardSheet,
+.invCraftRowV2,
+.deckLeft,
+.deckRight,
+.deckLeftBlock,
+.deckDemoPool,
+.shopCard,
+.shopNotice,
+.shopBalance,
+.shopCurrencyButtons,
+.marketHero,
+.marketStats,
+.marketInventoryPanel,
+.marketAuctionsPanel,
+.marketCreatePanel,
+.marketInventoryCard,
+.marketPurchasePanel,
+.marketPurchaseEstimate,
+.marketSelectedCard,
+.marketBackendNote,
+.marketEmpty,
+.marketEstimate,
+.marketNotice,
+.auctionRow,
+.marketFilters,
+.clubsHeader,
+.clubsPanel,
+.clubsPlaceholder,
+.frFantasyPanel,
+.frClubSection,
+.frClubCreate,
+.frClubIntro,
+.frClubOverview,
+.frItemsSection,
+.frItemTile,
+.frItemEmpty,
+.frProfileHero,
+.frBookDialog,
+.frCloudDetails,
+.profile-card,
+.profileIdentityCard,
+.profileMiniCard,
+.profileSyncBanner,
+.profileStatCards,
+.profileLevelBlock,
+.profileRecentGrid,
+.profileShowcaseGrid,
+.playCardV2,
+.playDeckStatus,
+.onlineMatchmakingCard,
+.matchHeroPanel,
+.matchOpponentProfile,
+.matchArenaTopbar,
+.matchActionStatus,
+.matchBattleLog,
+.matchBattleClock,
+.matchWillStrip,
+.matchD20Help,
+.matchWinnerCard,
+.matchSeriesHud,
+.matchContextBanner,
+.matchRoulettePresentationCard,
+.matchTurnAnnouncementCard,
+.fateRoulettePanel,
+.triad-player-block,
+.triad-lobby,
+.triad-log,
+.triad-chat,
+.triad-controls,
+.triad-deck-zone,
+.triad-discard-zone,
+.triad-player-title,
+.hpo-brandBlock,
+.hpo-progressBlock,
+.hpo-revealMeta,
+.hpo-summary,
+.hpo-summaryCard,
+.hpo-packPrompt,
+.fraktumPassport,
+.fraktumPassport__topbar,
+.utilityDrawer,
+.utilityPanel,
+.leaderRow,
+.friendCard,
+.questCard) {
+border:8px solid transparent !important;
+border-image-source:url("/ui/fraktum/arcane/panel_window.png") !important;
+border-image-slice:9 fill !important;
+border-image-width:10px !important;
+border-image-repeat:stretch !important;
+background:none !important;
+background-color:transparent !important;
+border-radius:0 !important;
+box-shadow:none !important;
+backdrop-filter:none !important;
+image-rendering:pixelated !important;
+color:#ebf3f1 !important;text-shadow:none !important;
+}
+
+#root :is(.coreMenuAction,
+.coreNavButton,
+.coreMenuSettings,
+.coreSettings,
+.playActionBtn,
+.playTutorialToggle,
+.invV2Tabs button,
+.invDeckBtn,
+.invCraftRowV2 button,
+.invSheetActions button,
+.deckBtn,
+.deckRemoveBtn,
+.buyBtn,
+.shopBack,
+.shopCurrencyButtons button,
+.marketTabs button,
+.marketPrimaryBtn,
+.marketGhostBtn,
+.marketDangerBtn,
+.marketSubmitBtn,
+.marketBuyButton,
+.clubsTab,
+.frProfilePage button,
+.frClubsPage button,
+.frItemsPage button,
+.frShellIdentityButton,
+.frBookDialog button,
+.matchGoldButton,
+.matchBackButton,
+.matchGhostButton,
+.matchD20HelpButton,
+.matchWinnerActions button,
+.matchPlayerActionZone button,
+.triad-topbar button,
+.triad-controls button,
+.triad-lobby button,
+.triad-chat button,
+.hpo-actionButton,
+.hpo-exitButton,
+.fraktumPassport__close,
+.utilityDrawer button,
+.utilityPanel button,
+.demo-page button,
+.profilePage button,
+.deckRoot button,
+.invRoot button,
+.shopRoot button,
+.marketRoot button,
+.playRoot button) {
+border:8px solid transparent !important;
+border-image-source:url("/ui/fraktum/arcane/button_idle.png") !important;
+border-image-slice:4 10 4 10 fill !important;
+border-image-width:6px 12px !important;
+border-image-repeat:stretch !important;
+background:none !important;
+background-color:transparent !important;
+border-radius:0 !important;
+box-shadow:none !important;
+backdrop-filter:none !important;
+image-rendering:pixelated !important;
+
+  min-height:34px !important;
+  padding:6px 11px !important;
+  color:#eff9f4 !important;
+  text-shadow:1px 1px #0a1523 !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+  line-height:1.35 !important;
+  cursor:pointer;
+
+}
+
+#root :is(.coreMenuAction:hover:not(:disabled),
+.coreNavButton:hover:not(:disabled),
+.coreSettings:hover:not(:disabled),
+.coreMenuSettings:hover:not(:disabled),
+.playActionBtn:hover:not(:disabled),
+.invRoot button:hover:not(:disabled),
+.deckRoot button:hover:not(:disabled),
+.shopRoot button:hover:not(:disabled),
+.marketRoot button:hover:not(:disabled),
+.frProfilePage button:hover:not(:disabled),
+.frClubsPage button:hover:not(:disabled),
+.frItemsPage button:hover:not(:disabled),
+.matchPage button:hover:not(:disabled),
+.triad-page button:hover:not(:disabled),
+.hpo-root button:hover:not(:disabled),
+.utilityDrawer button:hover:not(:disabled)) {
+border-image-source:url("/ui/fraktum/arcane/button_hover.png") !important;
+  color:#ffffff !important;
+  filter:none !important;
+  transform:translateY(-1px) !important;
+}
+
+#root :is(.coreMenuAction:active:not(:disabled),
+.coreNavButton:active:not(:disabled),
+.playActionBtn:active:not(:disabled),
+.invRoot button:active:not(:disabled),
+.deckRoot button:active:not(:disabled),
+.shopRoot button:active:not(:disabled),
+.marketRoot button:active:not(:disabled),
+.frProfilePage button:active:not(:disabled),
+.frClubsPage button:active:not(:disabled),
+.frItemsPage button:active:not(:disabled),
+.matchPage button:active:not(:disabled),
+.triad-page button:active:not(:disabled)) {
+border-image-source:url("/ui/fraktum/arcane/button_pressed.png") !important;
+  transform:translateY(2px) !important;
+}
+
+#root :is(.coreMenuAction:disabled,
+.coreNavButton:disabled,
+.playActionBtn:disabled,
+.invRoot button:disabled,
+.deckRoot button:disabled,
+.shopRoot button:disabled,
+.marketRoot button:disabled,
+.frProfilePage button:disabled,
+.frClubsPage button:disabled,
+.frItemsPage button:disabled,
+.matchPage button:disabled,
+.triad-page button:disabled) {
+border-image-source:url("/ui/fraktum/arcane/button_disabled.png") !important;
+  opacity:.57 !important;cursor:not-allowed !important;
+}
+
+#root :is(.coreMenuAction.is-primary,
+.coreNavButton.is-active,
+.playActionBtn,
+.invV2Tabs button.is-active,
+.marketTabs button.is-active,
+.frProfileTabs button.is-active,
+.frClubTabs button.is-active,
+.frItemsTabs button.is-active,
+.marketPrimaryBtn,
+.marketBuyButton:not(:disabled),
+.matchGoldButton,
+.matchPlayerActionZone .is-end-turn,
+.hpo-actionButtonPrimary,
+.frClubIntro form button,
+.frChatCompose button) {
+border-image-source:url("/ui/fraktum/arcane/button_gold.png") !important;
+  border-image-slice:4 10 4 10 fill !important;
+  border-image-width:6px 12px !important;
+  color:#fff4d7 !important;
+  text-shadow:1px 1px #1a1519 !important;
+  filter:none !important;
+}
+
+#root :is(.frProfilePage input,
+.frProfilePage textarea,
+.frClubsPage input,
+.frItemsPage input,
+.invSearch input,
+.invRarityFilter select,
+.marketFilters input,
+.marketFilters select,
+.marketField input,
+.marketField select,
+.demo-page input,
+.demo-page select,
+.demo-page textarea,
+.profile-card input,
+.triad-chat input,
+.triad-lobby input,
+.utilityPanel input,
+.shopRoot input,
+.shopRoot select,
+.matchPage input,
+.frCardPicker input,
+.frFieldLabel input,
+.frFieldLabel textarea) {
+border:8px solid transparent !important;
+border-image-source:url("/ui/fraktum/arcane/input_field.png") !important;
+border-image-slice:4 10 4 10 fill !important;
+border-image-width:5px 10px !important;
+border-image-repeat:stretch !important;
+background:none !important;
+background-color:transparent !important;
+border-radius:0 !important;
+box-shadow:none !important;
+backdrop-filter:none !important;
+image-rendering:pixelated !important;
+
+ background-color:#131b2c !important;
+ color:#e8f7f1 !important;
+ min-height:37px !important;padding:7px 11px !important;
+ font-size:13px !important;
+ box-shadow:none !important;
+
+}
+
+#root :is(.invCardV2,
+.invCardSheet .invCardV2,
+.invCraftRowV2,
+.deckMiniCard,
+.deckMainSlot,
+.deckCharSlot,
+.deckBoostSlot,
+.marketInventoryArt,
+.marketInventoryCard,
+.frItemTile,
+.frShowcaseSlot,
+.frCardPickerGrid button,
+.frFrameGrid button,
+.frTitlePicker button,
+.matchBoardSlot,
+.matchBonusSlot,
+.matchPile,
+.matchPileStack,
+.matchPileLayer,
+.triad-slot,
+.triad-back,
+.triad-hand-card,
+.frClubCardSlots span,
+.frClubStats>div,
+.frStatGrid>div,
+.frMemberRow) {
+border:8px solid transparent !important;
+border-image-source:url("/ui/fraktum/arcane/slot_idle.png") !important;
+border-image-slice:5 fill !important;
+border-image-width:6px !important;
+border-image-repeat:stretch !important;
+background:none !important;
+background-color:transparent !important;
+border-radius:0 !important;
+box-shadow:none !important;
+backdrop-filter:none !important;
+image-rendering:pixelated !important;
+color:#e5f1f2 !important;
+}
+
+#root :is(.invCardV2:hover,
+.invCardV2.is-selected,
+.marketInventoryCard.is-selected,
+.deckMainSlot.is-selected,
+.deckBoostSlot.is-selected,
+.frShowcaseSlot:hover,
+.frFrameGrid button.is-selected,
+.frTitlePicker button.is-selected,
+.frItemTile.is-selected,
+.matchBoardSlot.is-valid,
+.matchBoardSlot.is-drag-over,
+.matchBoardSlot:hover,
+.triad-slot.is-ready,
+.triad-slot.is-selected,
+.triad-hand-card.is-selected) {
+border-image-source:url("/ui/fraktum/arcane/slot_selected.png") !important;
+  border-image-slice:5 fill !important;
+  border-image-width:6px !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+#root :is(.matchVerticalHp,
+.matchShieldMeter,
+.matchStatusTrack,
+.matchWillTrack,
+.matchHeroMiniWillTrack,
+.profileXpBar,
+.frProfileXP,
+.triad-hp-meter,
+.triad-shield-meter,
+.playDeckProgress,
+.questProgress,
+.hpo-progressTrack) {
+border:8px solid transparent !important;
+border-image-source:url("/ui/fraktum/arcane/bar_frame.png") !important;
+border-image-slice:3 8 3 8 fill !important;
+border-image-width:3px 8px !important;
+border-image-repeat:stretch !important;
+background:none !important;
+background-color:transparent !important;
+border-radius:0 !important;
+box-shadow:none !important;
+backdrop-filter:none !important;
+image-rendering:pixelated !important;
+
+ padding:1px !important;
+ min-height:11px;
+
+}
+
+#root :is(.matchStatusFill,
+.matchVerticalHpFill,
+.matchShieldMeter span,
+.matchWillFill,
+.matchHeroMiniWillTrack i,
+.profileXpBar i,
+.frProfileXP i) {
+border:0 !important;border-radius:0 !important;
+  background-image:url("/ui/fraktum/arcane/bar_fill.png") !important;
+  background-repeat:repeat !important;
+  background-size:auto 100% !important;
+  image-rendering:pixelated !important;
+  box-shadow:none !important;
+  transition:width .18s steps(8,end),height .18s steps(8,end) !important;
+
+}
+
+#root :is(.matchVerticalHpFill) {
+background-size:100% auto !important;
+}
+
+#root :is(.matchStatusBar.is-hp .matchStatusFill,
+.matchVerticalHpFill,
+.triad-slot-hp) {
+filter:hue-rotate(155deg) saturate(1.5) !important;
+}
+
+#root :is(.matchStatusBar.is-shield .matchStatusFill,
+.matchShieldMeter span) {
+filter:hue-rotate(17deg) saturate(1.1) !important;
+}
+
+#root :is(.matchStatusBar.is-will .matchStatusFill,
+.matchWillFill) {
+filter:hue-rotate(0deg) !important;
+}
+
+#root :is(.matchArenaShell,
+.triad-arena) {
+background-image:url("/ui/fraktum/arcane/bg_tiles.png") !important;
+ background-repeat:repeat !important;
+ background-size:64px 64px !important;
+ background-color:#12192b !important;
+ border:10px solid transparent !important;
+ border-image-source:url("/ui/fraktum/arcane/panel_window.png") !important;
+ border-image-slice:9 !important;
+ border-image-width:10px !important;
+ border-image-repeat:stretch !important;
+ box-shadow:none !important;
+ border-radius:0 !important;
+}
+
+#root :is(.matchBoardPanel,
+.triad-field-cards) {
+border:5px solid transparent !important;
+ border-image-source:url("/ui/fraktum/arcane/panel_flat.png") !important;
+ border-image-slice:9 !important;
+ border-image-width:7px !important;
+ background:url("/ui/fraktum/arcane/bg_tiles.png") repeat center/64px 64px !important;
+ border-radius:0 !important; box-shadow:none !important;
+}
+
+#root :is(.coreShellHeader,
+.coreMenuHeading,
+.matchHeader,
+.triad-topbar,
+.hpo-brandBlock) {
+background-image:url("/ui/fraktum/arcane/titlebar.png") !important;
+ background-repeat:repeat-x !important;
+ background-size:auto 100% !important;
+ background-color:#151c2e !important;
+ border-bottom:3px solid #628ca6 !important;
+ box-shadow:none !important;
+}
+
+#root :is(.coreMenuHeading h1,
+.coreBrand,
+.frProfileHeading h1,
+.frClubsHero h1,
+.invV2Header h1,
+.marketHero h1,
+.shopRoot h1,
+.playRoot h1,
+.deckRoot h1,
+.frProfilePage h2,
+.frClubsPage h2,
+.frItemsPage h2,
+.matchHeader h1,
+.hpo-brandBlock strong,
+.frBookDialog h2,
+.matchTurnAnnouncementCard h2) {
+font-family:var(--arc-font) !important;
+ color:#ecf4ec !important;
+ text-shadow:2px 2px #0c1020 !important;
+ font-weight:400 !important;letter-spacing:0 !important;
+ line-height:1.6 !important;
+}
+
+#root :is(.coreMenuAction strong,
+.coreMenuSettings,
+.coreNavButton,
+.playModeTitle,
+.matchGoldButton,
+.matchGhostButton,
+.frProfileTabs button,
+.frItemsTabs button,
+.frClubTabs button,
+.frStatusTag,
+.frBookDialog button) {
+font-family:var(--arc-font) !important;line-height:1.7 !important;
+ letter-spacing:0 !important;font-weight:400 !important;
+}
+
+#root :is(.coreMenuAction span,
+.coreMenuHeading span,
+.marketHero p,
+.frProfilePage p,
+.frClubsPage p,
+.frItemsPage p,
+.matchHeroRank,
+.matchLogText,
+.frHint,
+.frLocalNote,
+.frClubFinePrint,
+.playLead,
+.playModeDescription) {
+font-family:var(--arc-body) !important;color:#c5dce3 !important;
+ text-shadow:none !important;
+}
+
+#root :is(.coreMenuPanel,
+.coreMenuRoot .coreMenuPanel,
+.coreMenuGrid,
+.playCardV2,
+.shopCard,
+.marketHero,
+.frProfileHero,
+.frClubsHero) {
+max-width:100% !important;
+}
+
+#root :is(.coreMenuBackdrop,
+.playCardGlow,
+.matchSideColumn::before,
+.matchHeroPanel::before,
+.marketHero::before,
+.matchBoardPanel::before,
+.matchSlotRune) {
+display:none !important;
+}
+
+#root :is(.matchHeroPortrait,
+.frPlayerPortrait,
+.profile-card>img,
+.profileIdentityCard>img,
+.matchOpponentProfile img) {
+border:6px solid transparent !important;
+ border-image-source:url("/ui/fraktum/arcane/panel_window.png") !important;
+ border-image-slice:9 fill !important;
+ border-image-width:6px !important;
+ image-rendering:pixelated !important;
+ border-radius:0 !important;
+ background-color:#111929 !important;
+ box-shadow:none !important;
+}
+
+#root :is(.frPlayerPortrait[data-frame='ruby'],
+.frFrameSample[data-frame='ruby']) {
+outline:2px solid #f294ab !important;outline-offset:0 !important;
+}
+
+#root :is(.frPlayerPortrait[data-frame='emerald'],
+.frFrameSample[data-frame='emerald']) {
+outline:2px solid #78e3bb !important;outline-offset:0 !important;
+}
+
+#root :is(.frPlayerPortrait[data-frame='gold'],
+.frFrameSample[data-frame='gold']) {
+outline:2px solid #f6d38a !important;outline-offset:0 !important;
+}
+
+#root :is(.frPlayerPortrait[data-frame='arcane'],
+.frFrameSample[data-frame='arcane']) {
+outline:2px solid #cbadff !important;outline-offset:0 !important;
+}
+
+#root :is(.frFantasyPanel,
+.frClubSection,
+.frClubCreate,
+.frClubOverview,
+.frItemsSection,
+.frProfileHero,
+.frItemTile,
+.frBookDialog,
+.frClubChat,
+.frCardPicker) {
+background-image:none !important;
+}
+
+#root :is(.frItemArt) {
+image-rendering:pixelated !important;filter:none !important;
+}
+
+#root :is(.hpo-background,
+.hpo-root,
+.matchBackdrop) {
+background-image:url("/ui/fraktum/arcane/bg_tiles.png") !important;
+ background-size:64px 64px !important;background-repeat:repeat !important;
+}
+
+#root :is(.hpo-revealCardFace,
+.matchCardView,
+.invCardVisual,
+.deckMiniCard) {
+image-rendering:pixelated !important;
+}
+
+#root :is(.matchHeroRank,
+.matchPhaseBadge,
+.matchSlotStateTag,
+.matchCardBadge,
+.marketFoilBadge,
+.invNewBadge,
+.playBadge,
+.frStatusTag) {
+border-radius:0 !important;
+ background-image:url("/ui/fraktum/arcane/titlebar.png") !important;
+ background-size:auto 100% !important;
+ color:#e7f8ee !important;
+ text-shadow:1px 1px #090e1c !important;
+}
+
+#root :is(.matchHeroMeterValue,
+.matchCardBadge.is-cost,
+.matchCardBadge.is-hp,
+.triad-slot-hp,
+.frProfileXP,
+.shopBalance) {
+border-radius:0 !important;
+}
+
+#root :is(.coreNav,
+.frProfileTabs,
+.frClubTabs,
+.frItemsTabs,
+.marketTabs,
+.invV2Tabs) {
+scrollbar-width:thin;scrollbar-color:#7ca9b7 #11172b;
+}
+
+#root :is(.matchPage button,
+.triad-page button) {
+touch-action:manipulation;
+}
+
+
+/* Responsive assets: keep artwork crisp and controls accessible on phones. */
+@media (max-width:760px) {
+ #root :is(.coreMenuAction,.coreNavButton,.marketTabs button,.frProfileTabs button,
+ .frClubTabs button,.frItemsTabs button,.invV2Tabs button) {
+   min-height:43px !important;
+   font-size:clamp(9px,2.4vw,12px) !important;
+   padding:7px 9px !important;
+   white-space:normal !important;
+ }
+ #root :is(.coreMenuPanel,.frProfileHero,.frFantasyPanel,.frItemsSection,
+ .frClubSection,.frClubOverview,.shopCard,.marketHero) {
+    border-image-width:6px !important;
+    border-width:6px !important;
+    padding:clamp(12px,3vw,18px) !important;
+ }
+ #root :is(.matchArenaShell,.triad-arena) {
+    border-width:5px !important;
+    border-image-width:5px !important;
+ }
+ #root :is(.matchBoardSlot,.triad-slot,.matchBonusSlot) {
+    border-width:3px !important;
+    border-image-width:3px !important;
+    min-width:0 !important;
+ }
+ #root :is(.coreMenuHeading h1,.frProfileHeading h1,.frClubsHero h1) {
+    font-size:clamp(12px,3.2vw,19px) !important;
+    line-height:1.7 !important;
+    overflow-wrap:anywhere !important;
+ }
+ #root :is(.frFrameGrid,.frTitlePicker,.frShowcaseGrid,.frItemGrid) {gap:8px !important;}
+}
+@media(max-width:420px){
+ #root :is(.coreMenuAction strong,.coreNavButton,.frItemsTabs button,
+ .frProfileTabs button) {font-size:9px !important;}
+ #root :is(.matchHeroPanel,.matchOpponentProfile,.triad-player-block) {
+   border-width:4px !important;border-image-width:4px !important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #root :is(.matchStatusFill,.matchVerticalHpFill,.matchWillFill,.frProfileXP i){
+   transition:none !important;
+ }
+}
