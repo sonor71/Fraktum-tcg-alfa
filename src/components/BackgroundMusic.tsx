@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useGameStore } from "../useGameStore";
+import { useIdentity } from "../features/PlayerIdentity";
 
 const MUSIC_TRACKS = [
   "/assets/audio/fraktum-main-theme.mp3",
@@ -10,6 +11,7 @@ const MUSIC_VOLUME = 0.35;
 
 export default function BackgroundMusic() {
   const musicEnabled = useGameStore((state) => state.settings.music);
+  const selectedMusic = useIdentity((state) => state.musicTrack);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const trackIndexRef = useRef(0);
@@ -60,7 +62,7 @@ export default function BackgroundMusic() {
     };
 
     const playNextTrack = () => {
-      loadTrack((trackIndexRef.current + 1) % MUSIC_TRACKS.length);
+      loadTrack(selectedMusic === "cycle" ? (trackIndexRef.current + 1) % MUSIC_TRACKS.length : selectedMusic === "main" ? 0 : 1);
       void tryPlay();
     };
 
@@ -92,7 +94,7 @@ export default function BackgroundMusic() {
     window.addEventListener("keydown", handleUserAction);
     window.addEventListener("touchstart", handleUserAction, { passive: true });
 
-    loadTrack(0);
+    loadTrack(selectedMusic === "main" ? 0 : selectedMusic === "crown" ? 1 : 0);
     void tryPlay();
 
     return () => {
@@ -109,7 +111,7 @@ export default function BackgroundMusic() {
 
       audioRef.current = null;
     };
-  }, []);
+  }, [selectedMusic]);
 
   return null;
 }
