@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import type { CardInstance, PlayerState } from "../../game/core/types";
 import { BonusSlots } from "./BonusSlots";
 import { StatusBar } from "./StatusBar";
+import { PlayerPortrait } from "../../features/PlayerIdentity";
 
 type HeroPanelProps = {
   player: PlayerState;
@@ -143,6 +144,7 @@ export function HeroPanel({ player, label, alignment = "left" }: HeroPanelProps)
       </div>
 
       <header className="matchHeroIdentity">
+        {player.id === "player" ? <PlayerPortrait size="tiny" className="frMatchPlayerAvatar" /> : null}
         <div className="matchHeroIdentityText">
           <span className="matchHeroRank">{getHeroSubtitle(player)}</span>
           <h2>{label}</h2>
