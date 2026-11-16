@@ -99,7 +99,7 @@ const CRAFT_COST = 10;
 const MAX_SHOWCASE_SIZE = 3;
 const MAX_MATCH_HISTORY = 20;
 const MAX_PACK_HISTORY = 50;
-const PACK_PURCHASE_TTL = 24 * 60 * 60 * 1000;
+// Unopened purchased packs are inventory items and must not expire overnight.
 const MAX_AUCTION_HISTORY = 60;
 export const AUCTION_HOUSE_FEE_RATE = 0.08;
 
@@ -514,9 +514,13 @@ function createPackSessionId(packId: string) {
 }
 
 function prunePendingPurchases(purchases: Record<string, PendingPackPurchase>) {
-  const threshold = Date.now() - PACK_PURCHASE_TTL;
+  // A purchased pack must stay available until the player opens it.
+  // Keep the newest 500 pending sessions to bound local save size.
   return Object.fromEntries(
-    Object.entries(purchases).filter(([, purchase]) => purchase.createdAt >= threshold && purchase.packId)
+    Object.entries(purchases)
+      .filter(([, purchase]) => Boolean(purchase?.packId) && Number.isFinite(purchase.createdAt) && purchase.createdAt > 0)
+      .sort((a, b) => b[1].createdAt - a[1].createdAt)
+      .slice(0, 500)
   );
 }
 
