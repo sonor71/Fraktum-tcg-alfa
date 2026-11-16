@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CloudAutoSync } from "../cloud/CloudAutoSync";
+import { PlayerIdentityChip } from "../features/PlayerIdentity";
 import "./core-shell.css";
 
 const NAV_ITEMS = [
@@ -48,6 +49,9 @@ export default function Shell({ children }: PropsWithChildren) {
               );
             })}
           </nav>
+
+          <button type="button" className="frShellIdentityButton" onClick={() => navigate("/profile")}
+            aria-label="Открыть профиль"><PlayerIdentityChip compact /></button>
 
           <button
             className={location.pathname === "/settings" ? "coreSettings is-active" : "coreSettings"}
