@@ -15,6 +15,7 @@ import {
   subscribeTriadRoom, type TriadEvent, type TriadRoom,
 } from "../../services/triadRooms";
 import { TriadPixelFxLayer, buildTriadVisualEvents, type TriadVisualEvent } from "./TriadPixelFxLayer";
+import { PlayerPortrait } from "../../features/PlayerIdentity";
 import "./triad-arena.css";
 
 const cardBack = "/cards/card-back.png";
@@ -300,7 +301,7 @@ export default function TriadMatchPage() {
   };
   const section = (owner: TriadSeat, side: "left" | "right" | "bottom") => (
     <div className={"triad-player-block is-" + side + (match.active === owner ? " is-active" : "")}>
-      <div className="triad-player-title" data-vfx-anchor={"triad-hero-" + owner}>{match.players[owner].name} <b>HP {match.players[owner].hp}</b>
+      <div className="triad-player-title" data-vfx-anchor={"triad-hero-" + owner}>{owner === seat ? <PlayerPortrait size="tiny" className="frTriadPlayerAvatar" /> : null}{match.players[owner].name} <b>HP {match.players[owner].hp}</b>
         <b>🛡 {match.players[owner].shield}</b>
         <b>ПОБЕДЫ {match.players[owner].victories}/{TRIAD_VICTORIES_TO_WIN}</b></div>
       {owner !== seat ? <BackHand cards={match.players[owner].hand}
