@@ -1,0 +1,336 @@
+/* FRAKTUM: Identity & Items. Dark 2D adventure-fantasy, original layout.
+   Carefully overrides historic yellow wood theme only where needed. */
+:root {
+  --fr4-back:#10121d; --fr4-panel:#202439; --fr4-deep:#111622;
+  --fr4-border:#495571; --fr4-text:#ecf2ff; --fr4-muted:#b0bed9;
+  --fr4-sky:#71d9ee; --fr4-lilac:#c7a2ff; --fr4-gold:#f1d18a;
+  --fr4-heading:"Press Start 2P", ui-monospace, Consolas, monospace;
+}
+.frProfilePage,.frClubsPage,.frItemsPage,.frProfilePage *, .frClubsPage *, .frItemsPage * {box-sizing:border-box}
+.frProfilePage,.frClubsPage {
+  width:min(1180px,calc(100% - 32px));margin:0 auto;padding:28px 0 64px;
+  color:var(--fr4-text);font-family:Consolas,ui-monospace,monospace;
+}
+.frProfilePage button,.frClubsPage button,.frItemsPage button {
+  cursor:pointer;transition:transform .12s steps(2,end),filter .12s ease;
+  font:700 12px/1.5 Consolas,ui-monospace,monospace;
+  border:2px solid #657497 !important;border-radius:1px !important;
+  background:#252d43 !important;color:#e9f4ff !important;
+  padding:10px 12px;box-shadow:3px 3px 0 #060813 !important;
+  text-shadow:none !important;border-image:none !important;
+}
+.frProfilePage button:hover:not(:disabled),.frClubsPage button:hover:not(:disabled),
+.frItemsPage button:hover:not(:disabled){filter:brightness(1.17);transform:translateY(-1px)}
+.frProfilePage button:disabled,.frClubsPage button:disabled,.frItemsPage button:disabled{
+ cursor:not-allowed;filter:saturate(.55);opacity:.54}
+.frProfilePage h1,.frClubsPage h1,.frProfilePage h2,.frClubsPage h2,.frItemsPage h2,
+.frProfilePage h3,.frClubsPage h3,.frItemsPage h3 {
+  font-family:var(--fr4-heading) !important;font-weight:400 !important;
+  color:#f4e3b7 !important;text-shadow:2px 3px #0a0d1c !important;line-height:1.7 !important;
+}
+.frProfilePage h2,.frClubsPage h2,.frItemsPage h2 {font-size:clamp(13px,1.35vw,18px) !important}
+.frProfilePage h3,.frClubsPage h3,.frItemsPage h3 {font-size:11px !important;letter-spacing:0 !important}
+.frProfilePage p,.frClubsPage p,.frItemsPage p {color:var(--fr4-muted);line-height:1.65}
+.frFantasyPanel,.frClubSection,.frClubCreate,.frItemsSection,.frClubOverview,
+.frClubFeature,.frBookDialog,.frClubIntro {
+  position:relative;min-width:0;border:4px solid #647497 !important;
+  border-image:url("/ui/fraktum/panels/panel_main.png") 7/8px stretch !important;
+  background:linear-gradient(145deg,rgba(36,42,66,.98),rgba(16,21,37,.98)) !important;
+  border-radius:1px !important;box-shadow:6px 7px 0 #070a15 !important;
+  padding:23px; color:var(--fr4-text)!important;
+}
+.frFantasyPanel>h2,.frClubSection>h3 {margin:0 0 20px}
+.frPlayerPortrait {
+  --frame-color:#82b7c9;
+  position:relative;display:inline-grid;place-items:center;flex:none;
+  width:57px;height:57px;padding:5px;vertical-align:middle;
+  border:4px solid var(--frame-color) !important;
+  background:linear-gradient(135deg,#283c58,#151c34);
+  box-shadow:inset 0 0 0 2px #0b1122,3px 4px 0 #080b14 !important;
+  border-radius:2px !important;isolation:isolate;
+}
+.frPlayerPortrait::after {
+  content:"";position:absolute;inset:-5px;pointer-events:none;
+  border:1px solid rgba(255,255,255,.27);box-shadow:inset 0 0 9px var(--frame-color);
+}
+.frPlayerPortrait[data-frame="arcane"],.frFrameSample[data-frame="arcane"]{--frame-color:#b799f0}
+.frPlayerPortrait[data-frame="emerald"],.frFrameSample[data-frame="emerald"]{--frame-color:#80dda9}
+.frPlayerPortrait[data-frame="ruby"],.frFrameSample[data-frame="ruby"]{--frame-color:#f18b99}
+.frPlayerPortrait[data-frame="gold"],.frFrameSample[data-frame="gold"]{--frame-color:#f4cd78}
+.frPlayerPortrait.is-tiny {width:35px;height:35px;padding:2px;border-width:3px !important}
+.frPlayerPortrait.is-large {width:132px;height:132px;padding:8px;border-width:6px !important}
+.frPlayerPortrait>img{display:block;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;background:#17223b;}
+.frPortraitFallback {font-size:32px;color:var(--frame-color);text-shadow:2px 3px #0d1425;line-height:1}
+.frPlayerPortrait.is-tiny .frPortraitFallback{font-size:18px}
+.frPlayerPortrait.is-large .frPortraitFallback{font-size:60px}
+.frPortraitCaption {
+ position:absolute;left:50%;bottom:-31px;transform:translateX(-50%);
+ border:2px solid var(--frame-color);padding:4px 8px;white-space:nowrap;
+ color:#fef6e3;background:#161b30;font:700 11px/1.3 Consolas,monospace;
+ box-shadow:2px 3px #070b13;z-index:3;
+}
+.frIdentityChip {display:inline-flex;align-items:center;gap:11px;min-width:0;color:#f3edf4;
+ text-align:left !important;white-space:nowrap}
+.frIdentityText {display:flex;flex-direction:column;gap:3px;min-width:0}
+.frIdentityText strong {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font:800 13px Consolas,monospace;color:#f5e9d2;text-shadow:1px 1px #080c14}
+.frIdentityText small {font:700 10px Consolas,monospace;color:#9de1de !important;white-space:nowrap}
+.frIdentityChip.is-compact .frIdentityText strong {font-size:11px}
+.frIdentityChip.is-compact .frIdentityText small {font-size:9px}
+.frShellIdentityButton {
+  display:flex;flex:none;max-width:210px;align-items:center;justify-content:flex-start;
+  border:2px solid #637894 !important;background:#151f33 !important;
+  border-radius:0 !important;padding:4px 8px;cursor:pointer;
+  box-shadow:2px 3px #080a14 !important;
+}
+.frShellIdentityButton:hover{border-color:#9fe8dc !important}
+.frShellIdentityButton .frPlayerPortrait{width:36px;height:36px;border-width:3px !important;padding:2px}
+.frShellIdentityButton .frIdentityText{max-width:135px}
+.frMenuIdentity {margin:0 auto 18px;width:max-content;max-width:100%;padding:8px 12px;
+ border:2px solid #657391;background:#121a30;text-align:left}
+.frMatchPlayerAvatar {margin-right:5px;z-index:2;transform:none}
+.matchHeroIdentity{display:flex !important;align-items:center !important;gap:5px}
+.frTriadPlayerAvatar{margin-right:6px}
+.triad-player-title{display:flex !important;align-items:center;gap:6px}
+.triad-player-title .frPlayerPortrait{width:31px;height:31px}
+/* Profile. */
+.frProfileHero {
+  border:4px solid #6b739d !important;border-radius:0 !important;
+  background:
+   linear-gradient(145deg,rgba(15,19,36,.38),rgba(15,15,30,.93)),
+   radial-gradient(circle at 78% 12%,#544276 0,transparent 43%),
+   linear-gradient(125deg,#203b56,#151a30) !important;
+  box-shadow:6px 7px #050815 !important;overflow:visible;padding:20px 24px 34px;
+}
+.frProfilePage[data-banner="crystal"] .frProfileHero {
+ background:linear-gradient(140deg,#122a38a8,#111c2fe0),
+ radial-gradient(circle at 65% 30%,#46b7be,#392d6d 55%,#10192c) !important}
+.frProfilePage[data-banner="ember"] .frProfileHero {
+ background:linear-gradient(135deg,#37243799,#171122f0),
+ radial-gradient(circle at 72% 35%,#b65d57,#583654 50%,#101325) !important}
+.frProfileHeroTop,.frPanelHeading {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.frProfileHeroTop>span,.frClubsHero small,.frItemsHeading>div>span {
+ color:#7de4e4;font:800 10px/1.5 Consolas,monospace;letter-spacing:1.3px}
+.frProfileHeroMain {display:flex;align-items:center;gap:30px;padding:31px 8px 20px}
+.frProfileHeading {min-width:0;flex:1}
+.frProfileHeading>span {color:#a9eddf;font:700 11px Consolas,monospace}
+.frProfileHeading h1{font-size:clamp(18px,2.3vw,30px) !important;overflow-wrap:anywhere;margin:10px 0}
+.frProfileHeading p {max-width:680px;font-size:14px;color:#d3d2e6}
+.frProfileHeading>small{color:#e1cfa8}
+.frProfileXP{width:min(420px,100%);height:13px;border:2px solid #617496;background:#0d1525;margin:15px 0 7px}
+.frProfileXP i{display:block;height:100%;background:repeating-linear-gradient(90deg,#70bfbc 0 10px,#3a8d92 10px 12px)}
+.frProfileTabs,.frItemsTabs,.frClubTabs {display:flex;gap:8px;overflow-x:auto;padding:3px 3px 9px;margin:22px 0 16px;scrollbar-width:thin}
+.frProfileTabs button,.frItemsTabs button,.frClubTabs button {flex:1 0 auto;white-space:nowrap}
+.frProfileTabs button.is-active,.frItemsTabs button.is-active,.frClubTabs button.is-active{
+ background:#274d57 !important;border-color:#78e4d3 !important;color:#f5ffe8 !important}
+.frProfileColumns {display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+.frProfileColumns>.frFantasyPanel:last-child:nth-child(odd){grid-column:1/-1}
+.frFieldLabel {display:flex;flex-direction:column;gap:7px;margin-bottom:17px;color:#9ad9db;font:700 11px Consolas,monospace}
+.frProfilePage input,.frProfilePage textarea,.frItemsPage input,.frClubsPage input {
+ border:2px solid #617494 !important;border-radius:0 !important;
+ background:#121729 !important;color:#f9f1df !important;
+ padding:12px;font:14px Consolas,monospace !important;width:100%;min-width:0;
+}
+.frProfilePage textarea{resize:vertical;line-height:1.5}
+.frProfilePage input:focus-visible,.frProfilePage textarea:focus-visible,
+.frClubsPage input:focus-visible,.frItemsPage input:focus-visible {
+ outline:2px solid #79ddcf !important;outline-offset:2px}
+.frFantasyPanel h3 {color:#a4e4e4 !important;margin:20px 0 12px}
+.frHint {font-size:12px;color:#a5b8d0 !important}
+.frAvatarPicker {display:flex;flex-wrap:wrap;gap:10px}
+.frAvatarPicker button {min-width:54px;height:54px;display:grid;place-items:center;padding:5px}
+.frAvatarPicker img {max-width:32px;max-height:32px;image-rendering:pixelated}
+.frFrameGrid {display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:9px}
+.frFrameGrid button {display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 8px}
+.frFrameSample {--frame-color:#82b7c9;display:grid;place-items:center;width:41px;height:41px;
+ border:5px double var(--frame-color);color:var(--frame-color);font-size:18px;background:#101729}
+.frFrameGrid button.is-selected,.frBannerPicker button.is-selected,.frTitlePicker button.is-selected {
+ border-color:#91ebd9 !important;background:#2a4553 !important}
+.frBannerPicker{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.frBannerPicker button[data-banner="crystal"]{background:#243f55 !important}
+.frBannerPicker button[data-banner="ember"]{background:#513040 !important}
+.frTitlePicker{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.frTitlePicker button{display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.frTitlePicker small {font-size:11px;color:#ccd6ec}
+.frStatusTag{display:inline-block;max-width:100%;white-space:normal;
+ padding:4px 7px;border:2px solid #4f91ac;background:#2b4d6c;color:#e9f8ff;font-size:12px}
+.frStatusTag.is-collector{border-color:#6ccea1;background:#225b55}
+.frStatusTag.is-winner{border-color:#f1c57b;background:#69512f}
+.frStatusTag.is-adept{border-color:#ba97ea;background:#554173}
+.frStatusTag.is-veteran{border-color:#ed8d9c;background:#74394c}
+.frShowcasePanel {padding:24px}
+.frShowcaseGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.frShowcaseSlot {display:flex;align-items:center;flex-direction:column;gap:9px;
+ min-width:0;min-height:250px;padding:12px !important;justify-content:center}
+.frShowcaseSlot img{height:190px;max-width:100%;object-fit:contain;image-rendering:pixelated}
+.frShowcaseEmpty{display:grid;place-items:center;width:90px;height:124px;
+ border:3px dashed #6a718f;font-size:37px;color:#9a9ad2}
+.frShowcaseSlot strong {font-size:11px;color:#f6e9ce;overflow-wrap:anywhere}
+.frShowcaseSlot small{font-size:10px;color:#8ed9d6}
+.frCardPicker{margin-top:22px;background:#111829;padding:18px;border:2px solid #607697}
+.frCardPickerGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;
+ max-height:430px;overflow:auto;padding:10px 0}
+.frCardPickerGrid button{display:flex;flex-direction:column;gap:7px;align-items:center}
+.frCardPickerGrid img{width:64px;height:88px;object-fit:contain;image-rendering:pixelated}
+.frCardPickerGrid span{font-size:11px;overflow-wrap:anywhere}
+.frStatGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.frStatGrid>div{padding:15px 12px;border:2px solid #495777;background:#141d32;
+ display:flex;flex-direction:column;gap:8px}
+.frStatGrid span{font-size:11px;color:#a1b5d1}
+.frStatGrid b{font-size:20px;color:#f6dfae}
+.frCloudDetails{margin-top:21px;border:2px solid #465577;background:#111827;padding:12px;color:#d2d9ef}
+.frCloudDetails summary{cursor:pointer;font:700 12px Consolas,monospace}
+.frCloudDetails>div{margin-top:14px}
+/* Club screen. */
+.frClubsHero{display:flex;justify-content:space-between;gap:18px;align-items:center}
+.frClubsHero h1{font-size:clamp(22px,3vw,36px) !important;margin:7px 0}
+.frClubsHero p {margin:0 0 13px;max-width:600px}
+.frLocalNote {padding:10px 15px;margin:15px 0;background:#253348;
+ border:2px solid #567993;color:#b2eaf0;font:700 11px/1.6 Consolas,monospace}
+.frClubCreate{display:grid;grid-template-columns:180px 1fr;gap:25px;align-items:center}
+.frClubEmblem{display:flex;flex-direction:column;align-items:center;justify-content:center;
+ width:150px;height:150px;font-size:74px;color:#b7c9fb;text-shadow:4px 4px #15172b;
+ background:radial-gradient(circle,#44577a,#192035 75%);border:5px double #91b2d4;box-shadow:4px 4px #080b16}
+.frClubEmblem small{font:700 13px Consolas,monospace;color:#eee7b8}
+.frClubIntro>h2 {margin:0 0 10px}
+.frClubIntro form{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+.frClubIntro form label{color:#a4deda;font:700 11px Consolas,monospace}
+.frClubIntro form input{margin:7px 0}
+.frClubIntro form button{grid-column:1/-1;background:#285452 !important;border-color:#78d6ca !important}
+.frClubOverview{display:flex;gap:22px;align-items:center;margin-top:20px}
+.frClubOverview .frClubEmblem{width:100px;height:100px;font-size:40px}
+.frClubOverviewText{flex:1;min-width:0}
+.frClubOverviewText span{color:#9bd6dc;font-size:11px}
+.frClubOverviewText h2{overflow-wrap:anywhere;margin:7px 0;font-size:clamp(16px,2vw,25px) !important}
+.frClubNumber{text-align:center;background:#111c2d;padding:10px;border:2px solid #60789a}
+.frClubNumber strong{display:block;color:#e9d191;font-size:25px}
+.frClubNumber small{font-size:10px}
+.frClubContent{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.frClubSection h3{margin:0 0 15px}
+.frMemberRow{display:flex;gap:11px;align-items:center;background:#142039;padding:12px;border:2px solid #435b7e}
+.frMemberRow>div{min-width:0;display:flex;flex-direction:column;gap:4px;flex:1}
+.frMemberRow strong{overflow-wrap:anywhere}
+.frMemberRow small{font-size:11px;color:#a4c8d5}
+.frClubRole{font-size:10px;padding:5px;color:#f8d9a6;background:#4b3b46;border:1px solid #947c85}
+.frClubFinePrint{font-size:11px;color:#9cb7d4!important}
+.frClubStats>div{display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid #465777}
+.frClubStats>div strong{color:#e6d191}
+.frClubLeave{margin-top:19px;border-color:#d38187 !important;color:#f5acb7 !important}
+.frChatLog{min-height:250px;max-height:420px;overflow-y:auto;border:2px solid #405579;background:#0d1528;padding:15px;margin:12px 0}
+.frChatEmpty{color:#8fa8c1;min-height:220px;display:grid;place-items:center;text-align:center;font-size:12px}
+.frChatBubble{max-width:80%;margin:0 0 12px auto;border:2px solid #518f91;background:#223e4a;padding:10px}
+.frChatBubble>span{color:#b5e8df;font-size:11px}
+.frChatBubble p{margin:7px 0;color:#f5e8d2}
+.frChatBubble small{font-size:9px;color:#abc0d3}
+.frChatCompose{display:grid;grid-template-columns:1fr auto;gap:10px}
+.frChatCompose button{background:#285653 !important;border-color:#75d0be !important}
+.frClubFeature{text-align:center;display:grid;place-items:center;min-height:320px}
+.frFeatureIcon{font-size:55px;color:#e6c592}
+.frClubWarsMock{display:flex;justify-content:space-around;gap:20px;align-items:center;width:min(460px,100%)}
+.frClubWarsMock>span{background:#232c47;padding:15px;border:2px solid #5d708c;font-size:15px}
+.frClubWarsMock strong{font:700 26px var(--fr4-heading);color:#edabac}
+.frClubCardSlots{display:flex;gap:10px;margin:20px 0}
+.frClubCardSlots span{display:grid;place-items:center;width:55px;height:76px;
+ border:3px solid #647aa0;background:#151d2d;font-size:28px;color:#94b5c5}
+/* inventory of actual pending paid packs, in-game music and lore books. */
+.frItemsPage{width:min(1130px,100%);margin:18px auto 48px}
+.frItemsHeading{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.frItemsHeading h2{margin:8px 0}
+.frItemsHeading p{max-width:700px;margin:0 0 9px;font-size:13px}
+.frItemsCount{display:flex;align-items:center;gap:10px;border:2px solid #568b96;
+ padding:12px 17px;color:#e9d898;font-size:22px;font-weight:800;background:#17293b}
+.frItemsCount small{font-size:10px;max-width:110px;color:#b4e9e7}
+.frItemsTabs button{flex:0 0 auto}
+.frItemsSection{margin-top:16px;padding:20px}
+.frItemsSection>h3{margin:0 0 17px}
+.frItemGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:13px}
+.frItemTile{
+ display:flex;min-width:0;flex-direction:column;align-items:center;gap:7px;text-align:center;
+ border:3px solid #5b6886 !important;background:#131b32 !important;
+ padding:15px 10px;box-shadow:3px 4px #080b13 !important;
+}
+.frItemTile:hover{border-color:#8ed5db !important}
+.frItemTile h4{color:#f5e1bb;margin:4px 0;font-size:13px;overflow-wrap:anywhere}
+.frItemTile p{font-size:11px;margin:0 0 9px;flex:1}
+.frItemTile button{margin-top:auto;width:100%;font-size:11px}
+.frItemTile.is-selected{border-color:#81d8bd !important;background:#214042 !important}
+.frItemTile.is-locked{opacity:.76}
+.frItemTile>span:last-child:not(.frItemArt){font-size:10px;color:#a3b4c8}
+.frItemArt{
+ width:72px;height:72px;display:block;flex:none;
+ background:url("/ui/fraktum/references/ref_items_atlas.png") no-repeat;
+ background-size:600% 200%;
+ image-rendering:pixelated;
+ filter:drop-shadow(2px 3px #080b18);
+}
+.frItemEmpty{display:flex;align-items:center;gap:18px;border:2px dashed #64769c;
+ background:#141d2f;padding:19px}
+.frItemEmpty strong{color:#eed6ad}
+.frItemEmpty p{font-size:12px;margin:5px 0 12px}
+.frSectionSubtitle{font-size:12px;margin-top:-8px}
+.frBookScrim{position:fixed;inset:0;z-index:3000;background:#080a12da;
+ display:grid;place-items:center;padding:16px;overflow-y:auto}
+.frBookDialog{max-width:590px;width:100%;max-height:95vh;overflow-y:auto;text-align:center}
+.frBookDialog>header{display:flex;justify-content:space-between;gap:16px;align-items:center;color:#9bdacc}
+.frBookDialog>.frItemArt{margin:17px auto}
+.frBookDialog p{text-align:left;font-size:15px;color:#e6d7c6;line-height:1.8}
+.frBookDialog>button{margin-top:10px;background:#30564f !important}
+.frSavePack{margin-top:7px;border-color:#77b4a7 !important;color:#d2f8e6 !important;font-size:10px !important}
+.shopCard .packRight{min-width:0}
+.shopNotice{word-break:break-word}
+@media(max-width:800px){
+ .frProfileColumns,.frClubContent{grid-template-columns:1fr}
+ .frProfileColumns>.frFantasyPanel:last-child:nth-child(odd){grid-column:auto}
+ .frClubsHero>.frIdentityChip{display:none}
+ .frShellIdentityButton .frIdentityText{display:none}
+ .frShellIdentityButton{padding:4px}
+ .coreShellHeader{gap:7px !important;padding:8px !important}
+ .coreShellHeader .coreBrand{min-width:103px !important;font-size:12px !important}
+ .coreShellHeader .coreBrand span{font-size:7px}
+ .coreShellHeader .coreNav{order:3;width:100%;display:flex;flex-wrap:nowrap !important;
+   overflow-x:auto;justify-content:flex-start;scrollbar-width:thin;padding-bottom:4px}
+ .coreNavButton{flex:0 0 auto !important;white-space:nowrap;min-height:44px}
+}
+@media(max-width:550px){
+ .frProfilePage,.frClubsPage{width:calc(100% - 20px);padding:15px 0 52px}
+ .frProfileHero{padding:13px}
+ .frProfileHeroMain{flex-direction:column;gap:36px;text-align:center;padding:20px 0}
+ .frProfileHeading{width:100%}
+ .frProfileHeading h1{font-size:16px !important}
+ .frProfileHeading p{font-size:12px}
+ .frProfileXP{margin:14px auto 7px}
+ .frPlayerPortrait.is-large{width:104px;height:104px}
+ .frPlayerPortrait.is-large .frPortraitFallback{font-size:43px}
+ .frFantasyPanel,.frClubSection,.frClubCreate,.frItemsSection{padding:14px}
+ .frProfileTabs button{flex:0 0 auto;padding:9px !important;font-size:10px !important}
+ .frShowcaseGrid{gap:6px}
+ .frShowcaseSlot{padding:6px !important;min-height:195px}
+ .frShowcaseSlot img{height:132px}
+ .frShowcaseSlot strong{font-size:9px}
+ .frShowcaseSlot small{font-size:8px}
+ .frShowcaseEmpty{width:56px;height:78px;font-size:24px}
+ .frClubCreate{grid-template-columns:1fr;justify-items:center}
+ .frClubIntro form{grid-template-columns:1fr}
+ .frClubOverview{gap:10px;padding:13px}
+ .frClubOverview .frClubEmblem{width:68px;height:68px;font-size:27px}
+ .frClubNumber{padding:5px}
+ .frClubNumber strong{font-size:18px}
+ .frClubNumber small{font-size:8px}
+ .frClubOverviewText h2{font-size:13px !important}
+ .frMemberRow{flex-wrap:wrap}
+ .frClubRole{margin-left:auto}
+ .frItemsHeading h2{font-size:13px !important}
+ .frItemGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .frItemTile{padding:12px 7px}
+ .frItemTile h4{font-size:11px}
+ .frItemTile button{font-size:10px;padding:8px}
+ .frItemArt{width:58px;height:58px}
+ .frItemEmpty{gap:11px;padding:10px}
+ .frItemEmpty>.frItemArt{width:54px;height:54px}
+ .frChatCompose{grid-template-columns:minmax(0,1fr) auto}
+ .frChatCompose button{font-size:10px;padding:6px}
+ .frChatBubble{max-width:96%}
+}
+@media(prefers-reduced-motion:reduce){
+ .frProfilePage button,.frClubsPage button,.frItemsPage button{transition:none}
+}
