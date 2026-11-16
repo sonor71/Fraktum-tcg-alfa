@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { PACKS, type PackMeta } from "../data/packs";
 import { useGameStore } from "../useGameStore";
 
-function PackCard({ pack, onBuy }: { pack: PackMeta; onBuy: (pack: PackMeta) => void }) {
+function PackCard({ pack, onBuy }: { pack: PackMeta; onBuy: (pack: PackMeta, save?: boolean) => void }) {
   const [artSrc, setArtSrc] = useState(pack.artSrc);
 
   return (
@@ -26,7 +26,8 @@ function PackCard({ pack, onBuy }: { pack: PackMeta; onBuy: (pack: PackMeta) => 
       </div>
 
       <div className="packRight">
-        <button className="buyBtn" onClick={() => onBuy(pack)} type="button">купить</button>
+        <button className="buyBtn" onClick={() => onBuy(pack)} type="button">КУПИТЬ И ОТКРЫТЬ</button>
+        <button className="buyBtn frSavePack" onClick={() => onBuy(pack, true)} type="button">СОХРАНИТЬ В ИНВЕНТАРЬ</button>
         <div className="packInfoBlock">
           <div className="packInfoText">{pack.description}</div>
           <div className="packPrice">{pack.price} монет</div>
@@ -75,13 +76,14 @@ export default function Shop() {
   const purchasePack = useGameStore((state) => state.purchasePack);
   const [warning, setWarning] = useState("");
 
-  function handleBuy(pack: PackMeta) {
+  function handleBuy(pack: PackMeta, save = false) {
     const sessionId = purchasePack(pack.id, pack.price);
     if (!sessionId) {
       setWarning(`Не хватает монет для "${pack.title}". Нужно ${pack.price}, доступно ${coins}.`);
       return;
     }
 
+    if (save) { setWarning("Пак сохранён в общем инвентаре. Открой Инвентарь → Общий инвентарь."); return; }
     setWarning("");
     nav(`/pack?packId=${pack.id}`, {
       state: { packId: pack.id, packTitle: pack.title, openSessionId: sessionId },
@@ -95,6 +97,7 @@ export default function Shop() {
       <div className="shopHeader">
         <button className="shopBack" onClick={() => nav(-1)} type="button">НАЗАД</button>
         <div className="shopBalance">Баланс: {coins} монет</div>
+        <button className="shopBack" type="button" onClick={()=>nav("/inventory")}>МОИ ПАКИ</button>
       </div>
 
       {warning ? <div className="shopNotice">{warning}</div> : null}
