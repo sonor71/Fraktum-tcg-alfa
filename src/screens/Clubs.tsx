@@ -4,6 +4,9 @@ import { persist } from "zustand/middleware";
 import { useGameStore } from "../useGameStore";
 import { PlayerIdentityChip, PlayerPortrait } from "../features/PlayerIdentity";
 import "./clubs.css";
+import { ClubEmotePicker, ClubEmoteText } from "../features/ClubEmotes";
+import { RankBadge, useRankPreview } from "../features/PlayerRanks";
+import "../features/club-emotes-ranks.css";
 
 type ClubTab = "home" | "chat" | "wars" | "cards";
 type ClubMessage = { id:string; sender:string; text:string; createdAt:number };
@@ -33,6 +36,7 @@ export default function Clubs(){
   const [tab,setTab]=useState<ClubTab>("home");
   const [newName,setNewName]=useState(""),[newTag,setNewTag]=useState(""),[message,setMessage]=useState("");
   const [notice,setNotice]=useState("");
+  const rank=useRankPreview(s=>s.rank);
   const membership=useMemo(()=>({count:clubName?1:0,role:"ОСНОВАТЕЛЬ"}),[clubName]);
   function submitClub(){
     if(newName.trim().length<3||newTag.trim().length<2){setNotice("Название: от 3 символов. Тег: от 2 символов.");return;}
@@ -75,7 +79,7 @@ export default function Clubs(){
       {tab==="home"&&<div className="frClubContent">
         <div className="frClubSection">
           <h3>УЧАСТНИКИ</h3>
-          <div className="frMemberRow"><PlayerPortrait/><div><strong>{player}</strong><small>{membership.role} · LVL {level}</small></div><span className="frClubRole">ОСНОВАТЕЛЬ</span></div>
+          <div className="frMemberRow"><PlayerPortrait/><div><strong>{player}</strong> <RankBadge rank={rank}/><small>{membership.role} · LVL {level}</small></div><span className="frClubRole">ОСНОВАТЕЛЬ</span></div>
           <p className="frClubFinePrint">Другие участники появятся после подключения серверных приглашений.</p>
         </div>
         <div className="frClubSection frClubStats">
@@ -90,9 +94,10 @@ export default function Clubs(){
         <h3>ЧАТ КЛУБА</h3><p className="frClubFinePrint">Сейчас сообщения видны только тебе в этом браузере. Это проверка интерфейса, не настоящий групповой чат.</p>
         <div className="frChatLog" role="log" aria-live="polite">
           {!messages.length&&<div className="frChatEmpty">ЗДЕСЬ ПОЯВЯТСЯ ТВОИ СООБЩЕНИЯ. ОНЛАЙН-ЧАТ — В СЛЕДУЮЩЕЙ ВЕРСИИ.</div>}
-          {messages.map(item=><div key={item.id} className="frChatBubble"><span>{item.sender}</span><p>{item.text}</p><small>{formatTime(item.createdAt)} · ЛОКАЛЬНО</small></div>)}
+          {messages.map(item=><div key={item.id} className="frChatBubble"><span>{item.sender}</span> <RankBadge rank={rank}/><p><ClubEmoteText text={item.text}/></p><small>{formatTime(item.createdAt)} · ЛОКАЛЬНО</small></div>)}
         </div>
         <form className="frChatCompose" onSubmit={e=>{e.preventDefault();send();}}>
+          <ClubEmotePicker onPick={token=>setMessage(current=>(current+token).slice(0,400))}/>
           <input aria-label="Сообщение клубу" maxLength={400} value={message}
             onChange={e=>setMessage(e.target.value)} placeholder="Написать сообщение..."/>
           <button type="submit" disabled={!message.trim()}>ОТПРАВИТЬ</button>
