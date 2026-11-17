@@ -25,6 +25,10 @@ export default function Profile(){
   const setFrame=useIdentity(s=>s.setFrame),setBanner=useIdentity(s=>s.setBanner),setBio=useIdentity(s=>s.setBio);
   const [tab,setTab]=useState<Tab>("appearance");
   const rank=useRankPreview(s=>s.rank),setRank=useRankPreview(s=>s.setRank);
+  const selectedAvatarIndex=avatarIndex(avatar);
+  const usingFallbackAvatar=!avatar||avatar==="/vite.svg"||avatar.startsWith("/ui/fraktum/icons/");
+  const displayedAvatarIndex=selectedAvatarIndex??(usingFallbackAvatar?0:null);
+  const displayedFrame=FRAMES.some(item=>item.id===frame)?frame:FRAMES[0].id;
   const [editSlot,setEditSlot]=useState<number|null>(null),[query,setQuery]=useState(""),[notice,setNotice]=useState("");
   const chosen=useMemo(()=>[0,1,2].map(i=>cards.find(c=>c.instanceId===showcaseIds[i])??null),[cards,showcaseIds]);
   const filtered=useMemo(()=>[...cards].filter(c=>c.title.toLowerCase().includes(query.toLowerCase()))
@@ -77,8 +81,8 @@ export default function Profile(){
         <h3>ЕДИНЫЙ СТАТУС ИГРОКА</h3><div className="frRankPreview"><RankBadge rank={rank}/><select aria-label="Предпросмотр статуса" value={rank} onChange={e=>setRank(e.target.value as RankId)}>{RANKS.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}</select></div><p className="frHint">Локальный предпросмотр. Платные и служебные статусы назначаются сервером.</p><h3>АВАТАРКИ · 15 ВАРИАНТОВ</h3>
         <div className="frAvatarPicker" role="group" aria-label="Выбор аватарки">
           {AVATARS.map(item=><button type="button" key={item.id}
-            className={avatar===avatarValue(item.index)?"is-selected":""}
-            aria-label={item.label} aria-pressed={avatar===avatarValue(item.index)}
+            className={displayedAvatarIndex===item.index?"is-selected":""}
+            aria-label={item.label} aria-pressed={displayedAvatarIndex===item.index}
             onClick={()=>{setAvatar(avatarValue(item.index));setNotice("Аватар выбран.");}} title={item.label}>
             <PixelAtlasTile index={item.index}/><small>{item.label}</small>
           </button>)}
@@ -92,11 +96,11 @@ export default function Profile(){
         <h2>РАМКА И ФОН</h2><h3>РАМКИ</h3>
         <div className="frFrameGrid" role="group" aria-label="Выбор рамки">
           {FRAMES.map(item=><button type="button" key={item.id}
-            className={frame===item.id?"is-selected":""}
-            aria-label={item.label} aria-pressed={frame===item.id}
+            className={displayedFrame===item.id?"is-selected":""}
+            aria-label={item.label} aria-pressed={displayedFrame===item.id}
             onClick={()=>setFrame(item.id as FrameId)}>
             <span className="frPixelFramePreview">
-              <PixelAtlasTile index={avatarIndex(avatar)??0}/>
+              {displayedAvatarIndex===null ? <img alt="" src={avatar}/> : <PixelAtlasTile index={displayedAvatarIndex}/>}
               <PixelAtlasTile index={item.index}/>
             </span>
             <small>{item.label}</small>
