@@ -13,6 +13,7 @@ import "./ui/fraktum-battle-vfx.css";
 import "./ui/fraktum-authentic-pixel.css";
 import "./ui/fraktum-player-world.css";
 import "./ui/fraktum-arcane-pixel-v4.css";
+import "./ui/fraktum-pixel-texture-pass.css";
 
 
 createRoot(document.getElementById('root')!).render(
