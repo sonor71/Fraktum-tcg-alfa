@@ -17,5 +17,5 @@ export type RankId = typeof RANKS[number]["id"];
 export const useRankPreview=create<{rank:RankId;setRank:(rank:RankId)=>void}>()(persist(set=>({rank:"player",setRank:rank=>set({rank})}),{name:"fraktum-rank-preview-v1"}));
 export function RankBadge({rank="player"}:{rank?:RankId}){
 const item=RANKS.find(r=>r.id===rank)??RANKS[0];
-return <img className="frRankBadge" src={"/ui/fraktum/custom/ranks/"+item.asset} alt={item.label} title={item.label}/>;
+return <img className="frRankBadge" src={"/custom/ranks/ItemsAdder/contents/superranks/textures/"+item.asset} alt={item.label} title={item.label}/>;
 }
