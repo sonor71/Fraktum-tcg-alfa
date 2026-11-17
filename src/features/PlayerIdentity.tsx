@@ -2,13 +2,56 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useGameStore } from "../useGameStore";
 
-export const FRAMES = [
-  { id: "steel", label: "Странник", color: "#82b7c9" },
-  { id: "arcane", label: "Аркана", color: "#b799f0" },
-  { id: "emerald", label: "Изумруд", color: "#80dda9" },
-  { id: "ruby", label: "Рубин", color: "#f18b99" },
-  { id: "gold", label: "Королевская", color: "#f4cd78" },
+/** 64px tiles from the 512x256 atlas created from the user's profile ZIP. */
+export const AVATARS = [
+  { id: "pixel-avatar-01", label: "Аватар 01", index: 0 },
+  { id: "pixel-avatar-02", label: "Аватар 02", index: 1 },
+  { id: "pixel-avatar-03", label: "Аватар 03", index: 2 },
+  { id: "pixel-avatar-04", label: "Аватар 04", index: 3 },
+  { id: "pixel-avatar-05", label: "Аватар 05", index: 4 },
+  { id: "pixel-avatar-06", label: "Аватар 06", index: 5 },
+  { id: "pixel-avatar-07", label: "Аватар 07", index: 6 },
+  { id: "pixel-avatar-08", label: "Аватар 08", index: 7 },
+  { id: "pixel-avatar-09", label: "Аватар 09", index: 8 },
+  { id: "pixel-avatar-10", label: "Аватар 10", index: 9 },
+  { id: "pixel-avatar-11", label: "Аватар 11", index: 10 },
+  { id: "pixel-avatar-12", label: "Аватар 12", index: 11 },
+  { id: "pixel-avatar-13", label: "Аватар 13", index: 12 },
+  { id: "pixel-avatar-14", label: "Аватар 14", index: 13 },
+  { id: "pixel-avatar-15", label: "Аватар 15", index: 14 },
 ] as const;
+export const FRAMES = [
+  { id: "pixel-frame-01", label: "Рамка 01", index: 16, color: "#90b8d1" },
+  { id: "pixel-frame-02", label: "Рамка 02", index: 17, color: "#90b8d1" },
+  { id: "pixel-frame-03", label: "Рамка 03", index: 18, color: "#90b8d1" },
+  { id: "pixel-frame-04", label: "Рамка 04", index: 19, color: "#90b8d1" },
+  { id: "pixel-frame-05", label: "Рамка 05", index: 20, color: "#90b8d1" },
+  { id: "pixel-frame-06", label: "Рамка 06", index: 21, color: "#90b8d1" },
+  { id: "pixel-frame-07", label: "Рамка 07", index: 22, color: "#90b8d1" },
+  { id: "pixel-frame-08", label: "Рамка 08", index: 23, color: "#90b8d1" },
+  { id: "pixel-frame-09", label: "Рамка 09", index: 24, color: "#90b8d1" },
+  { id: "pixel-frame-10", label: "Рамка 10", index: 25, color: "#90b8d1" },
+  { id: "pixel-frame-11", label: "Рамка 11", index: 26, color: "#90b8d1" },
+  { id: "pixel-frame-12", label: "Рамка 12", index: 27, color: "#90b8d1" },
+  { id: "pixel-frame-13", label: "Рамка 13", index: 28, color: "#90b8d1" },
+  { id: "pixel-frame-14", label: "Рамка 14", index: 29, color: "#90b8d1" },
+  { id: "pixel-frame-15", label: "Рамка 15", index: 30, color: "#90b8d1" },
+  { id: "pixel-frame-16", label: "Рамка 16", index: 31, color: "#90b8d1" },
+] as const;
+export const AVATAR_PREFIX = "fraktum-avatar:";
+export function avatarValue(index: number) { return AVATAR_PREFIX + String(index); }
+export function avatarIndex(value: string | null | undefined): number | null {
+  const match = /^fraktum-avatar:(\d+)$/.exec(value ?? "");
+  if (!match) return null;
+  const index = Number(match[1]);
+  return Number.isInteger(index) && index >= 0 && index < AVATARS.length ? index : null;
+}
+export function PixelAtlasTile({ index, className = "" }: { index: number; className?: string }) {
+  const x = (index % 8) * (100 / 7);
+  const y = Math.floor(index / 8) * (100 / 3);
+  return <span aria-hidden="true" className={"frPixelAtlasTile " + className}
+    style={{ backgroundPosition: x + "% " + y + "%" }} />;
+}
 export const BANNERS = [
   { id: "night", label: "Ночной свод" },
   { id: "crystal", label: "Кристальный храм" },
@@ -44,7 +87,7 @@ type IdentityState = {
  * participate in the existing cloud sync. Never claim cosmetic sync online. */
 export const useIdentity = create<IdentityState>()(
   persist((set) => ({
-    frame: "steel", banner: "night", title: "wanderer", bio: "",
+    frame: "pixel-frame-01", banner: "night", title: "wanderer", bio: "",
     musicTrack: "cycle",
     setFrame: (frame) => set({ frame }),
     setBanner: (banner) => set({ banner }),
@@ -77,9 +120,16 @@ export function PlayerPortrait({ size = "small", className = "", showTitle = fal
 
   return (
     <span className={"frPlayerPortrait is-" + size + " " + className} data-frame={frame} title={playerName}>
-      {avatar && avatar !== "/vite.svg"
-        ? <img src={avatar} alt="" draggable={false} />
-        : <span className="frPortraitFallback" aria-hidden="true">✦</span>}
+      {(() => {
+        const index = avatarIndex(avatar);
+        const isCustomPhoto = Boolean(avatar && index === null &&
+          avatar !== "/vite.svg" && !avatar.startsWith("/ui/fraktum/icons/"));
+        return isCustomPhoto
+          ? <img src={avatar} alt="" draggable={false} />
+          : <PixelAtlasTile index={index ?? 0} className="frPortraitAvatarArt" />;
+      })()}
+      <PixelAtlasTile index={FRAMES.find(item => item.id === frame)?.index ?? FRAMES[0].index}
+        className="frPortraitFrameArt" />
       {showTitle ? <span className="frPortraitCaption">{title}</span> : null}
     </span>
   );
