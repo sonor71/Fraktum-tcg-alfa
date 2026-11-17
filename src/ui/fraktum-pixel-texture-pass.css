@@ -1,0 +1,111 @@
+/* FRAKTUM pixel texture pass — load after every legacy theme.
+   Visual-only: no gameplay or state changes. All referenced PNGs are tracked in public/ui/fraktum. */
+:root {
+ --px-window:url('/ui/fraktum/arcane/panel_window.png');
+ --px-flat:url('/ui/fraktum/arcane/panel_flat.png');
+ --px-sunken:url('/ui/fraktum/arcane/panel_sunken.png');
+ --px-slot:url('/ui/fraktum/arcane/slot_idle.png');
+ --px-slot-active:url('/ui/fraktum/arcane/slot_selected.png');
+ --px-btn:url('/ui/fraktum/arcane/button_idle.png');
+ --px-btn-hover:url('/ui/fraktum/arcane/button_hover.png');
+ --px-btn-down:url('/ui/fraktum/arcane/button_pressed.png');
+ --px-btn-off:url('/ui/fraktum/arcane/button_disabled.png');
+ --px-input:url('/ui/fraktum/arcane/input_field.png');
+ --px-tiles:url('/ui/fraktum/arcane/bg_tiles.png');
+}
+.coreShellContent:not(.coreShellContent--match),.coreMenuRoot,.profilePage,.clubsPage,
+.invRoot,.shopRoot,.marketRoot,.deckRoot,.playRoot {
+ background-image:linear-gradient(rgba(12,11,17,.76),rgba(12,11,17,.83)),var(--px-tiles)!important;
+ background-size:auto,64px 64px!important;background-repeat:repeat!important;
+ background-attachment:scroll!important;
+}
+:where(.coreMenuPanel,.glass-panel,.profile-card,.profileIdentityCard,.profilePanelFixed,
+.profileMiniCard,.profileStatCards,.profileLevelBlock,.profileRecentCards,
+.clubsHeader,.clubsPanel,.clubsPlaceholder,.invTabletV2,.invCraftPanelV2,
+.deckLeft,.deckRight,.shopCard,.marketHero,.marketStats,.marketInventoryPanel,
+.marketCatalogPanel,.marketAuctionsPanel,.marketCreatePanel,.marketPurchasePanel,
+.playCardV2,.matchHeroPanel,.matchOpponentProfile,.matchArenaTopbar,
+.matchActionStatus,.matchBattleLog,.matchWillStrip,.matchWinnerCard,
+.triad-player-block,.triad-lobby,.triad-log,.triad-chat,.fraktumPassport,
+.hpo-brandBlock,.hpo-progressBlock,.hpo-summary) {
+ border:8px solid transparent!important;
+ border-image-source:var(--px-window)!important;
+ border-image-slice:8 fill!important;border-image-width:8px!important;
+ border-image-repeat:stretch!important;
+ background:#1b1924!important;background-image:none!important;
+ border-radius:0!important;backdrop-filter:none!important;
+ box-shadow:4px 5px 0 #09080d!important;
+}
+:where(.invCardV2,.deckMiniCard,.deckMainSlot,.deckBoostSlot,.deckCharSlot,
+.marketInventoryCard,.profileShowcaseGrid .slot-empty,.matchBoardSlot,.triad-slot) {
+ border:6px solid transparent!important;border-image-source:var(--px-slot)!important;
+ border-image-slice:6 fill!important;border-image-width:6px!important;
+ border-radius:0!important;background:#171620!important;
+}
+:where(.matchBoardSlot.is-valid,.triad-slot.is-ready,.invCardV2.is-selected,
+.deckMainSlot.is-selected) {border-image-source:var(--px-slot-active)!important;}
+:where(.coreMenuAction,.coreNavButton,.coreSettings,.coreMenuSettings,
+.playActionBtn,.invDeckBtn,.deckBtn,.shopBack,.buyBtn,.marketPrimaryBtn,
+.marketGhostBtn,.marketDangerBtn,.clubsTab,.matchBackButton,.matchGhostButton,
+.matchGoldButton,.matchD20HelpButton,.triad-topbar button,.triad-controls button,
+.triad-lobby button,.hpo-actionButton,.hpo-exitButton,.fraktumPassport__close,
+.profilePage button,.invRoot button,.shopRoot button,.marketRoot button,.clubsPage button) {
+ border:6px solid transparent!important;
+ border-image-source:var(--px-btn)!important;
+ border-image-slice:6 fill!important;border-image-width:6px!important;
+ border-image-repeat:stretch!important;
+ background:#292331!important;background-image:none!important;
+ border-radius:0!important;box-shadow:2px 3px 0 #0b0910!important;
+ text-shadow:1px 2px 0 #0a0910!important;
+ image-rendering:pixelated;
+}
+:where(.coreMenuAction,.coreNavButton,.coreSettings,.coreMenuSettings,
+.playActionBtn,.invDeckBtn,.deckBtn,.shopBack,.buyBtn,.marketPrimaryBtn,
+.marketGhostBtn,.clubsTab,.matchBackButton,.matchGhostButton,.matchGoldButton,
+.triad-topbar button,.triad-controls button,.triad-lobby button,
+.profilePage button,.invRoot button,.shopRoot button,.marketRoot button,.clubsPage button):hover:not(:disabled) {
+ border-image-source:var(--px-btn-hover)!important;filter:brightness(1.08);
+}
+:where(button):active:not(:disabled) {transform:translate(1px,2px);}
+:where(.coreMenuAction,.coreNavButton,.playActionBtn,.deckBtn,.buyBtn,
+.marketPrimaryBtn,.clubsTab,.triad-controls button):active:not(:disabled){
+ border-image-source:var(--px-btn-down)!important;
+}
+:where(.coreMenuAction,.coreNavButton,.playActionBtn,.deckBtn,.buyBtn,
+.marketPrimaryBtn,.triad-controls button):disabled{
+ border-image-source:var(--px-btn-off)!important;
+}
+:where(.profilePage input,.invRoot input,.invRoot select,.marketRoot input,
+.marketRoot select,.clubsPage input,.triad-chat input,.triad-lobby input){
+ border:5px solid transparent!important;
+ border-image-source:var(--px-input)!important;
+ border-image-slice:5 fill!important;border-image-width:5px!important;
+ border-radius:0!important;background:#13121a!important;
+ color:#f4e8d7!important;
+}
+:where(.matchStatusTrack,.matchWillTrack,.matchVerticalHp,.matchShieldMeter,
+.profileXpBar) {
+ border:4px solid transparent!important;
+ border-image-source:url('/ui/fraktum/arcane/bar_frame.png')!important;
+ border-image-slice:4 fill!important;border-image-width:4px!important;
+ border-radius:0!important;background:#13121a!important;
+}
+:where(.matchStatusFill,.matchVerticalHpFill,.matchWillFill,.profileXpBar i) {
+ background-image:url('/ui/fraktum/arcane/bar_fill.png')!important;
+ background-size:auto 100%!important;border-radius:0!important;
+ image-rendering:pixelated;
+}
+:where(.coreMenuAction,.coreNavButton,.profilePage button,.clubsPage button,
+.invRoot button,.marketRoot button,.shopRoot button):focus-visible {
+ outline:3px solid #e9c985!important;outline-offset:3px!important;
+}
+@media(max-width:680px){
+ :where(.coreMenuPanel,.profile-card,.clubsPanel,.invTabletV2,.shopCard,.marketHero){
+ border-image-width:6px!important;
+ }
+ :where(.coreMenuAction,.coreNavButton,.profilePage button,.invRoot button,
+ .clubsPage button,.shopRoot button){min-height:42px;}
+}
+@media(prefers-reduced-motion:reduce){
+ :where(.coreMenuAction,.coreNavButton,.profilePage button,.clubsPage button){transition:none!important;}
+}
