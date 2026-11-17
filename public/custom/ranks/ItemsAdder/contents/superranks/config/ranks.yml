@@ -1,0 +1,80 @@
+info:
+  namespace: superranks
+font_images:
+  player:
+    permission: "ranks.player"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "player.png"
+    scale_ratio: 9
+    y_position: 8
+  pro:
+    permission: "ranks.pro"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "pro.png"
+    scale_ratio: 9
+    y_position: 8
+  platinum:
+    permission: "ranks.platinum"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "platinum.png"
+    scale_ratio: 9
+    y_position: 8
+  ruby:
+    permission: "ranks.ruby"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "ruby.png"
+    scale_ratio: 9
+    y_position: 8
+  elite:
+    permission: "ranks.elite"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "elite.png"
+    scale_ratio: 9
+    y_position: 8
+  ultimate:
+    permission: "ranks.ultimate"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "ultimate.png"
+    scale_ratio: 9
+    y_position: 8
+  helper:
+    permission: "ranks.helper"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "helper.png"
+    scale_ratio: 9
+    y_position: 8
+  trial:
+    permission: "ranks.trial"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "trial.png"
+    scale_ratio: 9
+    y_position: 8
+  mod:
+    permission: "ranks.mod"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "mod.png"
+    scale_ratio: 9
+    y_position: 8
+  admin:
+    permission: "ranks.admin"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "admin.png"
+    scale_ratio: 9
+    y_position: 8
+  owner:
+    permission: "ranks.owner"
+    show_in_gui: true
+    suggest_in_command: false
+    path: "owner.png"
+    scale_ratio: 9
+    y_position: 8
