@@ -3,24 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { CloudAccountPanel } from "../cloud/CloudAccountPanel";
 import { RARITY_ORDER } from "../game/cards";
 import { getAvailableWillUpgradePoints, getXpRequiredForLevel, useGameStore, type OwnedCard } from "../useGameStore";
-import { BANNERS, FRAMES, PlayerPortrait, PlayerIdentityChip, useIdentity, type BannerId, type FrameId } from "../features/PlayerIdentity";
+import { AVATARS, BANNERS, FRAMES, PixelAtlasTile, PlayerPortrait, PlayerIdentityChip, avatarValue, avatarIndex, useIdentity, type BannerId, type FrameId } from "../features/PlayerIdentity";
 
 import { RankBadge, RANKS, useRankPreview, type RankId } from "../features/PlayerRanks";
 import "../features/club-emotes-ranks.css";
 type Tab = "appearance" | "cards" | "progress";
-const PRESETS = [
-  {label:"Меч",src:"/ui/fraktum/icons/icon_sword.png"},
-  {label:"Щит",src:"/ui/fraktum/icons/icon_shield.png"},
-  {label:"Кристалл",src:"/ui/fraktum/icons/icon_gem.png"},
-  {label:"Звезда",src:"/ui/fraktum/icons/icon_star.png"},
-];
 function number(n:number){return Math.max(0,Math.floor(n)).toLocaleString("ru-RU");}
 function cardImage(card:OwnedCard){return card.frontSrc||card.image||"/cards/card-back.png";}
 
 export default function Profile(){
   const navigate=useNavigate(), avatarInput=useRef<HTMLInputElement>(null);
   const name=useGameStore(s=>s.playerName),setName=useGameStore(s=>s.setPlayerName);
-  const setAvatar=useGameStore(s=>s.setAvatar);
+  const setAvatar=useGameStore(s=>s.setAvatar), avatar=useGameStore(s=>s.avatar);
   const level=useGameStore(s=>s.level),xp=useGameStore(s=>s.xp),wins=useGameStore(s=>s.wins);
   const history=useGameStore(s=>s.matchHistory),coins=useGameStore(s=>s.coins);
   const premium=useGameStore(s=>s.premium),packs=useGameStore(s=>s.openedPacksCount);
@@ -62,10 +56,10 @@ export default function Profile(){
     <header className="frProfileHero">
       <div className="frProfileHeroTop"><span>FRAKTUM / ПАСПОРТ ИГРОКА</span><button type="button" onClick={()=>navigate("/")}>← МЕНЮ</button></div>
       <div className="frProfileHeroMain">
-        <PlayerPortrait size="large" showTitle />
+        <PlayerPortrait size="large" />
         <div className="frProfileHeading">
           <span>ИГРОК • УРОВЕНЬ {level}</span><h1>{name||"Игрок FRAKTUM"}</h1>
-          <p>{bio||"Ваша история начинается здесь. Выберите титул, рамку и любимые карты."}</p>
+          <p>{bio||"Ваша история начинается здесь. Выберите аватарку, рамку и любимые карты."}</p>
           <div className="frProfileXP"><i style={{width:Math.round(xpNow/xpNeed*100)+"%"}}/></div>
           <small>{number(xpNow)} / {number(xpNeed)} XP</small>
         </div>
@@ -80,18 +74,34 @@ export default function Profile(){
         <h2>НАСТРОЙКА ИГРОКА</h2>
         <label className="frFieldLabel">НИКНЕЙМ<input maxLength={28} value={name} onChange={e=>setName(e.target.value)}/></label>
         <label className="frFieldLabel">О СЕБЕ<textarea rows={3} maxLength={140} value={bio} onChange={e=>setBio(e.target.value)} placeholder="Короткое описание игрока..."/></label>
-        <h3>ЕДИНЫЙ СТАТУС ИГРОКА</h3><div className="frRankPreview"><RankBadge rank={rank}/><select aria-label="Предпросмотр статуса" value={rank} onChange={e=>setRank(e.target.value as RankId)}>{RANKS.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}</select></div><p className="frHint">Локальный предпросмотр. Платные и служебные статусы назначаются сервером.</p><h3>АВАТАР</h3>
-        <div className="frAvatarPicker">{PRESETS.map(item=><button type="button" key={item.label} onClick={()=>{setAvatar(item.src);setNotice("Аватар выбран.");}} title={item.label}><img alt={item.label} src={item.src}/></button>)}
-          <button type="button" onClick={()=>avatarInput.current?.click()}>+ ФОТО</button>
+        <h3>ЕДИНЫЙ СТАТУС ИГРОКА</h3><div className="frRankPreview"><RankBadge rank={rank}/><select aria-label="Предпросмотр статуса" value={rank} onChange={e=>setRank(e.target.value as RankId)}>{RANKS.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}</select></div><p className="frHint">Локальный предпросмотр. Платные и служебные статусы назначаются сервером.</p><h3>АВАТАРКИ · 15 ВАРИАНТОВ</h3>
+        <div className="frAvatarPicker" role="group" aria-label="Выбор аватарки">
+          {AVATARS.map(item=><button type="button" key={item.id}
+            className={avatar===avatarValue(item.index)?"is-selected":""}
+            aria-label={item.label} aria-pressed={avatar===avatarValue(item.index)}
+            onClick={()=>{setAvatar(avatarValue(item.index));setNotice("Аватар выбран.");}} title={item.label}>
+            <PixelAtlasTile index={item.index}/><small>{item.label}</small>
+          </button>)}
+          <button type="button" className="frAvatarCustomUpload" onClick={()=>avatarInput.current?.click()}>+ СВОЁ ФОТО</button>
         </div>
         <input ref={avatarInput} type="file" hidden accept="image/png,image/jpeg,image/webp" onChange={upload}/>
         {notice&&<p role="status" className="frHint">{notice}</p>}
-        <p className="frHint">Настройки рамки и титула пока сохраняются в этом браузере.</p>
+        <p className="frHint">Выбранная рамка пока сохраняется только в этом браузере.</p>
       </section>
       <section className="frFantasyPanel">
         <h2>РАМКА И ФОН</h2><h3>РАМКИ</h3>
-        <div className="frFrameGrid">{FRAMES.map(item=><button type="button" key={item.id} className={frame===item.id?"is-selected":""}
-          onClick={()=>setFrame(item.id as FrameId)}><span className="frFrameSample" data-frame={item.id}>◆</span><small>{item.label}</small></button>)}</div>
+        <div className="frFrameGrid" role="group" aria-label="Выбор рамки">
+          {FRAMES.map(item=><button type="button" key={item.id}
+            className={frame===item.id?"is-selected":""}
+            aria-label={item.label} aria-pressed={frame===item.id}
+            onClick={()=>setFrame(item.id as FrameId)}>
+            <span className="frPixelFramePreview">
+              <PixelAtlasTile index={avatarIndex(avatar)??0}/>
+              <PixelAtlasTile index={item.index}/>
+            </span>
+            <small>{item.label}</small>
+          </button>)}
+        </div>
         <h3>ФОН ПРОФИЛЯ</h3>
         <div className="frBannerPicker">{BANNERS.map(item=><button key={item.id} data-banner={item.id} type="button"
           className={banner===item.id?"is-selected":""} onClick={()=>setBanner(item.id as BannerId)}>{item.label}</button>)}</div>
