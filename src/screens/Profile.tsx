@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CloudAccountPanel } from "../cloud/CloudAccountPanel";
 import { RARITY_ORDER } from "../game/cards";
 import { getAvailableWillUpgradePoints, getXpRequiredForLevel, useGameStore, type OwnedCard } from "../useGameStore";
-import { BANNERS, FRAMES, TITLES, canUseTitle, PlayerPortrait, PlayerIdentityChip, useIdentity, type BannerId, type FrameId, type TitleId } from "../features/PlayerIdentity";
+import { BANNERS, FRAMES, PlayerPortrait, PlayerIdentityChip, useIdentity, type BannerId, type FrameId } from "../features/PlayerIdentity";
 
 import { RankBadge, RANKS, useRankPreview, type RankId } from "../features/PlayerRanks";
 import "../features/club-emotes-ranks.css";
@@ -27,8 +27,8 @@ export default function Profile(){
   const cards=useGameStore(s=>s.ownedCards),deck=useGameStore(s=>s.deckIds);
   const showcaseIds=useGameStore(s=>s.showcaseCardIds),setShowcaseCard=useGameStore(s=>s.setShowcaseCard);
   const upgrades=useGameStore(s=>s.willUpgrades);
-  const frame=useIdentity(s=>s.frame),banner=useIdentity(s=>s.banner),title=useIdentity(s=>s.title),bio=useIdentity(s=>s.bio);
-  const setFrame=useIdentity(s=>s.setFrame),setBanner=useIdentity(s=>s.setBanner),setTitle=useIdentity(s=>s.setTitle),setBio=useIdentity(s=>s.setBio);
+  const frame=useIdentity(s=>s.frame),banner=useIdentity(s=>s.banner),bio=useIdentity(s=>s.bio);
+  const setFrame=useIdentity(s=>s.setFrame),setBanner=useIdentity(s=>s.setBanner),setBio=useIdentity(s=>s.setBio);
   const [tab,setTab]=useState<Tab>("appearance");
   const rank=useRankPreview(s=>s.rank),setRank=useRankPreview(s=>s.setRank);
   const [editSlot,setEditSlot]=useState<number|null>(null),[query,setQuery]=useState(""),[notice,setNotice]=useState("");
@@ -80,7 +80,7 @@ export default function Profile(){
         <h2>НАСТРОЙКА ИГРОКА</h2>
         <label className="frFieldLabel">НИКНЕЙМ<input maxLength={28} value={name} onChange={e=>setName(e.target.value)}/></label>
         <label className="frFieldLabel">О СЕБЕ<textarea rows={3} maxLength={140} value={bio} onChange={e=>setBio(e.target.value)} placeholder="Короткое описание игрока..."/></label>
-        <h3>СТАТУС ИГРОКА</h3><div className="frRankPreview"><RankBadge rank={rank}/><select aria-label="Предпросмотр статуса" value={rank} onChange={e=>setRank(e.target.value as RankId)}>{RANKS.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}</select></div><p className="frHint">Локальный предпросмотр. Платные и служебные статусы назначаются сервером.</p><h3>АВАТАР</h3>
+        <h3>ЕДИНЫЙ СТАТУС ИГРОКА</h3><div className="frRankPreview"><RankBadge rank={rank}/><select aria-label="Предпросмотр статуса" value={rank} onChange={e=>setRank(e.target.value as RankId)}>{RANKS.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}</select></div><p className="frHint">Локальный предпросмотр. Платные и служебные статусы назначаются сервером.</p><h3>АВАТАР</h3>
         <div className="frAvatarPicker">{PRESETS.map(item=><button type="button" key={item.label} onClick={()=>{setAvatar(item.src);setNotice("Аватар выбран.");}} title={item.label}><img alt={item.label} src={item.src}/></button>)}
           <button type="button" onClick={()=>avatarInput.current?.click()}>+ ФОТО</button>
         </div>
@@ -96,15 +96,7 @@ export default function Profile(){
         <div className="frBannerPicker">{BANNERS.map(item=><button key={item.id} data-banner={item.id} type="button"
           className={banner===item.id?"is-selected":""} onClick={()=>setBanner(item.id as BannerId)}>{item.label}</button>)}</div>
       </section>
-      <section className="frFantasyPanel">
-        <h2>ТИТУЛ ИГРОКА</h2><p className="frHint">Титулы открываются достижениями. Это не PvP-рейтинг.</p>
-        <div className="frTitlePicker">{TITLES.map(item=>{
-          const opened=canUseTitle(item.id,level,wins,cards.length);
-          return <button key={item.id} type="button" disabled={!opened} className={title===item.id?"is-selected":""}
-            onClick={()=>setTitle(item.id as TitleId)}>
-            <strong className={"frStatusTag is-"+item.id}>{item.label}</strong><small>{opened?item.detail:"ЗАКРЫТО · "+item.detail}</small></button>;
-        })}</div>
-      </section>
+
     </div>}
     {tab==="cards"&&<section className="frFantasyPanel frShowcasePanel">
       <header><h2>ВИТРИНА КАРТ</h2><p>Нажмите на слот, чтобы выбрать карту из своей коллекции.</p></header>

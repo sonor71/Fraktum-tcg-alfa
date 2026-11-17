@@ -37,7 +37,7 @@ export default function Clubs(){
   const [newName,setNewName]=useState(""),[newTag,setNewTag]=useState(""),[message,setMessage]=useState("");
   const [notice,setNotice]=useState("");
   const rank=useRankPreview(s=>s.rank);
-  const membership=useMemo(()=>({count:clubName?1:0,role:"ОСНОВАТЕЛЬ"}),[clubName]);
+  const membership=useMemo(()=>({count:clubName?1:0}),[clubName]);
   function submitClub(){
     if(newName.trim().length<3||newTag.trim().length<2){setNotice("Название: от 3 символов. Тег: от 2 символов.");return;}
     createClub(newName,newTag);setTab("home");setNotice("");
@@ -79,7 +79,7 @@ export default function Clubs(){
       {tab==="home"&&<div className="frClubContent">
         <div className="frClubSection">
           <h3>УЧАСТНИКИ</h3>
-          <div className="frMemberRow"><PlayerPortrait/><div><strong>{player}</strong> <RankBadge rank={rank}/><small>{membership.role} · LVL {level}</small></div><span className="frClubRole">ОСНОВАТЕЛЬ</span></div>
+          <div className="frMemberRow"><PlayerPortrait/><div><strong>{player}</strong> <RankBadge rank={rank}/><small>LVL {level}</small></div></div>
           <p className="frClubFinePrint">Другие участники появятся после подключения серверных приглашений.</p>
         </div>
         <div className="frClubSection frClubStats">

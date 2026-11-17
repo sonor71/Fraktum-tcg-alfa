@@ -1,0 +1,98 @@
+player_tag:
+  texture: default/chat/player
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":player:"
+    permission: "oraxen.emoji.player"
+    
+pro_tag:
+  texture: default/chat/pro
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":pro:"
+    permission: "oraxen.emoji.pro"
+    
+platinum_tag:
+  texture: default/chat/platinum
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":platinum:"
+    permission: "oraxen.emoji.platinum"
+    
+ruby_tag:
+  texture: default/chat/ruby
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":ruby:"
+    permission: "oraxen.emoji.ruby"
+    
+elite_tag:
+  texture: default/chat/elite
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":elite:"
+    permission: "oraxen.emoji.elite"
+    
+ultimate_tag:
+  texture: default/chat/ultimate
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":ultimate:"
+    permission: "oraxen.emoji.ultimate"
+    
+helper_tag:
+  texture: default/chat/helper
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":helper:"
+    permission: "oraxen.emoji.helper"
+    
+trial_tag:
+  texture: default/chat/trial
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":trial:"
+    permission: "oraxen.emoji.trial"
+    
+mod_tag:
+  texture: default/chat/mod
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":mod:"
+    permission: "oraxen.emoji.mod"
+   
+admin_tag:
+  texture: default/chat/admin
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":admin:"
+    permission: "oraxen.emoji.admin"
+    
+owner_tag:
+  texture: default/chat/owner
+  ascent: 9
+  height: 10
+  chat:
+    placeholders:
+      - ":owner:"
+    permission: "oraxen.emoji.owner"
