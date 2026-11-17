@@ -43,23 +43,22 @@
 .frPlayerPortrait {
   --frame-color:#82b7c9;
   position:relative;display:inline-grid;place-items:center;flex:none;
-  width:57px;height:57px;padding:5px;vertical-align:middle;
-  border:4px solid var(--frame-color) !important;
-  background:linear-gradient(135deg,#283c58,#151c34);
-  box-shadow:inset 0 0 0 2px #0b1122,3px 4px 0 #080b14 !important;
-  border-radius:2px !important;isolation:isolate;
+  width:57px;height:57px;padding:0;vertical-align:middle;
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  border-radius:0 !important;isolation:isolate;
 }
 .frPlayerPortrait::after {
-  content:"";position:absolute;inset:-5px;pointer-events:none;
-  border:1px solid rgba(255,255,255,.27);box-shadow:inset 0 0 9px var(--frame-color);
+  content:none;display:none;
 }
 .frPlayerPortrait[data-frame="arcane"],.frFrameSample[data-frame="arcane"]{--frame-color:#b799f0}
 .frPlayerPortrait[data-frame="emerald"],.frFrameSample[data-frame="emerald"]{--frame-color:#80dda9}
 .frPlayerPortrait[data-frame="ruby"],.frFrameSample[data-frame="ruby"]{--frame-color:#f18b99}
 .frPlayerPortrait[data-frame="gold"],.frFrameSample[data-frame="gold"]{--frame-color:#f4cd78}
-.frPlayerPortrait.is-tiny {width:35px;height:35px;padding:2px;border-width:3px !important}
-.frPlayerPortrait.is-large {width:132px;height:132px;padding:8px;border-width:6px !important}
-.frPlayerPortrait>img{display:block;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;background:#17223b;}
+.frPlayerPortrait.is-tiny {width:35px;height:35px;padding:0;border:0 !important}
+.frPlayerPortrait.is-large {width:132px;height:132px;padding:0;border:0 !important}
+.frPlayerPortrait>img{display:block;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;background:transparent;}
 .frPortraitFallback {font-size:32px;color:var(--frame-color);text-shadow:2px 3px #0d1425;line-height:1}
 .frPlayerPortrait.is-tiny .frPortraitFallback{font-size:18px}
 .frPlayerPortrait.is-large .frPortraitFallback{font-size:60px}
@@ -84,7 +83,7 @@
   box-shadow:2px 3px #080a14 !important;
 }
 .frShellIdentityButton:hover{border-color:#9fe8dc !important}
-.frShellIdentityButton .frPlayerPortrait{width:36px;height:36px;border-width:3px !important;padding:2px}
+.frShellIdentityButton .frPlayerPortrait{width:36px;height:36px;border:0 !important;padding:0 !important}
 .frShellIdentityButton .frIdentityText{max-width:135px}
 .frMenuIdentity {margin:0 auto 18px;width:max-content;max-width:100%;padding:8px 12px;
  border:2px solid #657391;background:#121a30;text-align:left}

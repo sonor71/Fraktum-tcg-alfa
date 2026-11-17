@@ -580,8 +580,8 @@ max-width:100% !important;
 display:none !important;
 }
 
+/* The avatar frame is provided exclusively by PlayerPortrait's sprite layer. */
 #root :is(.matchHeroPortrait,
-.frPlayerPortrait,
 .profile-card>img,
 .profileIdentityCard>img,
 .matchOpponentProfile img) {

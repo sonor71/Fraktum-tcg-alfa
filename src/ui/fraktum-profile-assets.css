@@ -10,18 +10,25 @@
  image-rendering:pixelated;
  flex:none;
 }
-.frPlayerPortrait,
-.frPlayerPortrait.is-large,
-.frPlayerPortrait.is-tiny{
+/* Selected decorative PNG is the ONLY frame. Override any legacy global
+   #root skin rule so blue panel borders cannot reappear in menus or matches. */
+#root .frPlayerPortrait,
+#root .frPlayerPortrait.is-large,
+#root .frPlayerPortrait.is-tiny{
  padding:0!important;
  border:0!important;
+ border-width:0!important;
  border-image:none!important;
- background:#131522!important;
+ background:transparent!important;
+ background-image:none!important;
  border-radius:0!important;
+ outline:none!important;
  box-shadow:none!important;
  overflow:visible;
 }
-.frPlayerPortrait::after{content:none!important;display:none!important}
+#root .frPlayerPortrait::before,
+#root .frPlayerPortrait::after{content:none!important;display:none!important}
+#root .frPlayerPortrait>img{background:transparent!important}
 .frPlayerPortrait>.frPixelAtlasTile,
 .frPlayerPortrait>img{
  position:absolute;
