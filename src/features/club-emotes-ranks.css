@@ -1,4 +1,4 @@
-.frClubEmote{display:inline-block;width:32px;height:32px;flex:none;vertical-align:middle;background-image:url('/custom/ranks/Smile%20pack.png');background-size:384px 288px;image-rendering:pixelated;background-repeat:no-repeat}
+.frClubEmote{display:inline-block;width:32px;height:32px;flex:none;vertical-align:middle;image-rendering:pixelated}
 .frEmoteWrap{position:relative;flex:none}.frEmotePicker{position:absolute;bottom:calc(100% + 8px);left:0;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px;width:min(328px,85vw);max-height:230px;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;padding:8px;background:#181a2b;border:2px solid #8d9fba;z-index:100}
 .frEmotePicker button{width:36px;height:36px;padding:2px;display:grid;place-items:center;cursor:pointer}
 .frChatCompose{display:flex;align-items:center;gap:8px}.frChatCompose input{flex:1;min-width:0}
