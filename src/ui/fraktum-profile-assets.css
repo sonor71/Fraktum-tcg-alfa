@@ -32,15 +32,15 @@
 /* Keep the portrait slightly inset while the decorative overlay projects
    beyond its bounds. Each sprite is still drawn pixel-perfect from the atlas. */
 .frPlayerPortrait{
- --fr-frame-bleed:4px;
+ --fr-frame-bleed:6px;
  --fr-avatar-inset:2px;
 }
 .frPlayerPortrait.is-tiny{
- --fr-frame-bleed:2px;
+ --fr-frame-bleed:3px;
  --fr-avatar-inset:1px;
 }
 .frPlayerPortrait.is-large{
- --fr-frame-bleed:7px;
+ --fr-frame-bleed:9px;
  --fr-avatar-inset:4px;
 }
 .frPlayerPortrait>.frPortraitAvatarArt,
@@ -105,8 +105,8 @@
  width:60px;height:60px;
 }
 .frPixelFramePreview>.frPixelAtlasTile:last-child{
- inset:-4px;
- width:72px;height:72px;
+ inset:-6px;
+ width:76px;height:76px;
  pointer-events:none;
  z-index:2;
 }
