@@ -29,9 +29,33 @@
  display:block;object-fit:cover;
  image-rendering:pixelated;
 }
+/* Keep the portrait slightly inset while the decorative overlay projects
+   beyond its bounds. Each sprite is still drawn pixel-perfect from the atlas. */
+.frPlayerPortrait{
+ --fr-frame-bleed:4px;
+ --fr-avatar-inset:2px;
+}
+.frPlayerPortrait.is-tiny{
+ --fr-frame-bleed:2px;
+ --fr-avatar-inset:1px;
+}
+.frPlayerPortrait.is-large{
+ --fr-frame-bleed:7px;
+ --fr-avatar-inset:4px;
+}
 .frPlayerPortrait>.frPortraitAvatarArt,
-.frPlayerPortrait>img{z-index:1}
-.frPlayerPortrait>.frPortraitFrameArt{z-index:2;pointer-events:none}
+.frPlayerPortrait>img{
+ inset:var(--fr-avatar-inset);
+ width:calc(100% - var(--fr-avatar-inset) - var(--fr-avatar-inset));
+ height:calc(100% - var(--fr-avatar-inset) - var(--fr-avatar-inset));
+ z-index:1;
+}
+.frPlayerPortrait>.frPortraitFrameArt{
+ inset:calc(0px - var(--fr-frame-bleed));
+ width:calc(100% + var(--fr-frame-bleed) + var(--fr-frame-bleed));
+ height:calc(100% + var(--fr-frame-bleed) + var(--fr-frame-bleed));
+ z-index:2;pointer-events:none;
+}
 .frPlayerPortrait>.frPortraitCaption{z-index:3}
 .frAvatarPicker{
  display:grid!important;
@@ -77,18 +101,23 @@
  image-rendering:pixelated;
 }
 .frPixelFramePreview>.frPixelAtlasTile{
- position:absolute;inset:0;
- width:64px;height:64px;
+ position:absolute;inset:2px;
+ width:60px;height:60px;
 }
-.frPixelFramePreview>.frPixelAtlasTile:last-child{pointer-events:none}
+.frPixelFramePreview>.frPixelAtlasTile:last-child{
+ inset:-4px;
+ width:72px;height:72px;
+ pointer-events:none;
+ z-index:2;
+}
 @media(max-width:560px){
  .frAvatarPicker{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}
  .frFrameGrid{grid-template-columns:repeat(auto-fill,minmax(85px,1fr))}
 }
 
 .frPixelFramePreview>img{
- position:absolute;inset:0;display:block;
- width:100%;height:100%;object-fit:cover;
+ position:absolute;inset:2px;display:block;
+ width:60px;height:60px;object-fit:cover;
  image-rendering:pixelated;
 }
 .frPixelFramePreview>img+.frPixelAtlasTile{z-index:2}
