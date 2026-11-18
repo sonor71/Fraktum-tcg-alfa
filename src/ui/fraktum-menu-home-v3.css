@@ -1,6 +1,6 @@
-/* FRAKTUM TCG — home composition.
- * Desktop: an intentionally centered 2-column layout, not a scaled screenshot.
- * News and menu retain the same functionality; theme uses the existing pixel sprites. */
+/* FRAKTUM home menu — layout matched to the supplied two-column wireframe.
+ * Desktop: left menu ~25%, clear open background ~27%, right news ~48%.
+ * No transform-based scaling: keep buttons/text legible and clickable. */
 
 .coreShellContent:has(> .coreMenuRoot--homeV2) {
   padding: 0 !important;
@@ -9,23 +9,23 @@
 
 #root .coreMenuRoot.coreMenuRoot--homeV2 {
   position: relative;
+  box-sizing: border-box;
   isolation: isolate;
   display: flex;
-  justify-content: center;
   align-items: center;
-  box-sizing: border-box;
+  justify-content: center;
   min-height: calc(100dvh - 68px) !important;
-  padding: 24px clamp(18px, 3vw, 44px) !important;
+  padding: 24px 0 !important;
   overflow: hidden;
   background-color: #080d19 !important;
   background-image: url('/ui/fraktum/menu/backgrounds/phon1.png') !important;
-  background-size: cover !important;
   background-position: center !important;
+  background-size: cover !important;
   background-repeat: no-repeat !important;
   background-attachment: scroll !important;
 }
 
-/* The global Arcane skin previously hid .coreMenuBackdrop. Restore it only here. */
+/* The older pixel theme hides .coreMenuBackdrop; override that for the home page. */
 #root .coreMenuRoot--homeV2 .coreMenuBackdrop.coreMenuBackdrop--slideshow {
   display: block !important;
   position: absolute !important;
@@ -47,11 +47,10 @@
   max-width: none;
   max-height: none;
   object-fit: cover !important;
-  object-position: center;
+  object-position: center !important;
   image-rendering: pixelated;
   transition: opacity 1800ms ease-in-out;
 }
-
 #root .coreMenuRoot--homeV2 .coreMenuBgImage.is-visible { opacity: 1 !important; }
 #root .coreMenuRoot--homeV2 .coreMenuBgImage:not(.is-visible) { opacity: 0 !important; }
 
@@ -60,60 +59,63 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(90deg,
-    rgba(3, 7, 14, .24),
-    rgba(3, 7, 14, .09) 50%,
-    rgba(3, 7, 14, .24)) !important;
+  background: linear-gradient(90deg, rgba(3,7,14,.21), rgba(3,7,14,.04) 50%, rgba(3,7,14,.21)) !important;
 }
 
-/* Composition: about 10% larger than before, with more air between columns.
- * Use actual CSS grid geometry: no scale() and no translateX() hacks. */
+/* Desktop wireframe dimensions. Space between columns intentionally exposes art. */
 #root .coreMenuRoot--homeV2 .coreMenuLayout {
   position: relative;
   z-index: 2;
   display: grid;
-  width: min(1370px, 100%) !important;
+  width: min(2100px, 95%) !important;
   max-width: none !important;
-  height: clamp(560px, 72dvh, 700px);
-  min-height: 0;
   margin: 0 auto !important;
-  grid-template-columns: minmax(0, .39fr) minmax(0, 1fr) !important;
-  gap: clamp(82px, 6.1vw, 110px) !important;
-  align-items: stretch !important;
+  min-height: 0;
+  height: auto;
+  grid-template-columns: minmax(0, 25.5fr) minmax(0, 47.5fr) !important;
+  column-gap: 27% !important;
+  align-items: center !important;
   transform: none !important;
 }
 
-/* Matching frame heights and better inner breathing room. */
+/* The left and right panels have their own heights, as in the wireframe. */
 #root .coreMenuRoot--homeV2 .coreMenuPanel,
 #root .coreMenuRoot--homeV2 .coreMenuNews {
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 100% !important;
-  max-width: none !important;
   min-width: 0;
   min-height: 0 !important;
-  height: 100%;
+  width: 100% !important;
+  max-width: none !important;
   margin: 0 !important;
   transform: none !important;
+  display: flex;
+  flex-direction: column;
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuPanel {
-  padding: clamp(14px, 1.1vw, 20px) !important;
+  height: clamp(600px, 67dvh, 760px);
+  padding: clamp(14px, 1vw, 22px) !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuNews {
+  height: clamp(550px, 62dvh, 700px);
+  padding: clamp(11px, 1.1vw, 20px);
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuHeading {
   flex: 0 0 auto;
-  margin-bottom: clamp(12px, 1.2vw, 20px) !important;
+  margin-bottom: clamp(12px, 1.3vw, 24px) !important;
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuHeading h1 {
-  font-size: clamp(16px, 1.15vw, 21px) !important;
-  line-height: 1.5 !important;
+  font-size: clamp(16px, 1.18vw, 25px) !important;
+  line-height: 1.42 !important;
+  overflow-wrap: normal;
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuHeading > span {
-  font-size: clamp(10px, .7vw, 12px) !important;
+  font-size: clamp(10px, .7vw, 13px) !important;
+  line-height: 1.5 !important;
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuGrid {
@@ -122,20 +124,20 @@
   min-height: 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: repeat(4, minmax(0, 1fr));
-  gap: clamp(10px, .9vw, 14px);
+  gap: clamp(10px, .8vw, 16px);
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuAction {
   min-height: 0 !important;
-  padding: clamp(10px, .9vw, 16px) !important;
+  padding: clamp(10px, .9vw, 18px) !important;
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuAction strong {
-  font-size: clamp(11px, .85vw, 15px) !important;
+  font-size: clamp(11px, .83vw, 16px) !important;
+  line-height: 1.4 !important;
 }
-
 #root .coreMenuRoot--homeV2 .coreMenuAction span {
-  font-size: clamp(10px, .75vw, 13px) !important;
+  font-size: clamp(10px, .70vw, 13px) !important;
   line-height: 1.45 !important;
 }
 
@@ -144,27 +146,27 @@
   margin-top: 14px !important;
 }
 
-/* All three news pictures occupy the whole frame, no empty letterbox bars. */
+/* News artwork is full bleed within the news viewport, with no black bars. */
+#root .coreMenuRoot--homeV2 .coreMenuNewsHeader {
+  flex: 0 0 auto;
+}
 #root .coreMenuRoot--homeV2 .coreMenuNewsViewport {
   box-sizing: border-box;
   display: flex;
   flex: 1 1 auto;
-  min-height: 0 !important;
   height: auto;
+  min-height: 0 !important;
   aspect-ratio: auto;
 }
-
 #root .coreMenuRoot--homeV2 .coreMenuNewsTrack {
   height: 100%;
   min-height: 0;
 }
-
 #root .coreMenuRoot--homeV2 .coreMenuNewsSlide {
-  height: 100%;
   min-height: 0;
+  height: 100%;
   aspect-ratio: auto;
 }
-
 #root .coreMenuRoot--homeV2 .coreMenuNewsSlide img {
   display: block;
   width: 100% !important;
@@ -172,42 +174,53 @@
   object-fit: fill !important;
   image-rendering: pixelated;
 }
-
 #root .coreMenuRoot--homeV2 .coreMenuNewsControls {
   flex: 0 0 auto;
 }
 
-/* Tablet and phone: real responsive stacking, never scaled text or buttons. */
-@media (max-width: 1150px) {
-  #root .coreMenuRoot.coreMenuRoot--homeV2 {
-    align-items: flex-start;
-    padding: 22px 14px calc(90px + env(safe-area-inset-bottom)) !important;
-    overflow: visible;
+/* Mid-size desktop: preserve readable panel and reduce giant gutter. */
+@media (min-width: 1051px) and (max-width: 1450px) {
+  #root .coreMenuRoot--homeV2 .coreMenuLayout {
+    width: 94% !important;
+    grid-template-columns: minmax(340px, 35fr) minmax(0, 53fr) !important;
+    column-gap: 12% !important;
   }
+  #root .coreMenuRoot--homeV2 .coreMenuPanel {
+    height: clamp(560px, 71dvh, 710px);
+  }
+  #root .coreMenuRoot--homeV2 .coreMenuNews {
+    height: clamp(510px, 65dvh, 670px);
+  }
+}
 
+/* Tablet & mobile: one-column layout, no squashed controls. */
+@media (max-width: 1050px) {
+  #root .coreMenuRoot.coreMenuRoot--homeV2 {
+    display: block;
+    min-height: auto !important;
+    overflow: visible;
+    padding: 18px 12px calc(100px + env(safe-area-inset-bottom)) !important;
+  }
   #root .coreMenuRoot--homeV2 .coreMenuLayout {
     width: min(760px, 100%) !important;
-    height: auto;
-    min-height: 0;
     grid-template-columns: minmax(0, 1fr) !important;
-    gap: 24px !important;
+    column-gap: 0 !important;
+    row-gap: 24px !important;
+    align-items: stretch !important;
   }
-
   #root .coreMenuRoot--homeV2 .coreMenuPanel,
   #root .coreMenuRoot--homeV2 .coreMenuNews {
     height: auto;
     min-height: 0 !important;
   }
-
   #root .coreMenuRoot--homeV2 .coreMenuGrid {
+    flex: none;
     grid-template-rows: auto;
-    grid-auto-rows: minmax(78px, auto);
+    grid-auto-rows: minmax(82px, auto);
   }
-
   #root .coreMenuRoot--homeV2 .coreMenuAction {
-    min-height: 78px !important;
+    min-height: 82px !important;
   }
-
   #root .coreMenuRoot--homeV2 .coreMenuNewsViewport {
     flex: none;
     aspect-ratio: 16 / 9;
@@ -215,35 +228,23 @@
 }
 
 @media (max-width: 700px) {
-  #root .coreMenuRoot.coreMenuRoot--homeV2 {
-    padding: 14px 12px calc(100px + env(safe-area-inset-bottom)) !important;
-  }
-
   #root .coreMenuRoot--homeV2 .coreMenuGrid {
-    grid-template-columns: 1fr;
-    grid-auto-rows: minmax(74px, auto);
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: minmax(76px, auto);
   }
-
   #root .coreMenuRoot--homeV2 .coreMenuAction {
-    min-height: 74px !important;
+    min-height: 76px !important;
   }
-
-  #root .coreMenuRoot--homeV2 .coreMenuPanel {
-    padding: 14px !important;
-  }
-
-  #root .coreMenuRoot--homeV2 .coreMenuHeading h1 {
-    font-size: 16px !important;
-  }
-
-  #root .coreMenuRoot--homeV2 .coreMenuNewsViewport {
-    aspect-ratio: 16 / 9;
-  }
+  #root .coreMenuRoot--homeV2 .coreMenuPanel { padding: 14px !important; }
+  #root .coreMenuRoot--homeV2 .coreMenuHeading h1 { font-size: 16px !important; }
 }
 
-@media (max-height: 730px) and (min-width: 1151px) {
-  #root .coreMenuRoot--homeV2 .coreMenuLayout {
-    height: min(560px, calc(100dvh - 108px));
+@media (max-height: 780px) and (min-width: 1051px) {
+  #root .coreMenuRoot--homeV2 .coreMenuPanel {
+    height: max(540px, calc(100dvh - 100px));
+  }
+  #root .coreMenuRoot--homeV2 .coreMenuNews {
+    height: max(490px, calc(100dvh - 140px));
   }
 }
 
