@@ -1,194 +1,40 @@
-/* FRAKTUM TCG home v3: visible backgrounds + near full-screen columns */
+/* FRAKTUM TCG — home composition.
+ * Desktop: an intentionally centered 2-column layout, not a scaled screenshot.
+ * News and menu retain the same functionality; theme uses the existing pixel sprites. */
+
 .coreShellContent:has(> .coreMenuRoot--homeV2) {
   padding: 0 !important;
   background: none !important;
 }
-.coreMenuRoot.coreMenuRoot--homeV2 {
-  min-height: calc(100dvh - 68px) !important;
-  padding: clamp(12px, 1.4vw, 24px) !important;
+
+#root .coreMenuRoot.coreMenuRoot--homeV2 {
+  position: relative;
   isolation: isolate;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: calc(100dvh - 68px) !important;
+  padding: 24px clamp(18px, 3vw, 44px) !important;
+  overflow: hidden;
   background-color: #080d19 !important;
   background-image: url('/ui/fraktum/menu/backgrounds/phon1.png') !important;
-  background-position: center !important;
   background-size: cover !important;
+  background-position: center !important;
   background-repeat: no-repeat !important;
   background-attachment: scroll !important;
 }
-.coreMenuRoot--homeV2 .coreMenuBackdrop.coreMenuBackdrop--slideshow {
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 0 !important;
-  background: none !important;
-  opacity: 1 !important;
-  pointer-events: none;
-}
-.coreMenuRoot--homeV2 .coreMenuBgImage {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  max-height: none;
-  object-fit: cover;
-  image-rendering: pixelated;
-}
-.coreMenuRoot--homeV2 .coreMenuBackdrop--slideshow::after {
-  z-index: 1;
-  background: linear-gradient(90deg, rgba(3,7,14,.23), rgba(3,7,14,.09) 50%, rgba(3,7,14,.23)) !important;
-}
-.coreMenuRoot--homeV2 .coreMenuLayout {
-  position: relative;
-  z-index: 2;
-  width: min(1920px, 100%) !important;
-  min-height: calc(100dvh - 68px - clamp(24px, 2.8vw, 48px));
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: minmax(0, .95fr) minmax(0, 1.1fr) !important;
-  align-items: stretch !important;
-  gap: clamp(14px, 1.5vw, 28px) !important;
-}
-.coreMenuRoot--homeV2 .coreMenuPanel,
-.coreMenuRoot--homeV2 .coreMenuNews {
-  box-sizing: border-box;
-  width: 100% !important;
-  max-width: none !important;
-  min-width: 0;
-  min-height: 100%;
-  margin: 0 !important;
-  display: flex;
-  flex-direction: column;
-}
-.coreMenuRoot--homeV2 .coreMenuPanel { padding: clamp(16px, 1.6vw, 28px) !important; }
-.coreMenuRoot--homeV2 .coreMenuHeading {
-  flex: 0 0 auto;
-  margin-bottom: clamp(18px, 2vw, 32px) !important;
-}
-.coreMenuRoot--homeV2 .coreMenuHeading h1 {
-  font-size: clamp(18px, 2.1vw, 32px) !important;
-}
-.coreMenuRoot--homeV2 .coreMenuGrid {
-  display: grid;
-  flex: 1 1 auto;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(4, minmax(88px, 1fr));
-  gap: clamp(10px, 1.1vw, 18px);
-}
-.coreMenuRoot--homeV2 .coreMenuAction {
-  min-height: 0 !important;
-  padding: clamp(12px, 1.2vw, 22px) !important;
-}
-.coreMenuRoot--homeV2 .coreMenuAction strong {
-  font-size: clamp(12px, 1.2vw, 18px) !important;
-}
-.coreMenuRoot--homeV2 .coreMenuAction span {
-  font-size: clamp(12px, .95vw, 15px) !important;
-}
-.coreMenuRoot--homeV2 .coreMenuSettings {
-  flex: 0 0 auto;
-  margin-top: 20px !important;
-}
-.coreMenuRoot--homeV2 .coreMenuNewsViewport {
-  box-sizing: border-box;
-  flex: 1 1 auto;
-  min-height: 260px;
-  height: auto;
-  aspect-ratio: auto;
-}
-.coreMenuRoot--homeV2 .coreMenuNewsTrack,
-.coreMenuRoot--homeV2 .coreMenuNewsSlide { height: 100%; }
-.coreMenuRoot--homeV2 .coreMenuNewsSlide { aspect-ratio: auto; }
-.coreMenuRoot--homeV2 .coreMenuNewsSlide img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.coreMenuRoot--homeV2 .coreMenuNewsControls { flex: 0 0 auto; }
-@media (max-width: 1050px) {
-  .coreMenuRoot--homeV2 .coreMenuLayout {
-    grid-template-columns: minmax(0, 1fr) !important;
-    min-height: auto;
-    max-width: 760px;
-  }
-  .coreMenuRoot--homeV2 .coreMenuPanel,
-  .coreMenuRoot--homeV2 .coreMenuNews { min-height: 0; }
-  .coreMenuRoot--homeV2 .coreMenuGrid { grid-template-rows: auto; }
-  .coreMenuRoot--homeV2 .coreMenuAction { min-height: 86px !important; }
-  .coreMenuRoot--homeV2 .coreMenuNewsViewport {
-    flex: none;
-    aspect-ratio: 16 / 9;
-    min-height: 0;
-  }
-}
-@media (max-width: 700px) {
-  .coreMenuRoot.coreMenuRoot--homeV2 {
-    min-height: auto !important;
-    padding: 14px 12px calc(100px + env(safe-area-inset-bottom)) !important;
-  }
-  .coreMenuRoot--homeV2 .coreMenuGrid { grid-template-columns: 1fr; }
-  .coreMenuRoot--homeV2 .coreMenuAction { min-height: 74px !important; }
-  .coreMenuRoot--homeV2 .coreMenuPanel { padding: 14px !important; }
-  .coreMenuRoot--homeV2 .coreMenuHeading h1 { font-size: 16px !important; }
-}
 
-
-/* Home v3 refinement: edge-aligned menu and full-bleed news artwork.
- * Keep image-rendering pixelated; do not crop news text or leave letterbox bars. */
-.coreMenuRoot--homeV2 .coreMenuNewsViewport {
-  display: flex;
-  min-height: 0 !important;
-}
-.coreMenuRoot--homeV2 .coreMenuNewsTrack {
-  height: 100% !important;
-  min-height: 100%;
-}
-.coreMenuRoot--homeV2 .coreMenuNewsSlide {
-  height: 100% !important;
-  min-height: 100%;
-}
-.coreMenuRoot--homeV2 .coreMenuNewsSlide img {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: fill !important;
-  image-rendering: pixelated;
-}
-
-@media (min-width: 1051px) {
-  .coreMenuRoot.coreMenuRoot--homeV2 {
-    padding: 10px !important;
-  }
-  .coreMenuRoot--homeV2 .coreMenuLayout {
-    width: 100% !important;
-    max-width: none !important;
-    margin-inline: 0 !important;
-    grid-template-columns: minmax(360px, 27%) minmax(0, 1fr) !important;
-    gap: 14px !important;
-    min-height: calc(100dvh - 88px);
-  }
-  .coreMenuRoot--homeV2 .coreMenuPanel {
-    justify-self: stretch;
-    padding: clamp(12px, 1.15vw, 20px) !important;
-  }
-}
-
-/* Home v4: override global #root arcane theme which was hiding slideshow
-   and forcing a repeating tile background over the uploaded phon images. */
-#root .coreMenuRoot.coreMenuRoot--homeV2 {
-  background-image: url('/ui/fraktum/menu/backgrounds/phon1.png') !important;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  background-color: #080d19 !important;
-}
-
+/* The global Arcane skin previously hid .coreMenuBackdrop. Restore it only here. */
 #root .coreMenuRoot--homeV2 .coreMenuBackdrop.coreMenuBackdrop--slideshow {
   display: block !important;
   position: absolute !important;
   inset: 0 !important;
   z-index: 0 !important;
-  opacity: 1 !important;
   visibility: visible !important;
-  background: none !important;
+  opacity: 1 !important;
   overflow: hidden;
+  background: none !important;
   pointer-events: none;
 }
 
@@ -198,37 +44,212 @@
   inset: 0;
   width: 100% !important;
   height: 100% !important;
+  max-width: none;
+  max-height: none;
   object-fit: cover !important;
-  object-position: center !important;
+  object-position: center;
   image-rendering: pixelated;
   transition: opacity 1800ms ease-in-out;
 }
 
-#root .coreMenuRoot--homeV2 .coreMenuBgImage.is-visible {
-  opacity: 1 !important;
-}
-#root .coreMenuRoot--homeV2 .coreMenuBgImage:not(.is-visible) {
-  opacity: 0 !important;
+#root .coreMenuRoot--homeV2 .coreMenuBgImage.is-visible { opacity: 1 !important; }
+#root .coreMenuRoot--homeV2 .coreMenuBgImage:not(.is-visible) { opacity: 0 !important; }
+
+#root .coreMenuRoot--homeV2 .coreMenuBackdrop--slideshow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg,
+    rgba(3, 7, 14, .24),
+    rgba(3, 7, 14, .09) 50%,
+    rgba(3, 7, 14, .24)) !important;
 }
 
-/* Exactly 70% of the prior desktop panel dimensions: same internal ratios. */
-@media (min-width: 1051px) {
+/* Composition: about 10% larger than before, with more air between columns.
+ * Use actual CSS grid geometry: no scale() and no translateX() hacks. */
+#root .coreMenuRoot--homeV2 .coreMenuLayout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: min(1370px, 100%) !important;
+  max-width: none !important;
+  height: clamp(560px, 72dvh, 700px);
+  min-height: 0;
+  margin: 0 auto !important;
+  grid-template-columns: minmax(0, .39fr) minmax(0, 1fr) !important;
+  gap: clamp(82px, 6.1vw, 110px) !important;
+  align-items: stretch !important;
+  transform: none !important;
+}
+
+/* Matching frame heights and better inner breathing room. */
+#root .coreMenuRoot--homeV2 .coreMenuPanel,
+#root .coreMenuRoot--homeV2 .coreMenuNews {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  min-height: 0 !important;
+  height: 100%;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuPanel {
+  padding: clamp(14px, 1.1vw, 20px) !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuHeading {
+  flex: 0 0 auto;
+  margin-bottom: clamp(12px, 1.2vw, 20px) !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuHeading h1 {
+  font-size: clamp(16px, 1.15vw, 21px) !important;
+  line-height: 1.5 !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuHeading > span {
+  font-size: clamp(10px, .7vw, 12px) !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuGrid {
+  display: grid;
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  gap: clamp(10px, .9vw, 14px);
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuAction {
+  min-height: 0 !important;
+  padding: clamp(10px, .9vw, 16px) !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuAction strong {
+  font-size: clamp(11px, .85vw, 15px) !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuAction span {
+  font-size: clamp(10px, .75vw, 13px) !important;
+  line-height: 1.45 !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuSettings {
+  flex: 0 0 auto;
+  margin-top: 14px !important;
+}
+
+/* All three news pictures occupy the whole frame, no empty letterbox bars. */
+#root .coreMenuRoot--homeV2 .coreMenuNewsViewport {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0 !important;
+  height: auto;
+  aspect-ratio: auto;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuNewsTrack {
+  height: 100%;
+  min-height: 0;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuNewsSlide {
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuNewsSlide img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: fill !important;
+  image-rendering: pixelated;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuNewsControls {
+  flex: 0 0 auto;
+}
+
+/* Tablet and phone: real responsive stacking, never scaled text or buttons. */
+@media (max-width: 1150px) {
+  #root .coreMenuRoot.coreMenuRoot--homeV2 {
+    align-items: flex-start;
+    padding: 22px 14px calc(90px + env(safe-area-inset-bottom)) !important;
+    overflow: visible;
+  }
+
   #root .coreMenuRoot--homeV2 .coreMenuLayout {
-    transform: scale(.70);
-    transform-origin: center center;
-    gap: 48px !important;
+    width: min(760px, 100%) !important;
+    height: auto;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 24px !important;
   }
-  #root .coreMenuRoot--homeV2 .coreMenuPanel {
-    transform: translateX(-70px);
-  }
+
+  #root .coreMenuRoot--homeV2 .coreMenuPanel,
   #root .coreMenuRoot--homeV2 .coreMenuNews {
-    transform: translateX(70px);
+    height: auto;
+    min-height: 0 !important;
+  }
+
+  #root .coreMenuRoot--homeV2 .coreMenuGrid {
+    grid-template-rows: auto;
+    grid-auto-rows: minmax(78px, auto);
+  }
+
+  #root .coreMenuRoot--homeV2 .coreMenuAction {
+    min-height: 78px !important;
+  }
+
+  #root .coreMenuRoot--homeV2 .coreMenuNewsViewport {
+    flex: none;
+    aspect-ratio: 16 / 9;
   }
 }
 
-/* On narrow screens do not shrink tap targets or lettering. */
-@media (max-width: 1050px) {
+@media (max-width: 700px) {
+  #root .coreMenuRoot.coreMenuRoot--homeV2 {
+    padding: 14px 12px calc(100px + env(safe-area-inset-bottom)) !important;
+  }
+
+  #root .coreMenuRoot--homeV2 .coreMenuGrid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: minmax(74px, auto);
+  }
+
+  #root .coreMenuRoot--homeV2 .coreMenuAction {
+    min-height: 74px !important;
+  }
+
+  #root .coreMenuRoot--homeV2 .coreMenuPanel {
+    padding: 14px !important;
+  }
+
+  #root .coreMenuRoot--homeV2 .coreMenuHeading h1 {
+    font-size: 16px !important;
+  }
+
+  #root .coreMenuRoot--homeV2 .coreMenuNewsViewport {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-height: 730px) and (min-width: 1151px) {
   #root .coreMenuRoot--homeV2 .coreMenuLayout {
-    transform: none;
+    height: min(560px, calc(100dvh - 108px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root .coreMenuRoot--homeV2 .coreMenuBgImage,
+  #root .coreMenuRoot--homeV2 .coreMenuNewsTrack {
+    transition: none !important;
   }
 }
