@@ -1,0 +1,130 @@
+/* FRAKTUM TCG home v3: visible backgrounds + near full-screen columns */
+.coreShellContent:has(> .coreMenuRoot--homeV2) {
+  padding: 0 !important;
+  background: none !important;
+}
+.coreMenuRoot.coreMenuRoot--homeV2 {
+  min-height: calc(100dvh - 68px) !important;
+  padding: clamp(12px, 1.4vw, 24px) !important;
+  isolation: isolate;
+  background-color: #080d19 !important;
+  background-image: url('/ui/fraktum/menu/backgrounds/phon1.png') !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+}
+.coreMenuRoot--homeV2 .coreMenuBackdrop.coreMenuBackdrop--slideshow {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  background: none !important;
+  opacity: 1 !important;
+  pointer-events: none;
+}
+.coreMenuRoot--homeV2 .coreMenuBgImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+.coreMenuRoot--homeV2 .coreMenuBackdrop--slideshow::after {
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(3,7,14,.23), rgba(3,7,14,.09) 50%, rgba(3,7,14,.23)) !important;
+}
+.coreMenuRoot--homeV2 .coreMenuLayout {
+  position: relative;
+  z-index: 2;
+  width: min(1920px, 100%) !important;
+  min-height: calc(100dvh - 68px - clamp(24px, 2.8vw, 48px));
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.1fr) !important;
+  align-items: stretch !important;
+  gap: clamp(14px, 1.5vw, 28px) !important;
+}
+.coreMenuRoot--homeV2 .coreMenuPanel,
+.coreMenuRoot--homeV2 .coreMenuNews {
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  min-height: 100%;
+  margin: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+.coreMenuRoot--homeV2 .coreMenuPanel { padding: clamp(16px, 1.6vw, 28px) !important; }
+.coreMenuRoot--homeV2 .coreMenuHeading {
+  flex: 0 0 auto;
+  margin-bottom: clamp(18px, 2vw, 32px) !important;
+}
+.coreMenuRoot--homeV2 .coreMenuHeading h1 {
+  font-size: clamp(18px, 2.1vw, 32px) !important;
+}
+.coreMenuRoot--homeV2 .coreMenuGrid {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(88px, 1fr));
+  gap: clamp(10px, 1.1vw, 18px);
+}
+.coreMenuRoot--homeV2 .coreMenuAction {
+  min-height: 0 !important;
+  padding: clamp(12px, 1.2vw, 22px) !important;
+}
+.coreMenuRoot--homeV2 .coreMenuAction strong {
+  font-size: clamp(12px, 1.2vw, 18px) !important;
+}
+.coreMenuRoot--homeV2 .coreMenuAction span {
+  font-size: clamp(12px, .95vw, 15px) !important;
+}
+.coreMenuRoot--homeV2 .coreMenuSettings {
+  flex: 0 0 auto;
+  margin-top: 20px !important;
+}
+.coreMenuRoot--homeV2 .coreMenuNewsViewport {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 260px;
+  height: auto;
+  aspect-ratio: auto;
+}
+.coreMenuRoot--homeV2 .coreMenuNewsTrack,
+.coreMenuRoot--homeV2 .coreMenuNewsSlide { height: 100%; }
+.coreMenuRoot--homeV2 .coreMenuNewsSlide { aspect-ratio: auto; }
+.coreMenuRoot--homeV2 .coreMenuNewsSlide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.coreMenuRoot--homeV2 .coreMenuNewsControls { flex: 0 0 auto; }
+@media (max-width: 1050px) {
+  .coreMenuRoot--homeV2 .coreMenuLayout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-height: auto;
+    max-width: 760px;
+  }
+  .coreMenuRoot--homeV2 .coreMenuPanel,
+  .coreMenuRoot--homeV2 .coreMenuNews { min-height: 0; }
+  .coreMenuRoot--homeV2 .coreMenuGrid { grid-template-rows: auto; }
+  .coreMenuRoot--homeV2 .coreMenuAction { min-height: 86px !important; }
+  .coreMenuRoot--homeV2 .coreMenuNewsViewport {
+    flex: none;
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+  }
+}
+@media (max-width: 700px) {
+  .coreMenuRoot.coreMenuRoot--homeV2 {
+    min-height: auto !important;
+    padding: 14px 12px calc(100px + env(safe-area-inset-bottom)) !important;
+  }
+  .coreMenuRoot--homeV2 .coreMenuGrid { grid-template-columns: 1fr; }
+  .coreMenuRoot--homeV2 .coreMenuAction { min-height: 74px !important; }
+  .coreMenuRoot--homeV2 .coreMenuPanel { padding: 14px !important; }
+  .coreMenuRoot--homeV2 .coreMenuHeading h1 { font-size: 16px !important; }
+}
