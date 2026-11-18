@@ -128,3 +128,44 @@
   .coreMenuRoot--homeV2 .coreMenuPanel { padding: 14px !important; }
   .coreMenuRoot--homeV2 .coreMenuHeading h1 { font-size: 16px !important; }
 }
+
+
+/* Home v3 refinement: edge-aligned menu and full-bleed news artwork.
+ * Keep image-rendering pixelated; do not crop news text or leave letterbox bars. */
+.coreMenuRoot--homeV2 .coreMenuNewsViewport {
+  display: flex;
+  min-height: 0 !important;
+}
+.coreMenuRoot--homeV2 .coreMenuNewsTrack {
+  height: 100% !important;
+  min-height: 100%;
+}
+.coreMenuRoot--homeV2 .coreMenuNewsSlide {
+  height: 100% !important;
+  min-height: 100%;
+}
+.coreMenuRoot--homeV2 .coreMenuNewsSlide img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: fill !important;
+  image-rendering: pixelated;
+}
+
+@media (min-width: 1051px) {
+  .coreMenuRoot.coreMenuRoot--homeV2 {
+    padding: 10px !important;
+  }
+  .coreMenuRoot--homeV2 .coreMenuLayout {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+    grid-template-columns: minmax(360px, 27%) minmax(0, 1fr) !important;
+    gap: 14px !important;
+    min-height: calc(100dvh - 88px);
+  }
+  .coreMenuRoot--homeV2 .coreMenuPanel {
+    justify-self: stretch;
+    padding: clamp(12px, 1.15vw, 20px) !important;
+  }
+}
