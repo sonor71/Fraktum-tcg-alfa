@@ -67,13 +67,13 @@
   position: relative;
   z-index: 2;
   display: grid;
-  width: min(2100px, 95%) !important;
+  width: min(1640px, calc(100vw - 72px)) !important;
   max-width: none !important;
   margin: 0 auto !important;
   min-height: 0;
   height: auto;
-  grid-template-columns: minmax(0, 25.5fr) minmax(0, 47.5fr) !important;
-  column-gap: 27% !important;
+  grid-template-columns: minmax(0, 28fr) minmax(0, 55fr) !important;
+  column-gap: 17% !important;
   align-items: center !important;
   transform: none !important;
 }
@@ -93,12 +93,12 @@
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuPanel {
-  height: clamp(600px, 67dvh, 760px);
+  height: clamp(660px, 82dvh, 780px);
   padding: clamp(14px, 1vw, 22px) !important;
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuNews {
-  height: clamp(550px, 62dvh, 700px);
+  height: clamp(610px, 76dvh, 730px);
   padding: clamp(11px, 1.1vw, 20px);
 }
 
@@ -123,7 +123,7 @@
   flex: 1 1 auto;
   min-height: 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(64px, 1fr));
   gap: clamp(10px, .8vw, 16px);
 }
 
@@ -133,11 +133,11 @@
 }
 
 #root .coreMenuRoot--homeV2 .coreMenuAction strong {
-  font-size: clamp(11px, .83vw, 16px) !important;
+  font-size: clamp(12px, .95vw, 17px) !important;
   line-height: 1.4 !important;
 }
 #root .coreMenuRoot--homeV2 .coreMenuAction span {
-  font-size: clamp(10px, .70vw, 13px) !important;
+  font-size: clamp(11px, .76vw, 14px) !important;
   line-height: 1.45 !important;
 }
 
@@ -181,15 +181,15 @@
 /* Mid-size desktop: preserve readable panel and reduce giant gutter. */
 @media (min-width: 1051px) and (max-width: 1450px) {
   #root .coreMenuRoot--homeV2 .coreMenuLayout {
-    width: 94% !important;
-    grid-template-columns: minmax(340px, 35fr) minmax(0, 53fr) !important;
-    column-gap: 12% !important;
+    width: calc(100vw - 48px) !important;
+    grid-template-columns: minmax(340px, 35fr) minmax(0, 55fr) !important;
+    column-gap: 10% !important;
   }
   #root .coreMenuRoot--homeV2 .coreMenuPanel {
-    height: clamp(560px, 71dvh, 710px);
+    height: clamp(620px, 82dvh, 750px);
   }
   #root .coreMenuRoot--homeV2 .coreMenuNews {
-    height: clamp(510px, 65dvh, 670px);
+    height: clamp(575px, 75dvh, 705px);
   }
 }
 
