@@ -218,6 +218,12 @@
     transform-origin: center center;
     gap: 48px !important;
   }
+  #root .coreMenuRoot--homeV2 .coreMenuPanel {
+    transform: translateX(-70px);
+  }
+  #root .coreMenuRoot--homeV2 .coreMenuNews {
+    transform: translateX(70px);
+  }
 }
 
 /* On narrow screens do not shrink tap targets or lettering. */
