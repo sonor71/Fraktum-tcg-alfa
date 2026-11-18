@@ -17,6 +17,7 @@ import "./ui/fraktum-pixel-texture-pass.css";
 import "./ui/fraktum-profile-assets.css";
 import "./ui/fraktum-menu-home-v2.css";
 import "./ui/fraktum-menu-home-v3.css";
+import "./ui/fraktum-menu-texture-v4.css";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

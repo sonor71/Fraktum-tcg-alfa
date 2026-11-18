@@ -1,0 +1,191 @@
+/* FRAKTUM TCG — original pixel menu textures from supplied archive.
+   panel.png = left menu frame; button.png = idle; button-pressed.png = pointer down.
+   Nine-slice images preserve their pixel corners while resizing. */
+:root {
+  --fr-menu-panel-art: url('/ui/fraktum/menu/ui/panel.png');
+  --fr-menu-button-idle: url('/ui/fraktum/menu/ui/button.png');
+  --fr-menu-button-down: url('/ui/fraktum/menu/ui/button-pressed.png');
+}
+
+/* Replace the old blue/teal menu frame, not the layout measurements from v3. */
+#root .coreMenuRoot--homeV2 .coreMenuPanel {
+  border: 10px solid transparent !important;
+  border-image-source: var(--fr-menu-panel-art) !important;
+  border-image-slice: 10 fill !important;
+  border-image-width: 10px !important;
+  border-image-repeat: stretch !important;
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: 0 7px 0 rgba(0,0,0,.55) !important;
+  color: #f6e9ce !important;
+  padding: clamp(12px, .9vw, 18px) !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuHeading {
+  background: transparent !important;
+  background-image: none !important;
+}
+#root .coreMenuRoot--homeV2 .coreMenuHeading h1 {
+  color: #f3e1bb !important;
+  text-shadow: 2px 3px #120b08 !important;
+}
+#root .coreMenuRoot--homeV2 .coreMenuHeading p {
+  color: #dca967 !important;
+  text-shadow: 1px 1px #140b08 !important;
+}
+#root .coreMenuRoot--homeV2 .coreMenuHeading > span {
+  color: #d6c3a7 !important;
+  text-shadow: 1px 1px #140b08 !important;
+}
+
+/* Use real border-image, rather than ::before: the latter is the icon sprite. */
+#root .coreMenuRoot--homeV2 .coreMenuAction,
+#root .coreMenuRoot--homeV2 .coreMenuSettings,
+#root .coreShellHeader .coreNavButton,
+#root .coreShellHeader .coreSettings {
+  border: 8px solid transparent !important;
+  border-image-source: var(--fr-menu-button-idle) !important;
+  border-image-slice: 9 10 9 10 fill !important;
+  border-image-width: 8px 10px !important;
+  border-image-repeat: stretch !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: #f5e9d3 !important;
+  text-shadow: 1px 2px #2b1009 !important;
+  filter: none !important;
+  transform: none !important;
+  transition: transform 110ms steps(2, end), filter 110ms linear !important;
+  image-rendering: pixelated !important;
+}
+
+/* Current menu item remains highlighted without looking permanently pressed. */
+#root .coreMenuRoot--homeV2 .coreMenuAction.is-primary,
+#root .coreShellHeader .coreNavButton.is-active {
+  border-image-source: var(--fr-menu-button-idle) !important;
+  filter: brightness(1.13) !important;
+}
+#root .coreMenuRoot--homeV2 .coreMenuAction:hover:not(:disabled),
+#root .coreMenuRoot--homeV2 .coreMenuSettings:hover:not(:disabled),
+#root .coreShellHeader .coreNavButton:hover:not(:disabled),
+#root .coreShellHeader .coreSettings:hover:not(:disabled) {
+  border-image-source: var(--fr-menu-button-idle) !important;
+  transform: translateY(-1px) !important;
+  filter: brightness(1.12) !important;
+}
+
+/* Second texture is shown on press/touch down; the entire button sinks 2px. */
+#root .coreMenuRoot--homeV2 .coreMenuAction:active:not(:disabled),
+#root .coreMenuRoot--homeV2 .coreMenuSettings:active:not(:disabled),
+#root .coreShellHeader .coreNavButton:active:not(:disabled),
+#root .coreShellHeader .coreSettings:active:not(:disabled) {
+  border-image-source: var(--fr-menu-button-down) !important;
+  transform: translateY(2px) !important;
+  filter: brightness(.96) !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuAction:focus-visible,
+#root .coreMenuRoot--homeV2 .coreMenuSettings:focus-visible,
+#root .coreShellHeader .coreNavButton:focus-visible,
+#root .coreShellHeader .coreSettings:focus-visible {
+  outline: 2px solid #f7da91 !important;
+  outline-offset: 3px !important;
+}
+
+/* Icon at left, title and description in a stable 2-row text column. */
+#root .coreMenuRoot--homeV2 .coreMenuAction {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  justify-content: start;
+  align-content: center;
+  align-items: center;
+  column-gap: 7px;
+  row-gap: 3px;
+  min-height: 70px !important;
+  padding: 7px 9px !important;
+  overflow: visible;
+  text-align: left;
+}
+#root .coreMenuRoot--homeV2 .coreMenuAction::before {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  display: block !important;
+  align-self: center;
+  justify-self: center;
+  width: 22px !important;
+  height: 22px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  filter: none !important;
+}
+#root .coreMenuRoot--homeV2 .coreMenuAction strong {
+  grid-column: 2;
+  grid-row: 1;
+  display: block;
+  margin: 0;
+  color: #fff0d6 !important;
+  text-shadow: 1px 2px #2b1009 !important;
+  line-height: 1.3 !important;
+}
+#root .coreMenuRoot--homeV2 .coreMenuAction > span {
+  grid-column: 2;
+  grid-row: 2;
+  display: block;
+  margin: 0 !important;
+  color: #f0d1a0 !important;
+  text-shadow: 1px 1px #2b1009 !important;
+  line-height: 1.35 !important;
+  overflow-wrap: anywhere;
+}
+#root .coreMenuRoot--homeV2 .coreMenuSettings {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  min-height: 42px !important;
+  padding: 5px 14px !important;
+}
+
+/* All header buttons, including settings, share the same pressed art. */
+#root .coreShellHeader .coreNavButton,
+#root .coreShellHeader .coreSettings {
+  min-height: 40px !important;
+  padding: 4px 10px !important;
+  white-space: nowrap;
+}
+#root .coreShellHeader .coreNavButton::before,
+#root .coreShellHeader .coreSettings::before {
+  flex: none;
+  image-rendering: pixelated;
+}
+
+/* Preload the second state to avoid a flash on the first click. */
+#root .coreMenuRoot--homeV2::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background-image: var(--fr-menu-button-idle), var(--fr-menu-button-down);
+}
+@media (max-width: 1050px) {
+  #root .coreMenuRoot--homeV2 .coreMenuAction { min-height: 84px !important; }
+}
+@media (max-width: 700px) {
+  #root .coreMenuRoot--homeV2 .coreMenuAction { min-height: 76px !important; }
+  #root .coreMenuRoot--homeV2 .coreMenuAction strong { font-size: 12px !important; }
+  #root .coreMenuRoot--homeV2 .coreMenuAction > span { font-size: 12px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #root .coreMenuRoot--homeV2 .coreMenuAction,
+  #root .coreMenuRoot--homeV2 .coreMenuSettings,
+  #root .coreShellHeader .coreNavButton,
+  #root .coreShellHeader .coreSettings { transition: none !important; }
+}
