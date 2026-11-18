@@ -247,3 +247,88 @@
   #root .coreShellHeader .coreNavButton,
   #root .coreShellHeader .coreSettings { transition: none !important; }
 }
+
+
+/* Menu v5: explicit art on SPECIAL STATES that used to revert to legacy theme.
+   Arena is .is-primary, Home nav is .is-active, FRAKTUM is .coreBrand. */
+#root .coreMenuRoot--homeV2 .coreMenuAction.is-primary,
+#root .coreMenuRoot--homeV2 .coreMenuAction.is-primary:hover:not(:disabled),
+#root .coreShellHeader .coreNavButton.is-active,
+#root .coreShellHeader .coreNavButton.is-active:hover:not(:disabled) {
+  border: 0 !important;
+  border-image: none !important;
+  background: transparent var(--fr-menu-button-idle) center / 100% 100% no-repeat !important;
+  box-shadow: none !important;
+  color: #fff1d8 !important;
+  text-shadow: 1px 1px 0 #3b180d !important;
+  filter: brightness(1.08) !important;
+}
+/* Keep pressed image even when the button is primary / current nav. */
+#root .coreMenuRoot--homeV2 .coreMenuAction.is-primary:active:not(:disabled),
+#root .coreShellHeader .coreNavButton.is-active:active:not(:disabled) {
+  background: transparent var(--fr-menu-button-down) center / 100% 100% no-repeat !important;
+  transform: translateY(2px) !important;
+  filter: brightness(.98) !important;
+}
+/* The brand is also a real clickable button; use the same 64×32 sprite.
+   Avoid forcing panel.png (160×256 portrait) onto the wide FRAKTUM label. */
+#root .coreShellHeader .coreBrand {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 128px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 128px !important;
+  min-width: 128px !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  border: 0 !important;
+  border-image: none !important;
+  border-radius: 0 !important;
+  background: transparent var(--fr-menu-button-idle) center / 100% 100% no-repeat !important;
+  box-shadow: none !important;
+  color: #fff1d8 !important;
+  text-shadow: 1px 1px 0 #3b180d !important;
+  font-size: 17px !important;
+  line-height: 1.2 !important;
+  letter-spacing: 1px !important;
+  image-rendering: pixelated !important;
+  transform: none !important;
+  transition: transform 100ms steps(2,end),filter 100ms linear !important;
+}
+#root .coreShellHeader .coreBrand span {
+  display: block;
+  color: #edd3af !important;
+  font-size: 7px !important;
+  line-height: 1.35 !important;
+  white-space: nowrap;
+  letter-spacing: .4px !important;
+  text-shadow: 1px 1px 0 #3b180d !important;
+}
+#root .coreShellHeader .coreBrand:hover {
+  background-image: var(--fr-menu-button-idle) !important;
+  transform: translateY(-1px) !important;
+  filter: brightness(1.10) !important;
+}
+#root .coreShellHeader .coreBrand:active {
+  background-image: var(--fr-menu-button-down) !important;
+  transform: translateY(2px) !important;
+  filter: brightness(.98) !important;
+}
+#root .coreShellHeader .coreBrand:focus-visible {
+  outline: 2px solid #f4d691 !important;
+  outline-offset: 2px !important;
+}
+@media (max-width: 700px) {
+  #root .coreShellHeader .coreBrand {
+    flex-basis: 112px;
+    min-width: 112px !important;
+    width: 112px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    font-size: 15px !important;
+  }
+}
