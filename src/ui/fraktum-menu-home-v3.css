@@ -169,3 +169,59 @@
     padding: clamp(12px, 1.15vw, 20px) !important;
   }
 }
+
+/* Home v4: override global #root arcane theme which was hiding slideshow
+   and forcing a repeating tile background over the uploaded phon images. */
+#root .coreMenuRoot.coreMenuRoot--homeV2 {
+  background-image: url('/ui/fraktum/menu/backgrounds/phon1.png') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-color: #080d19 !important;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuBackdrop.coreMenuBackdrop--slideshow {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  background: none !important;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuBgImage {
+  display: block !important;
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  image-rendering: pixelated;
+  transition: opacity 1800ms ease-in-out;
+}
+
+#root .coreMenuRoot--homeV2 .coreMenuBgImage.is-visible {
+  opacity: 1 !important;
+}
+#root .coreMenuRoot--homeV2 .coreMenuBgImage:not(.is-visible) {
+  opacity: 0 !important;
+}
+
+/* Exactly 70% of the prior desktop panel dimensions: same internal ratios. */
+@media (min-width: 1051px) {
+  #root .coreMenuRoot--homeV2 .coreMenuLayout {
+    transform: scale(.70);
+    transform-origin: top left;
+  }
+}
+
+/* On narrow screens do not shrink tap targets or lettering. */
+@media (max-width: 1050px) {
+  #root .coreMenuRoot--homeV2 .coreMenuLayout {
+    transform: none;
+  }
+}
