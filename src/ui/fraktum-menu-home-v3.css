@@ -216,7 +216,7 @@
   #root .coreMenuRoot--homeV2 .coreMenuLayout {
     transform: scale(.70);
     transform-origin: center center;
-    gap: 32px !important;
+    gap: 48px !important;
   }
 }
 
