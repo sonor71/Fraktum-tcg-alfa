@@ -215,7 +215,8 @@
 @media (min-width: 1051px) {
   #root .coreMenuRoot--homeV2 .coreMenuLayout {
     transform: scale(.70);
-    transform-origin: top left;
+    transform-origin: center center;
+    gap: 32px !important;
   }
 }
 
