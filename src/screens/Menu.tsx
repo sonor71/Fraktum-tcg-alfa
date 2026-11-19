@@ -125,12 +125,7 @@ export default function Menu() {
               <span className="coreMenuPassRewards">Монеты · паки · сундуки</span>
               <span className="coreMenuPassSoon">ПРЕВЬЮ</span>
             </div>
-            <img
-              className="coreMenuPassPacks"
-              src="/ui/fraktum/menu/pass/pass-packs.webp"
-              alt="Коллекционные паки FRAKTUM TCG"
-              draggable={false}
-            />
+
           </section>
 
           <aside
