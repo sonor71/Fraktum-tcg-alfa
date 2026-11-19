@@ -116,7 +116,24 @@ export default function Menu() {
           </button>
         </div>
 
-        <aside
+        <div className="coreMenuRightColumn">
+          <section className="coreMenuPassPreview" aria-label="Предпросмотр FRAKTUM PASS">
+            <div className="coreMenuPassCopy">
+              <span className="coreMenuPassEyebrow">СЕЗОННЫЙ ПРОПУСК</span>
+              <h2>FRAKTUM PASS</h2>
+              <p>Награды за завершённые матчи</p>
+              <span className="coreMenuPassRewards">Монеты · паки · сундуки</span>
+              <span className="coreMenuPassSoon">ПРЕВЬЮ</span>
+            </div>
+            <img
+              className="coreMenuPassPacks"
+              src="/ui/fraktum/menu/pass/pass-packs.webp"
+              alt="Коллекционные паки FRAKTUM TCG"
+              draggable={false}
+            />
+          </section>
+
+          <aside
           className="coreMenuNews"
           aria-label="Новости FRAKTUM TCG"
           onMouseEnter={() => setNewsPaused(true)}
@@ -161,7 +178,8 @@ export default function Menu() {
             </div>
             <button type="button" className="coreMenuNewsArrow" onClick={nextNews} aria-label="Следующая новость">›</button>
           </div>
-        </aside>
+          </aside>
+        </div>
       </div>
     </section>
   );
