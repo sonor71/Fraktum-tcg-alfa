@@ -118,6 +118,14 @@ export default function Menu() {
 
         <div className="coreMenuRightColumn">
           <section className="coreMenuPassPreview" aria-label="Предпросмотр FRAKTUM PASS">
+            <img
+              className="coreMenuPassArt"
+              src="/ui/fraktum/menu/pass/pass-packs.webp"
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+            />
+            <div className="coreMenuPassShade" aria-hidden="true" />
             <div className="coreMenuPassCopy">
               <span className="coreMenuPassEyebrow">СЕЗОННЫЙ ПРОПУСК</span>
               <h2>FRAKTUM PASS</h2>
@@ -125,7 +133,6 @@ export default function Menu() {
               <span className="coreMenuPassRewards">Монеты · паки · сундуки</span>
               <span className="coreMenuPassSoon">ПРЕВЬЮ</span>
             </div>
-
           </section>
 
           <aside
