@@ -1421,7 +1421,7 @@ export const useGameStore = create<GameState>()(
           get().addOwnedCards([{ baseId: fixedCard.id, packId: "battle-pass", isNew: true }]);
         }
         if (reward.kind === "pack" && pack) {
-          const sessionId = createPackSessionId(pack.id);
+          const sessionId = "pass-" + createPackSessionId(pack.id);
           set({ pendingPackPurchases: {
             ...prunePendingPurchases(get().pendingPackPurchases),
             [sessionId]: { packId: pack.id, createdAt: Date.now() },
