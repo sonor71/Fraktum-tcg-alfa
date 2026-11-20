@@ -155,6 +155,7 @@ function ChestLootReveal({ drop }: { drop: BattlePassChestDrop }) {
           : <img className="fpChestPrizeCard" src={cardArt ?? "/cards/card-back.png"}
               alt={drop.cardTitle} draggable={false} />}
       <span className="fpChestLootAmount">{drop.kind === "coins" ? `+${drop.amount}` : drop.kind === "disc" ? `DISC ${String(drop.discId).padStart(2, "0")}` : "НОВАЯ КАРТА"}</span>
+      <span className="fpChestLootTitle">{chestDropLabel(drop)}</span>
     </div> : null}
   </div>;
 }
@@ -301,9 +302,7 @@ export default function FraktumPass() {
             : reveal.reward.kind === "coins" ? <AnimatedSprite kind="coinSpin" frames={16} scale={3} className="fpRevealCoin" />
             : <Sprite name="coin" scale={4} className="fpPremiumCoin fpRevealCoin" />}
         </div>
-        <strong>{reveal.chestDrop ? "ИЗ СУНДУКА: " + chestDropLabel(reveal.chestDrop) : reveal.cardName ?? kindLabel(reveal.reward)}</strong>
-        {reveal.chestDrop ? <span className="fpDropNote">{reveal.chestDrop.kind === "disc" ? "Пластинка добавлена в музыкальную коллекцию."
-          : reveal.chestDrop.kind === "card" ? "Карта добавлена в инвентарь." : "Монеты зачислены на баланс."}</span> : null}
+        {reveal.chestDrop ? null : <strong>{reveal.cardName ?? kindLabel(reveal.reward)}</strong>}
         {reveal.reward.kind === "pack" ? <button type="button" className="fpRevealOpenPack"
           onClick={() => navigate("/inventory", { state: { view: "items" } })}>МОИ ПАКИ В ИНВЕНТАРЕ</button> : null}
         <button type="button" className="fpRevealClose" onClick={() => setReveal(null)}>ПРОДОЛЖИТЬ</button>
