@@ -208,3 +208,38 @@
   outline: 3px solid #f4ca79;
   outline-offset: -5px;
 }
+
+
+/* Compact banner: keep the art's 256:112 proportions and give news its room back. */
+@media (min-width: 1051px) {
+  #root .coreMenuRoot--homeV2 .coreMenuRightColumn .coreMenuPassPreview {
+    width: min(73%, 620px) !important;
+    max-width: 620px !important;
+    flex: 0 0 auto !important;
+    align-self: flex-end;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 256 / 112 !important;
+  }
+  #root .coreMenuRoot--homeV2 .coreMenuRightColumn {
+    gap: clamp(10px, 1.2dvh, 16px);
+  }
+  #root .coreMenuRoot--homeV2 .coreMenuRightColumn .coreMenuNews {
+    flex: 0 0 auto !important;
+    height: clamp(400px, 52dvh, 510px) !important;
+  }
+}
+@media (max-width: 1050px) {
+  #root .coreMenuRoot--homeV2 .coreMenuRightColumn .coreMenuPassPreview {
+    width: min(100%, 520px) !important;
+    max-width: 520px !important;
+    align-self: center;
+    aspect-ratio: 256 / 112 !important;
+  }
+}
+/* Never distort the artwork in the news carousel when its height changes. */
+#root .coreMenuRoot--homeV2 .coreMenuRightColumn .coreMenuNewsSlide img {
+  object-fit: contain !important;
+  object-position: center !important;
+  image-rendering: pixelated;
+}
