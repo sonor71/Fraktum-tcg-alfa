@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { label: "Главная", path: "/", icon: "home" },
   { label: "Арена", path: "/play", icon: "play" },
   { label: "Инвентарь", path: "/inventory", icon: "inventory" },
+  { label: "Пасс", path: "/pass", icon: "pass" },
   { label: "Маркет", path: "/market", icon: "market" },
   { label: "Магазин", path: "/shop", icon: "shop" },
   { label: "Клубы", path: "/clubs", icon: "clubs" },

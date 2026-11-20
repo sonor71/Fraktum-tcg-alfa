@@ -166,7 +166,7 @@ const FOIL_VALUE_MULTIPLIER: Record<CardRarity, number> = {
   archaic: 150,
 };
 
-const BATTLE_PASS_REWARDS: Record<
+export const BATTLE_PASS_REWARDS: Record<
   number,
   | { kind: "coins"; amount: number }
   | { kind: "premium"; amount: number }
