@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import { BATTLE_PASS_MAX_LEVEL, BATTLE_PASS_REWARDS, BATTLE_PASS_XP_STEP, useGameStore, type BattlePassChestDrop } from "../useGameStore";
 import { getPackById } from "../data/packs";
+import { CARDS_BY_ID } from "../game/cards";
 import "./fraktum-pass.css";
 
 /* Every tile below comes from the user's «нормальные текстуры (4).zip».
@@ -13,7 +14,7 @@ const ATLAS_HEIGHT = 512;
 const PASS_LEVELS = BATTLE_PASS_MAX_LEVEL;
 const PASS_XP_STEP = BATTLE_PASS_XP_STEP;
 const TRACK_SCALE = 2;
-const TRACK_TOP = 146;
+const TRACK_TOP = 192; // Room for larger standalone reward sprites, without reward boxes.
 const NOTCH_X = [44, 106, 160, 232] as const;
 // The original pixel segments are repeated without stretching any image.
 const TRACK_PARTS = ["track0", ...Array.from({ length: 6 }, () => "track1"), "track2"];
@@ -116,7 +117,9 @@ function PackSprite({ packId, scale = 2 }: { packId: string; scale?: number }) {
 
 function rewardIcon(reward: Reward, scale = 2) {
   if (reward.kind === "pack") return <PackSprite packId={reward.packId} scale={scale} />;
-  if (reward.kind === "chest" || reward.kind === "card") return <Sprite name="chest" scale={scale} />;
+  if (reward.kind === "card") return <img className="fpRewardCardBack" src="/cards/card-back.png" alt="" draggable={false}
+    style={{ width: 58 * scale, height: 80 * scale }} />;
+  if (reward.kind === "chest") return <Sprite name="chest" scale={scale} />;
   if (reward.kind === "premium") return <Sprite name="coin" scale={scale + .15} className="fpPremiumCoin" />;
   return <Sprite name={reward.amount >= 200 ? "coins" : "coin"} scale={scale} />;
 }
@@ -125,6 +128,35 @@ function chestDropLabel(drop: BattlePassChestDrop) {
   if (drop.kind === "coins") return String(drop.amount) + " монет";
   if (drop.kind === "disc") return "Музыкальный диск " + String(drop.discId).padStart(2, "0");
   return drop.cardTitle;
+}
+
+/** Show the *actual* chest drop sprite coming out of the opened chest.
+ * This is a separate layer, so the chest lid moves first, then the prize rises out. */
+function ChestLootReveal({ drop }: { drop: BattlePassChestDrop }) {
+  const [uncovered, setUncovered] = useState(false);
+  useEffect(() => {
+    setUncovered(false);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timer = window.setTimeout(() => setUncovered(true), reduced ? 0 : 1400);
+    return () => window.clearTimeout(timer);
+  }, [drop]);
+
+  const cardArt = drop.kind === "card"
+    ? CARDS_BY_ID[drop.cardBaseId]?.frontSrc || CARDS_BY_ID[drop.cardBaseId]?.image || "/cards/card-back.png"
+    : null;
+
+  return <div className="fpChestLootStage">
+    <AnimatedSprite kind="chestOpen" frames={16} scale={3} className="fpChestLootBody" />
+    {uncovered ? <div className="fpChestLootItem" aria-label={chestDropLabel(drop)}>
+      {drop.kind === "coins"
+        ? <Sprite name={drop.amount >= 200 ? "coins" : "coin"} scale={2.2} className="fpChestPrizeSprite" />
+        : drop.kind === "disc"
+          ? <Sprite name={`disc${drop.discId}`} scale={2.25} className="fpChestPrizeSprite" />
+          : <img className="fpChestPrizeCard" src={cardArt ?? "/cards/card-back.png"}
+              alt={drop.cardTitle} draggable={false} />}
+      <span className="fpChestLootAmount">{drop.kind === "coins" ? `+${drop.amount}` : drop.kind === "disc" ? `DISC ${String(drop.discId).padStart(2, "0")}` : "НОВАЯ КАРТА"}</span>
+    </div> : null}
+  </div>;
 }
 
 const REWARDS = Array.from({ length: PASS_LEVELS }, (_, i) => ({ level: i + 1, reward: BATTLE_PASS_REWARDS[i + 1] }));
