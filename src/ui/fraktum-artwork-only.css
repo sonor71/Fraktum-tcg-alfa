@@ -288,3 +288,142 @@
 @media (prefers-reduced-motion: reduce) {
   #root .fpChestLootItem { animation: none !important; transform: translateX(-50%); opacity: 1; }
 }
+
+
+/* FRAKTUM sprite sizing pass — November 2026.
+   Increase the artwork itself, not any old CSS frame, and keep intrinsic proportions.
+   At laptop sizes two shop columns let the packs grow without crushing descriptions. */
+@media (min-width: 1501px) {
+  #root .shopRoot .packCard {
+    grid-template-columns: minmax(165px, 205px) minmax(0, 1fr) !important;
+    gap: 18px !important;
+  }
+}
+@media (min-width: 761px) and (max-width: 1500px) {
+  #root .shopRoot .shopGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  #root .shopRoot .packCard {
+    grid-template-columns: minmax(165px, 210px) minmax(0, 1fr) !important;
+    gap: 18px !important;
+  }
+}
+#root .shopRoot .packArt {
+  height: clamp(230px, 21vw, 284px) !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+#root .shopRoot .packArtImg {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  image-rendering: pixelated !important;
+}
+
+/* The market grid cards and its selected preview are enlarged together.
+   Art is still a plain PNG: no rotating/padded TiltCard scene returns. */
+#root .marketRoot .marketCardGrid {
+  grid-template-columns: repeat(auto-fill, minmax(162px, 184px)) !important;
+  gap: 16px !important;
+}
+#root .marketRoot .marketInventoryCard {
+  width: 184px !important;
+  max-width: 184px !important;
+}
+#root .marketRoot .marketSelectedCard {
+  grid-template-columns: 150px minmax(0, 1fr) !important;
+}
+#root .marketRoot .marketSelectedCard > .marketArtworkOnly {
+  width: 150px !important;
+  height: auto !important;
+  aspect-ratio: 29 / 40;
+}
+
+/* Fullscreen booster and revealed card: expand their natural image viewport,
+   never resize the two flipping card faces independently (which would misalign them).
+   The exact original PNG is enlarged as a unit, with the opening animation intact. */
+.hpo-root .hpo-packButton {
+  width: min(402px, 41vw, 51dvh) !important;
+  aspect-ratio: .68 !important;
+}
+.hpo-root .hpo-revealCardFrame {
+  width: min(390px, 39vw, 49dvh) !important;
+  aspect-ratio: .714 !important;
+}
+.hpo-root .hpo-summaryCard {
+  width: clamp(154px, 12vw, 192px) !important;
+}
+.hpo-root .hpo-summaryCardArt {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: .714 !important;
+}
+
+/* Smaller screens: never let a larger sprite cover game actions, navigation or text. */
+@media (max-width: 900px) {
+  .hpo-root .hpo-packButton {
+    width: min(355px, 61vw, 48dvh) !important;
+  }
+  .hpo-root .hpo-revealCardFrame {
+    width: min(340px, 62vw, 45dvh) !important;
+  }
+}
+@media (max-width: 760px) {
+  #root .shopRoot .shopGrid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  #root .shopRoot .packCard {
+    grid-template-columns: minmax(120px, 170px) minmax(0, 1fr) !important;
+    gap: 14px !important;
+  }
+  #root .shopRoot .packArt {
+    height: 228px !important;
+  }
+}
+@media (max-width: 620px) {
+  #root .marketRoot .marketCardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+  #root .marketRoot .marketInventoryCard {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  #root .marketRoot .marketSelectedCard {
+    grid-template-columns: 116px minmax(0, 1fr) !important;
+  }
+  #root .marketRoot .marketSelectedCard > .marketArtworkOnly {
+    width: 116px !important;
+  }
+}
+@media (max-width: 560px) {
+  .hpo-root .hpo-packButton {
+    width: min(290px, 73vw, 40dvh) !important;
+  }
+  .hpo-root .hpo-revealCardFrame {
+    width: min(278px, 72vw, 40dvh) !important;
+  }
+  .hpo-root .hpo-summaryCard {
+    width: min(172px, 43vw) !important;
+  }
+}
+@media (max-width: 420px) {
+  #root .shopRoot .packCard {
+    grid-template-columns: minmax(106px, 38%) minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+  #root .shopRoot .packArt {
+    height: 192px !important;
+  }
+  #root .marketRoot .marketSelectedCard {
+    grid-template-columns: 100px minmax(0, 1fr) !important;
+  }
+  #root .marketRoot .marketSelectedCard > .marketArtworkOnly {
+    width: 100px !important;
+  }
+}
