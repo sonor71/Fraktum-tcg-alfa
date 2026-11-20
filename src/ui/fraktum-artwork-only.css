@@ -152,6 +152,14 @@
   background: transparent;
   filter: drop-shadow(0 0 9px rgba(255,222,130,.7));
 }
+#root .fpChestLootTitle {
+  display: block;
+  max-width: 172px;
+  text-align: center;
+  color: #fff0d1;
+  font: 800 12px/1.2 Consolas, monospace;
+  text-shadow: 2px 2px #1c0c12;
+}
 #root .fpChestLootAmount {
   display: block;
   color: #fff1b9;
