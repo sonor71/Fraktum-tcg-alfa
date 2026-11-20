@@ -1,0 +1,103 @@
+/* FRAKTUM PASS — pixel-native art extracted from the user's original menu assets. */
+#root .fpRoot { position: relative; isolation: isolate; width: 100%; min-height: calc(100dvh - 60px); overflow: hidden; background: #130e17 !important; color: #ffe8bb; font-family: Consolas, "Courier New", monospace; }
+#root .fpRoot * { box-sizing: border-box; }
+#root .fpSprite { vertical-align: middle; image-rendering: pixelated; }
+#root .fpBackdrop { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+#root .fpBackdrop svg { display: block; width: 100%; height: 100%; opacity: .78; }
+#root .fpBackdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg,rgba(13,9,20,.63),rgba(13,9,20,.73) 30%,rgba(12,8,14,.92) 69%,rgba(12,8,14,.72)); }
+#root .fpContents { width: min(1460px,100%); padding: clamp(18px,3vw,42px) clamp(14px,3.2vw,48px) 78px; margin: 0 auto; position: relative; }
+#root .fpHeader { display: flex; justify-content: space-between; gap: 32px; align-items: flex-end; padding: 0 0 22px; border-bottom: 2px solid #846342; }
+#root .fpHeading { display: flex; gap: 26px; align-items: flex-start; }
+#root .fpKicker { color: #ecc07e; font: 800 11px/1.3 Consolas,"Courier New",monospace; letter-spacing: 1.5px; }
+#root .fpBack { flex: none; cursor: pointer; background: #24171e; color: #f4d59d; border: 2px solid #8f6547; padding: 10px 14px; font: 800 12px Consolas,monospace; box-shadow: 3px 3px 0 #09050b; }
+#root .fpBack:hover,#root .fpBack:focus-visible { border-color: #e4ba6d; color:#fff7dc; }
+#root .fpHeader h1 { color: #ffda8d !important; font: 900 clamp(28px,3.7vw,56px)/1.1 Consolas,monospace !important; letter-spacing: .045em; text-shadow: 4px 4px #351a1b; margin: 5px 0 9px !important; }
+#root .fpHeader p { margin: 0; color:#e4d0b5; font: 700 clamp(11px,.98vw,14px)/1.4 Consolas,monospace; }
+#root .fpCounters { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
+#root .fpBalance { display:flex; align-items:center; gap: 10px; border:2px solid #876348; box-shadow:3px 3px 0 #07050b; padding:8px 13px; background:#251a1ef2; font-weight:900; font-size: 17px; white-space: nowrap; }
+#root .fpBalance small { font-size: 10px; color:#d2aa77; letter-spacing:.08em; }
+#root .fpBalance--premium .fpSprite,#root .fpPremiumCoin { filter:hue-rotate(205deg) saturate(1.35); }
+#root .fpProgressInfo { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px; padding: 23px 0 21px; }
+#root .fpLevel { display:flex; align-items:center; gap: 16px; }
+#root .fpLevel strong { font-size: 22px; color:#f8c576; text-shadow:2px 2px #381e21; }
+#root .fpLevel span {font-size:12px;color:#ddc6a4}
+#root .fpProgressSummary { display:flex; gap:14px; align-items:baseline; flex-wrap: wrap; }
+#root .fpProgressSummary span {font-size:11px;color:#d4b98b}
+#root .fpProgressSummary strong {color:#fff0c3;font-size:16px}
+#root .fpRailSection { position:relative; padding: 17px 16px 10px; border:3px solid #876444; box-shadow:5px 5px #080509,inset 0 0 0 2px #24181c; background:rgba(12,8,17,.83); }
+#root .fpRailHead { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 4px 7px; }
+#root .fpRailHead h2 {color:#f6ca83; font:900 20px Consolas,monospace !important;margin:0!important;}
+#root .fpRailNavigation {display:flex; align-items:center; gap:12px; }
+#root .fpRailNavigation span {font-size:10px;color:#b9a288;letter-spacing:.07em}
+#root .fpRailNavigation button {width:35px;height:35px;border:2px solid #79604c;background:#271a25;color:#f4cf8b;font:900 25px/1 monospace;cursor:pointer}
+#root .fpRailNavigation button:hover {background:#493042;border-color:#ddae71;}
+#root .fpTrackScroll { position:relative; width:100%; padding:4px 0 10px; overflow-x:auto; overflow-y:hidden; scrollbar-color:#a67b50 #21141f; scrollbar-width:thin; overscroll-behavior-x:contain; }
+#root .fpTrackFlow { position:relative; height: 365px; }
+#root .fpTrackImage {position:absolute;left:0;z-index:2;display:flex;align-items:flex-start;gap:0;pointer-events:none;}
+#root .fpTrackFill {position:absolute;left:0;z-index:1;display:flex;align-items:center;height:24px;max-width:100%;overflow:hidden;pointer-events:none;white-space:nowrap;}
+#root .fpNotch { pointer-events:none; opacity:.95; filter:drop-shadow(0 0 2px #77df36); }
+#root .fpNotch.is-locked {opacity:.2;filter:grayscale(1)}
+#root .fpRewardNode { position:absolute;z-index:5;display:flex;flex-direction:column;align-items:center;gap:2px;justify-content:center; width:106px;height:112px;padding:3px 4px 5px;background:rgba(21,13,21,.92);border:2px solid #856b56;color:#f7d5a7;box-shadow:3px 3px 0 #07060a;cursor:pointer;text-align:center;font:700 10px/1.15 Consolas,monospace; }
+#root .fpRewardNode:hover,#root .fpRewardNode.is-selected {border-color:#f6ce78;box-shadow:0 0 0 1px #674b31,0 0 14px rgba(231,166,77,.34);background:#352028;}
+#root .fpRewardNode.is-locked {opacity:.59;filter:grayscale(.7)}
+#root .fpRewardNode.is-taken {border-color:#478b63}
+#root .fpRewardLevel {display:block;font-weight:900;font-size:12px;color:#eab66c}
+#root .fpRewardVisual {height:63px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+#root .fpRewardLabel {display:block;white-space:nowrap;font-size:9px;color:#fff0cb}
+#root .fpRewardStatus {display:block;font-size:8px;letter-spacing:.01em;color:#e2b36d}
+#root .fpRewardNode.is-taken .fpRewardStatus {color:#8be5a0}
+#root .fpDetail {display:flex;align-items:center;gap:16px;min-height:132px;padding:17px 24px;background:#211720f0;border:3px solid #806040;box-shadow:4px 4px #080509;margin:20px 0 0;}
+#root .fpDetailIcon {flex:none;width:106px;height:100px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#root .fpDetailCopy {flex:1;min-width:0}
+#root .fpDetailCopy h2 {font:900 clamp(17px,2vw,25px)/1.2 Consolas,monospace !important;color:#fff1c9!important;margin:7px 0!important}
+#root .fpDetailCopy p {font-size:11px;line-height:1.4;margin:0;color:#cbb89e}
+#root .fpClaimButton { flex: none;position:relative;border:0;padding:0;width:162px;height:80px;background:none!important;cursor:pointer;color:#fce6b0;}
+#root .fpClaimButton .fpSprite {position:absolute;top:0;left:0;}
+#root .fpClaimButton span:not(.fpSprite) {position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;font:900 12px Consolas,monospace;text-shadow:2px 2px #2f1b1a}
+#root .fpClaimButton:hover:not(:disabled) {filter:brightness(1.25)}
+#root .fpClaimButton:active:not(:disabled) {transform:translateY(2px)}
+#root .fpClaimButton:disabled {opacity:.6;cursor:not-allowed;}
+#root .fpNotice {padding:14px 19px;margin-top:16px;background:#351b21;border:2px solid #b0584d;color:#ffe9c5;font-size:12px;}
+#root .fpDiscs {margin-top:23px;padding:22px 24px;background:#18111ce8;border:2px solid #78563b;box-shadow:4px 4px #09050d}
+#root .fpDiscsHeading {display:flex;align-items:flex-end;justify-content:space-between;gap:18px}
+#root .fpDiscs h2 {color:#f3c482!important;font:900 20px Consolas,monospace!important;margin:4px 0 0!important;}
+#root .fpDiscsHeading p {font-size:11px;line-height:1.5;color:#c6b5a0;margin:0;text-align:right;}
+#root .fpDiscRow {display:flex;align-items:flex-start;flex-wrap:wrap;gap:9px;padding:20px 0 4px;}
+#root .fpDiscChoice {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:71px;min-height:84px;padding:6px;background:#241824;border:2px solid #564652;cursor:pointer;color:#d2b991;}
+#root .fpDiscChoice.is-active,#root .fpDiscChoice:hover {background:#3b2034;border-color:#dfa65e}
+#root .fpDiscChoice span:not(.fpSprite) {font-size:10px;}
+#root .fpDiscNote {color:#bba789;font-size:10px;margin:13px 0 0}
+#root .fpRevealScrim {position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;padding:15px;background:rgba(4,2,8,.86)}
+#root .fpRevealPanel {width:min(440px,100%);display:flex;align-items:center;flex-direction:column;padding:26px 18px 30px;text-align:center;border:4px solid #c99b5b;background:#271a2b;color:#fbecc3;box-shadow:8px 8px #09050b, inset 0 0 0 3px #513b39;}
+#root .fpRevealPanel h2 {margin:9px 0 4px!important;font:900 24px Consolas,monospace!important;color:#ffe3a2!important}
+#root .fpRevealArt {position:relative;width:220px;height:218px;display:flex;align-items:center;justify-content:center;}
+#root .fpRevealBurst {position:absolute;left:4px;top:3px;z-index:0}
+#root .fpRevealChest,#root .fpRevealCoin {position:relative;z-index:1}
+#root .fpRevealPanel > strong {font-size:17px;color:#fff4d6;padding:12px 0}
+#root .fpRevealClose {background:#4a2e25;border:2px solid #e8b971;color:#fff4d6;font:900 13px Consolas,monospace;cursor:pointer;padding:14px 20px;margin-top:9px;}
+#root .fpRoot :focus-visible {outline:2px solid #ffca76;outline-offset:3px;}
+@media (max-width:800px) {
+ #root .fpHeader {flex-direction:column;align-items:flex-start}
+ #root .fpCounters {justify-content:flex-start}
+ #root .fpContents {padding:18px 14px 64px}
+ #root .fpHeading {flex-direction:column;gap:12px}
+ #root .fpProgressInfo {align-items:flex-start}
+ #root .fpDetail {padding:13px 14px;flex-wrap:wrap}
+ #root .fpDetailIcon {width:70px;height:76px}
+ #root .fpClaimButton {margin-left:auto}
+ #root .fpDiscsHeading {flex-direction:column;align-items:flex-start}
+ #root .fpDiscsHeading p {text-align:left}
+ #root .fpRailSection {padding:12px 7px 8px}
+ #root .fpRailHead h2 {font-size:16px!important}
+ #root .fpRailNavigation span {display:none}
+}
+@media (max-width:430px) {
+ #root .fpHeader h1 {font-size:30px!important}
+ #root .fpLevel {flex-direction:column;align-items:flex-start;gap:6px}
+ #root .fpDetail {justify-content:center;text-align:center}
+ #root .fpDetailCopy {flex-basis:200px}
+ #root .fpClaimButton {margin:0 auto}
+ #root .fpDiscs {padding:15px 11px}
+ #root .fpDiscChoice {min-width:62px}
+}
+@media (prefers-reduced-motion:reduce) { #root .fpClaimButton:active:not(:disabled) {transform:none} }

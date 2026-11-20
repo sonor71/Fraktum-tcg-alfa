@@ -131,8 +131,14 @@ export default function Menu() {
               <h2>FRAKTUM PASS</h2>
               <p>Награды за завершённые матчи</p>
               <span className="coreMenuPassRewards">Монеты · паки · сундуки</span>
-              <span className="coreMenuPassSoon">ПРЕВЬЮ</span>
+              <span className="coreMenuPassSoon">ОТКРЫТЬ ПАСС</span>
             </div>
+            <button
+              type="button"
+              className="coreMenuPassOpenArea"
+              aria-label="Открыть FRAKTUM PASS"
+              onClick={() => navigate("/pass")}
+            />
           </section>
 
           <aside

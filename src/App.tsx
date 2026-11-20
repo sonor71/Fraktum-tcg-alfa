@@ -10,6 +10,7 @@ import Deck from "./screens/Deck";
 import Inventory from "./screens/Inventory";
 import Market from "./screens/Market";
 import Menu from "./screens/Menu";
+import FraktumPass from "./screens/FraktumPass";
 import PackOpen from "./screens/PackOpen";
 import PlayModes from "./screens/PlayModes";
 import Profile from "./screens/Profile";
@@ -32,6 +33,7 @@ export default function App() {
       <Shell>
         <Routes>
           <Route path="/" element={<Menu />} />
+          <Route path="/pass" element={<FraktumPass />} />
           <Route path="/play" element={<PlayModes />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/season-preview" element={<SeasonCardsPreview />} />
