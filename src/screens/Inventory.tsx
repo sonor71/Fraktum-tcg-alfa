@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import InventoryItems from "../features/InventoryItems";
 import { useGameStore, type OwnedCard } from "../useGameStore";
 import TiltCard from "../components/TiltCard";
@@ -59,6 +59,7 @@ function nextRarityOf(rarity: string) {
 
 export default function Inventory() {
   const nav = useNavigate();
+  const location = useLocation();
   const owned = useGameStore((s) => s.ownedCards);
   const deckIds = useGameStore((s) => s.deckIds);
   const addToDeck = useGameStore((s) => s.addToDeck);
@@ -66,7 +67,7 @@ export default function Inventory() {
   const markAllCardsAsSeen = useGameStore((s) => s.markAllCardsAsSeen);
 
   const cards = useMemo<CardItem[]>(() => [...owned], [owned]);
-  const [view, setView] = useState<InventoryView>("collection");
+  const [view, setView] = useState<InventoryView>(location.state?.view === "items" ? "items" : "collection");
   const [query, setQuery] = useState("");
   const [rarity, setRarity] = useState("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
