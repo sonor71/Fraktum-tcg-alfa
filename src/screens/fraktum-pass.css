@@ -101,3 +101,30 @@
  #root .fpDiscChoice {min-width:62px}
 }
 @media (prefers-reduced-motion:reduce) { #root .fpClaimButton:active:not(:disabled) {transform:none} }
+
+
+/* Native pixel-art alignment: the 44px rail has a 12px-high hollow
+   between source rows 16–27; the 12px fill is placed at that exact offset. */
+#root .fpTrackFill {
+  height: 24px !important;
+  align-items: flex-start;
+  overflow: hidden;
+  z-index: 1;
+}
+#root .fpTrackImage { z-index: 2; }
+#root .fpPackArt {
+  display: block;
+  flex: none;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  image-rendering: pixelated;
+}
+#root .fpRewardVisual { max-width: 100%; }
+#root .fpDiscChoice.is-locked .fpSprite { filter: grayscale(1); opacity: .5; }
+#root .fpDiscChoice.is-owned .fpSprite { filter: none; opacity: 1; }
+#root .fpDiscChoice.is-owned { border-color: #5d9a70; }
+#root .fpDropNote { display: block; margin: 5px 0 12px; font: 700 12px/1.5 Consolas, monospace; color: #d7cbad; }
+#root .fpRevealOpenPack { cursor: pointer; background: #392618; color: #f7d6a6; border: 2px solid #c79955; padding: 9px 14px; font: 800 12px Consolas, monospace; }
+#root .fpRevealOpenPack:hover { background: #5c3b23; }
