@@ -22,6 +22,7 @@ const CHRONICLE = [
 export default function InventoryItems(){
   const navigate=useNavigate();
   const pending=useGameStore(s=>s.pendingPackPurchases);
+  const ownedDiscs=useGameStore(s=>s.ownedMusicDiscs);
   const settings=useGameStore(s=>s.settings);
   const setSettings=useGameStore(s=>s.setSettings);
   const musicTrack=useIdentity(s=>s.musicTrack);
@@ -43,12 +44,12 @@ export default function InventoryItems(){
       {packs.length?<div className="frItemGrid">{packs.map(([session,purchase])=>{
         const meta=getPackById(purchase.packId);
         return <article key={session} className="frItemTile"><Art index={6}/><h4>{meta.title}</h4>
-          <p>Куплен и сохранён в инвентаре.</p>
+          <p>{session.startsWith("pass-") ? "Получен за уровень FRAKTUM PASS." : "Куплен и сохранён в инвентаре."}</p>
           <button type="button" onClick={()=>navigate("/pack?packId="+encodeURIComponent(purchase.packId),{
             state:{packId:purchase.packId,packTitle:meta.title,openSessionId:session}
           })}>ОТКРЫТЬ ПАК</button></article>;
       })}</div>:<div className="frItemEmpty"><Art index={9}/><div><strong>ПОКА НЕТ ПАКОВ</strong>
-        <p>В магазине нажми «Сохранить в инвентарь», и пак появится здесь.</p>
+        <p>Получай паки из FRAKTUM PASS или сохраняй покупки из магазина.</p>
         <button type="button" onClick={()=>navigate("/shop")}>В МАГАЗИН</button></div></div>}
     </section>}
     {show("chests")&&<section className="frItemsSection"><h3>СУНДУКИ</h3>
@@ -72,7 +73,26 @@ export default function InventoryItems(){
         <p>В будущих обновлениях здесь будут кристаллы, материалы и реликвии для крафта. Сейчас таких выпадений в игре нет.</p></div></div>
     </section>}
     {show("music")&&<section className="frItemsSection"><h3>МУЗЫКАЛЬНАЯ КОЛЛЕКЦИЯ</h3>
-      <p className="frSectionSubtitle">Две композиции уже включены в игру. Выбери, какая должна звучать на фоне.</p>
+      <p className="frSectionSubtitle">Коллекционные пластинки из сундуков пасса: {ownedDiscs.length}/10. У пластинок пока нет отдельных аудиотреков.</p>
+      {ownedDiscs.length > 0 ? <div className="frItemGrid">
+        {ownedDiscs.map((discId) => {
+          const index = discId - 1;
+          const x = 768 + (index % 5) * 48;
+          const y = Math.floor(index / 5) * 48;
+          const scale = 1.5;
+          return <article key={discId} className="frItemTile frCollectedDisc">
+            <span aria-hidden="true" style={{ display: "block", width: 72, height: 72, margin: "auto",
+              backgroundImage: 'url("/ui/fraktum/pass/pass-atlas.webp")',
+              backgroundSize: (1024 * scale) + "px " + (512 * scale) + "px",
+              backgroundPosition: (-x * scale) + "px " + (-y * scale) + "px",
+              backgroundRepeat: "no-repeat", imageRendering: "pixelated",
+            }} />
+            <h4>Пластинка {String(discId).padStart(2, "0")}</h4>
+            <p>Получено из сундука FRAKTUM PASS</p>
+          </article>;
+        })}
+      </div> : <p className="frHint">Пластинки пока не найдены. Их можно получить из сундуков пасса.</p>}
+      <p className="frSectionSubtitle">Ниже — доступные фоновые композиции игры. Выбери, какая должна звучать.</p>
       <div className="frItemGrid">
         {[["Обе по очереди","cycle",11],["Главная тема FRAKTUM","main",4],["Fracture Crown","crown",10]].map(([label,id,index])=>
           <article key={String(id)} className={"frItemTile"+(musicTrack===id?" is-selected":"")}>
