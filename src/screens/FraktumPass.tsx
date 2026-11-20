@@ -176,7 +176,7 @@ export default function FraktumPass() {
   const xpIntoLevel = currentLevel === PASS_LEVELS ? PASS_XP_STEP : xp % PASS_XP_STEP;
   const [selected, setSelected] = useState(1);
   const [activeDisc, setActiveDisc] = useState(1);
-  const [reveal, setReveal] = useState<{ reward: Reward; level: number; cardName?: string; chestDrop?: BattlePassChestDrop } | null>(null);
+  const [reveal, setReveal] = useState<{ reward: Reward; level: number; cardName?: string; cardSrc?: string; chestDrop?: BattlePassChestDrop } | null>(null);
   const [notice, setNotice] = useState("");
   const selectedReward = BATTLE_PASS_REWARDS[selected];
   const isClaimed = claimed.includes(selected);
@@ -203,7 +203,7 @@ export default function FraktumPass() {
       return;
     }
     const newCard = useGameStore.getState().ownedCards.find((card) => !beforeCardIds.has(card.instanceId));
-    setReveal({ reward: selectedReward, level: selected, cardName: newCard?.title,
+    setReveal({ reward: selectedReward, level: selected, cardName: newCard?.title, cardSrc: newCard?.frontSrc,
       chestDrop: useGameStore.getState().battlePassChestDrops[selected] });
     setNotice("");
   }
@@ -253,11 +253,11 @@ export default function FraktumPass() {
                   style={{ position: "absolute", left: point - 6, top: top ? TRACK_TOP - 12 : TRACK_TOP + 77, zIndex: 4 }} />
                 <button type="button"
                   className={`fpRewardNode ${top ? "is-top" : "is-bottom"} ${active ? "is-selected" : ""} ${locked ? "is-locked" : ""} ${taken ? "is-taken" : ""}`}
-                  style={{ left: point - 53, top: top ? 4 : 242 }}
+                  style={{ left: point - 79, top: top ? 0 : 290 }}
                   onClick={() => { setSelected(level); setNotice(""); }}
                   aria-label={`Уровень ${level}: ${kindLabel(reward)}. ${taken ? "Получено" : locked ? "Закрыто" : "Доступно"}`} aria-pressed={active}>
                   <span className="fpRewardLevel">{String(level).padStart(2, "0")}</span>
-                  <span className="fpRewardVisual">{rewardIcon(reward, reward.kind === "pack" ? 1.45 : reward.kind === "chest" || reward.kind === "card" ? 1.3 : reward.kind === "coins" && reward.amount >= 200 ? 1.5 : 1.9)}</span>
+                  <span className="fpRewardVisual">{rewardIcon(reward, reward.kind === "pack" ? 3 : reward.kind === "card" ? 1.35 : reward.kind === "chest" ? 1.6 : reward.kind === "coins" && reward.amount >= 200 ? 1.8 : 2.5)}</span>
                   <span className="fpRewardLabel">{kindLabel(reward)}</span>
                   <span className="fpRewardStatus">{taken ? "ПОЛУЧЕНО ✓" : locked ? "ЗАКРЫТО" : "МОЖНО ЗАБРАТЬ"}</span>
                 </button>
@@ -267,7 +267,7 @@ export default function FraktumPass() {
         </div>
       </section>
       <section className="fpDetail" aria-label="Выбранная награда">
-        <div className="fpDetailIcon">{selectedReward ? rewardIcon(selectedReward, selectedReward.kind === "pack" ? 2 : selectedReward.kind === "chest" || selectedReward.kind === "card" ? 1.35 : 2) : null}</div>
+        <div className="fpDetailIcon">{selectedReward ? rewardIcon(selectedReward, selectedReward.kind === "pack" ? 2.8 : selectedReward.kind === "chest" ? 1.55 : selectedReward.kind === "card" ? 1.15 : 2) : null}</div>
         <div className="fpDetailCopy"><span className="fpKicker">УРОВЕНЬ {selected} · {isClaimed ? "ПОЛУЧЕНО" : canClaim ? "ДОСТУПНО" : "ЗАКРЫТО"}</span>
           <h2>{selectedReward ? kindLabel(selectedReward) : "Награда"}</h2>
           <p>{selectedReward?.kind === "card" ? "При получении добавляется случайная карта указанной редкости в инвентарь."
@@ -291,12 +291,16 @@ export default function FraktumPass() {
     {reveal ? <div className="fpRevealScrim" role="presentation" onClick={() => setReveal(null)}>
       <div className="fpRevealPanel" role="dialog" aria-modal="true" aria-label="Награда получена" onClick={(event) => event.stopPropagation()}>
         <span className="fpKicker">УРОВЕНЬ {reveal.level} ПРОЙДЕН</span><h2>НАГРАДА ПОЛУЧЕНА!</h2>
-        <div className="fpRevealArt"><AnimatedSprite kind="rewardBurst" frames={15} scale={3.3} className="fpRevealBurst" />
-          {reveal.reward.kind === "chest" ? <AnimatedSprite kind="chestOpen" frames={16} scale={3} className="fpRevealChest" />
+        <div className={`fpRevealArt ${reveal.reward.kind === "chest" ? "fpRevealArt--chest" : ""}`}>
+          <AnimatedSprite kind="rewardBurst" frames={15} scale={3.3} className="fpRevealBurst" />
+          {reveal.reward.kind === "chest" && reveal.chestDrop
+            ? <ChestLootReveal drop={reveal.chestDrop} />
             : reveal.reward.kind === "pack" ? <PackSprite packId={reveal.reward.packId} scale={3} />
-            : reveal.reward.kind === "card" ? <Sprite name="chest" scale={3} className="fpRevealChest" />
+            : reveal.reward.kind === "card" ? <img className="fpRevealCardArt"
+                src={reveal.cardSrc ?? "/cards/card-back.png"} alt={reveal.cardName ?? "Карта"} draggable={false} />
             : reveal.reward.kind === "coins" ? <AnimatedSprite kind="coinSpin" frames={16} scale={3} className="fpRevealCoin" />
-            : <Sprite name="coin" scale={4} className="fpPremiumCoin fpRevealCoin" />}</div>
+            : <Sprite name="coin" scale={4} className="fpPremiumCoin fpRevealCoin" />}
+        </div>
         <strong>{reveal.chestDrop ? "ИЗ СУНДУКА: " + chestDropLabel(reveal.chestDrop) : reveal.cardName ?? kindLabel(reveal.reward)}</strong>
         {reveal.chestDrop ? <span className="fpDropNote">{reveal.chestDrop.kind === "disc" ? "Пластинка добавлена в музыкальную коллекцию."
           : reveal.chestDrop.kind === "card" ? "Карта добавлена в инвентарь." : "Монеты зачислены на баланс."}</span> : null}
