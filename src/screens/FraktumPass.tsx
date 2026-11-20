@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import { BATTLE_PASS_MAX_LEVEL, BATTLE_PASS_REWARDS, BATTLE_PASS_XP_STEP, useGameStore, type BattlePassChestDrop } from "../useGameStore";
 import { getPackById } from "../data/packs";
+import { CARDS_BY_ID } from "../game/cards";
 import "./fraktum-pass.css";
 
 /* Every tile below comes from the user's «нормальные текстуры (4).zip».
@@ -13,7 +14,7 @@ const ATLAS_HEIGHT = 512;
 const PASS_LEVELS = BATTLE_PASS_MAX_LEVEL;
 const PASS_XP_STEP = BATTLE_PASS_XP_STEP;
 const TRACK_SCALE = 2;
-const TRACK_TOP = 146;
+const TRACK_TOP = 192; // Room for larger standalone reward sprites, without reward boxes.
 const NOTCH_X = [44, 106, 160, 232] as const;
 // The original pixel segments are repeated without stretching any image.
 const TRACK_PARTS = ["track0", ...Array.from({ length: 6 }, () => "track1"), "track2"];
@@ -116,7 +117,9 @@ function PackSprite({ packId, scale = 2 }: { packId: string; scale?: number }) {
 
 function rewardIcon(reward: Reward, scale = 2) {
   if (reward.kind === "pack") return <PackSprite packId={reward.packId} scale={scale} />;
-  if (reward.kind === "chest" || reward.kind === "card") return <Sprite name="chest" scale={scale} />;
+  if (reward.kind === "card") return <img className="fpRewardCardBack" src="/cards/card-back.png" alt="" draggable={false}
+    style={{ width: 58 * scale, height: 80 * scale }} />;
+  if (reward.kind === "chest") return <Sprite name="chest" scale={scale} />;
   if (reward.kind === "premium") return <Sprite name="coin" scale={scale + .15} className="fpPremiumCoin" />;
   return <Sprite name={reward.amount >= 200 ? "coins" : "coin"} scale={scale} />;
 }
@@ -125,6 +128,36 @@ function chestDropLabel(drop: BattlePassChestDrop) {
   if (drop.kind === "coins") return String(drop.amount) + " монет";
   if (drop.kind === "disc") return "Музыкальный диск " + String(drop.discId).padStart(2, "0");
   return drop.cardTitle;
+}
+
+/** Show the *actual* chest drop sprite coming out of the opened chest.
+ * This is a separate layer, so the chest lid moves first, then the prize rises out. */
+function ChestLootReveal({ drop }: { drop: BattlePassChestDrop }) {
+  const [uncovered, setUncovered] = useState(false);
+  useEffect(() => {
+    setUncovered(false);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timer = window.setTimeout(() => setUncovered(true), reduced ? 0 : 1400);
+    return () => window.clearTimeout(timer);
+  }, [drop]);
+
+  const cardArt = drop.kind === "card"
+    ? CARDS_BY_ID[drop.cardBaseId]?.frontSrc || CARDS_BY_ID[drop.cardBaseId]?.image || "/cards/card-back.png"
+    : null;
+
+  return <div className="fpChestLootStage">
+    <AnimatedSprite kind="chestOpen" frames={16} scale={3} className="fpChestLootBody" />
+    {uncovered ? <div className="fpChestLootItem" aria-label={chestDropLabel(drop)}>
+      {drop.kind === "coins"
+        ? <Sprite name={drop.amount >= 200 ? "coins" : "coin"} scale={2.2} className="fpChestPrizeSprite" />
+        : drop.kind === "disc"
+          ? <Sprite name={`disc${drop.discId}`} scale={2.25} className="fpChestPrizeSprite" />
+          : <img className="fpChestPrizeCard" src={cardArt ?? "/cards/card-back.png"}
+              alt={drop.cardTitle} draggable={false} />}
+      <span className="fpChestLootAmount">{drop.kind === "coins" ? `+${drop.amount}` : drop.kind === "disc" ? `DISC ${String(drop.discId).padStart(2, "0")}` : "НОВАЯ КАРТА"}</span>
+      <span className="fpChestLootTitle">{chestDropLabel(drop)}</span>
+    </div> : null}
+  </div>;
 }
 
 const REWARDS = Array.from({ length: PASS_LEVELS }, (_, i) => ({ level: i + 1, reward: BATTLE_PASS_REWARDS[i + 1] }));
@@ -144,7 +177,7 @@ export default function FraktumPass() {
   const xpIntoLevel = currentLevel === PASS_LEVELS ? PASS_XP_STEP : xp % PASS_XP_STEP;
   const [selected, setSelected] = useState(1);
   const [activeDisc, setActiveDisc] = useState(1);
-  const [reveal, setReveal] = useState<{ reward: Reward; level: number; cardName?: string; chestDrop?: BattlePassChestDrop } | null>(null);
+  const [reveal, setReveal] = useState<{ reward: Reward; level: number; cardName?: string; cardSrc?: string; chestDrop?: BattlePassChestDrop } | null>(null);
   const [notice, setNotice] = useState("");
   const selectedReward = BATTLE_PASS_REWARDS[selected];
   const isClaimed = claimed.includes(selected);
@@ -171,7 +204,7 @@ export default function FraktumPass() {
       return;
     }
     const newCard = useGameStore.getState().ownedCards.find((card) => !beforeCardIds.has(card.instanceId));
-    setReveal({ reward: selectedReward, level: selected, cardName: newCard?.title,
+    setReveal({ reward: selectedReward, level: selected, cardName: newCard?.title, cardSrc: newCard?.frontSrc,
       chestDrop: useGameStore.getState().battlePassChestDrops[selected] });
     setNotice("");
   }
@@ -221,11 +254,11 @@ export default function FraktumPass() {
                   style={{ position: "absolute", left: point - 6, top: top ? TRACK_TOP - 12 : TRACK_TOP + 77, zIndex: 4 }} />
                 <button type="button"
                   className={`fpRewardNode ${top ? "is-top" : "is-bottom"} ${active ? "is-selected" : ""} ${locked ? "is-locked" : ""} ${taken ? "is-taken" : ""}`}
-                  style={{ left: point - 53, top: top ? 4 : 242 }}
+                  style={{ left: point - 79, top: top ? 0 : 290 }}
                   onClick={() => { setSelected(level); setNotice(""); }}
                   aria-label={`Уровень ${level}: ${kindLabel(reward)}. ${taken ? "Получено" : locked ? "Закрыто" : "Доступно"}`} aria-pressed={active}>
                   <span className="fpRewardLevel">{String(level).padStart(2, "0")}</span>
-                  <span className="fpRewardVisual">{rewardIcon(reward, reward.kind === "pack" ? 1.45 : reward.kind === "chest" || reward.kind === "card" ? 1.3 : reward.kind === "coins" && reward.amount >= 200 ? 1.5 : 1.9)}</span>
+                  <span className="fpRewardVisual">{rewardIcon(reward, reward.kind === "pack" ? 3 : reward.kind === "card" ? 1.35 : reward.kind === "chest" ? 1.6 : reward.kind === "coins" && reward.amount >= 200 ? 1.8 : 2.5)}</span>
                   <span className="fpRewardLabel">{kindLabel(reward)}</span>
                   <span className="fpRewardStatus">{taken ? "ПОЛУЧЕНО ✓" : locked ? "ЗАКРЫТО" : "МОЖНО ЗАБРАТЬ"}</span>
                 </button>
@@ -235,7 +268,7 @@ export default function FraktumPass() {
         </div>
       </section>
       <section className="fpDetail" aria-label="Выбранная награда">
-        <div className="fpDetailIcon">{selectedReward ? rewardIcon(selectedReward, selectedReward.kind === "pack" ? 2 : selectedReward.kind === "chest" || selectedReward.kind === "card" ? 1.35 : 2) : null}</div>
+        <div className="fpDetailIcon">{selectedReward ? rewardIcon(selectedReward, selectedReward.kind === "pack" ? 2.8 : selectedReward.kind === "chest" ? 1.55 : selectedReward.kind === "card" ? 1.15 : 2) : null}</div>
         <div className="fpDetailCopy"><span className="fpKicker">УРОВЕНЬ {selected} · {isClaimed ? "ПОЛУЧЕНО" : canClaim ? "ДОСТУПНО" : "ЗАКРЫТО"}</span>
           <h2>{selectedReward ? kindLabel(selectedReward) : "Награда"}</h2>
           <p>{selectedReward?.kind === "card" ? "При получении добавляется случайная карта указанной редкости в инвентарь."
@@ -259,15 +292,17 @@ export default function FraktumPass() {
     {reveal ? <div className="fpRevealScrim" role="presentation" onClick={() => setReveal(null)}>
       <div className="fpRevealPanel" role="dialog" aria-modal="true" aria-label="Награда получена" onClick={(event) => event.stopPropagation()}>
         <span className="fpKicker">УРОВЕНЬ {reveal.level} ПРОЙДЕН</span><h2>НАГРАДА ПОЛУЧЕНА!</h2>
-        <div className="fpRevealArt"><AnimatedSprite kind="rewardBurst" frames={15} scale={3.3} className="fpRevealBurst" />
-          {reveal.reward.kind === "chest" ? <AnimatedSprite kind="chestOpen" frames={16} scale={3} className="fpRevealChest" />
+        <div className={`fpRevealArt ${reveal.reward.kind === "chest" ? "fpRevealArt--chest" : ""}`}>
+          <AnimatedSprite kind="rewardBurst" frames={15} scale={3.3} className="fpRevealBurst" />
+          {reveal.reward.kind === "chest" && reveal.chestDrop
+            ? <ChestLootReveal drop={reveal.chestDrop} />
             : reveal.reward.kind === "pack" ? <PackSprite packId={reveal.reward.packId} scale={3} />
-            : reveal.reward.kind === "card" ? <Sprite name="chest" scale={3} className="fpRevealChest" />
+            : reveal.reward.kind === "card" ? <img className="fpRevealCardArt"
+                src={reveal.cardSrc ?? "/cards/card-back.png"} alt={reveal.cardName ?? "Карта"} draggable={false} />
             : reveal.reward.kind === "coins" ? <AnimatedSprite kind="coinSpin" frames={16} scale={3} className="fpRevealCoin" />
-            : <Sprite name="coin" scale={4} className="fpPremiumCoin fpRevealCoin" />}</div>
-        <strong>{reveal.chestDrop ? "ИЗ СУНДУКА: " + chestDropLabel(reveal.chestDrop) : reveal.cardName ?? kindLabel(reveal.reward)}</strong>
-        {reveal.chestDrop ? <span className="fpDropNote">{reveal.chestDrop.kind === "disc" ? "Пластинка добавлена в музыкальную коллекцию."
-          : reveal.chestDrop.kind === "card" ? "Карта добавлена в инвентарь." : "Монеты зачислены на баланс."}</span> : null}
+            : <Sprite name="coin" scale={4} className="fpPremiumCoin fpRevealCoin" />}
+        </div>
+        {reveal.chestDrop ? null : <strong>{reveal.cardName ?? kindLabel(reveal.reward)}</strong>}
         {reveal.reward.kind === "pack" ? <button type="button" className="fpRevealOpenPack"
           onClick={() => navigate("/inventory", { state: { view: "items" } })}>МОИ ПАКИ В ИНВЕНТАРЕ</button> : null}
         <button type="button" className="fpRevealClose" onClick={() => setReveal(null)}>ПРОДОЛЖИТЬ</button>

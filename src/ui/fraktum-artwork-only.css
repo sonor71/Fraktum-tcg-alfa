@@ -1,0 +1,290 @@
+/* FRAKTUM artwork cleanup: source sprites, never an extra fake card/pack shell.
+   Loaded last to override legacy, separately maintained UI skins. */
+
+/* Inventory: preview actual product pack sprites instead of the chest placeholder. */
+#root .frItemsPage .frItemPackImage {
+  display: block;
+  width: min(128px, 100%);
+  height: 160px;
+  object-fit: contain;
+  object-position: center;
+  image-rendering: pixelated;
+  margin: 0 auto 8px;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#root .frItemsPage .frItemTile--pack { min-height: 270px; }
+#root .frItemsPage .frItemPassChestArt {
+  display: block;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto 8px;
+  background: transparent url('/ui/fraktum/pass/pass-atlas.webp') no-repeat -1484px -168px;
+  background-size: 1792px 896px;
+  image-rendering: pixelated;
+}
+
+/* Pass progression: transparent clickable zones, with large actual prizes on the rail.
+   The small LVL UP sprite stays exactly on the original notch. */
+#root .fpTrackFlow { height: 486px !important; }
+#root .fpRewardNode {
+  width: 158px !important;
+  height: 178px !important;
+  min-height: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-image: none !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  text-shadow: 1px 2px 0 #0a0610 !important;
+  transform: none !important;
+  cursor: pointer;
+}
+#root .fpRewardNode:hover,
+#root .fpRewardNode.is-selected,
+#root .fpRewardNode.is-taken {
+  border: 0 !important;
+  border-image: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#root .fpRewardNode:hover .fpRewardVisual,
+#root .fpRewardNode.is-selected .fpRewardVisual {
+  filter: drop-shadow(0 0 9px rgba(255, 211, 117, .75));
+}
+#root .fpRewardNode.is-locked {
+  opacity: 1 !important;
+  filter: none !important;
+}
+#root .fpRewardNode.is-locked .fpRewardVisual {
+  opacity: .44;
+  filter: grayscale(.8) !important;
+}
+#root .fpRewardNode.is-locked:hover .fpRewardVisual { opacity: .72; }
+#root .fpRewardNode .fpRewardVisual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 128px !important;
+  min-height: 128px;
+  max-width: none !important;
+  overflow: visible !important;
+  flex: none;
+}
+#root .fpRewardNode .fpRewardVisual .fpPackArt {
+  width: 90px !important;
+  height: 120px !important;
+  object-fit: contain !important;
+  image-rendering: pixelated !important;
+}
+#root .fpRewardNode .fpRewardLevel { font-size: 12px; color: #ffc97c; }
+#root .fpRewardNode .fpRewardLabel {
+  display: block;
+  max-width: 150px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal !important;
+  color: #ffead0;
+  font-size: 10px;
+}
+#root .fpRewardNode .fpRewardStatus { font-size: 9px; line-height: 1.2; }
+#root .fpRewardCardBack {
+  object-fit: contain;
+  image-rendering: pixelated;
+  border: 0;
+  background: transparent;
+}
+#root .fpDetailIcon { width: 136px; height: 122px; }
+#root .fpDetailIcon .fpPackArt { max-width: 130px; max-height: 120px; }
+
+/* Prize visibly rises out of the open animated chest instead of merely changing text. */
+#root .fpRevealPanel { width: min(480px, 100%); }
+#root .fpRevealArt--chest {
+  width: min(300px, 100%);
+  height: 306px;
+  overflow: visible;
+}
+#root .fpRevealArt--chest .fpRevealBurst { left: 50%; top: 50px; transform: translateX(-50%); }
+#root .fpChestLootStage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+#root .fpChestLootBody {
+  display: block;
+  position: absolute !important;
+  bottom: 1px;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+}
+#root .fpChestLootItem {
+  position: absolute;
+  left: 50%;
+  top: 5px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 108px;
+  animation: fpChestLootEmerge 720ms cubic-bezier(.15,.85,.2,1.15) both;
+}
+#root .fpChestPrizeSprite { display: block; flex: none; filter: drop-shadow(0 0 9px rgba(255,222,130,.85)); }
+#root .fpChestPrizeCard {
+  display: block;
+  width: 97px;
+  height: 133px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  border: 0;
+  background: transparent;
+  filter: drop-shadow(0 0 9px rgba(255,222,130,.7));
+}
+#root .fpChestLootTitle {
+  display: block;
+  max-width: 172px;
+  text-align: center;
+  color: #fff0d1;
+  font: 800 12px/1.2 Consolas, monospace;
+  text-shadow: 2px 2px #1c0c12;
+}
+#root .fpChestLootAmount {
+  display: block;
+  color: #fff1b9;
+  font: 900 14px/1.25 Consolas, monospace;
+  text-shadow: 2px 2px #26121a;
+}
+#root .fpRevealCardArt {
+  display: block;
+  width: 122px;
+  max-height: 190px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+@keyframes fpChestLootEmerge {
+  0% { opacity: 0; transform: translate(-50%, 94px) scale(.25); }
+  68% { opacity: 1; transform: translate(-50%, -12px) scale(1.08); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+/* Market: the <img> is the entire visible card. There is no tilting scene. */
+#root .marketRoot .marketArtworkOnly {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain !important;
+  object-position: center !important;
+  image-rendering: pixelated !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+#root .marketRoot .marketInventoryArt {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+#root .marketRoot .marketSelectedCard > .marketArtworkOnly {
+  display: block;
+  width: 116px !important;
+  height: auto !important;
+  aspect-ratio: 29 / 40;
+}
+#root .marketRoot .auctionRowCard > .marketArtworkOnly { width: 100%; height: 100%; }
+@media (max-width: 620px) {
+  #root .marketRoot .marketSelectedCard > .marketArtworkOnly { width: 92px !important; }
+}
+
+/* Shop + pack-opening: the pack's original PNG defines its outline. */
+#root .shopRoot .packArt {
+  border: 0 !important;
+  border-image: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+#root .shopRoot .packArt::after { display: none !important; }
+#root .shopRoot .packArtImg { object-fit: contain !important; image-rendering: pixelated !important; }
+.hpo-root .hpo-packWhole,
+.hpo-root .hpo-packSplit,
+.hpo-root .hpo-packButton {
+  border: 0 !important;
+  border-image: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+.hpo-root .hpo-packWhole img,
+.hpo-root .hpo-packSplit img {
+  object-fit: contain !important;
+  image-rendering: pixelated !important;
+  border-radius: 0 !important;
+}
+.hpo-root .hpo-packGlow,
+.hpo-root .hpo-packGloss,
+.hpo-root .hpo-packEdgeLight,
+.hpo-root .hpo-revealCardShadow {
+  display: none !important;
+}
+
+/* Reveal animation still flips the authentic two card images, not a black plate. */
+.hpo-root .hpo-revealCardFace {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+.hpo-root .hpo-revealCardFace img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+  image-rendering: pixelated !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.hpo-root .hpo-revealCardLight,
+.hpo-root .hpo-revealCardFoil { display: none !important; }
+.hpo-root .hpo-summaryCard,
+.hpo-root .hpo-summaryCardArt {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.hpo-root .hpo-summaryCardArt img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+  image-rendering: pixelated !important;
+  background: transparent !important;
+}
+.hpo-root .hpo-summaryCardLight,
+.hpo-root .hpo-summaryFoil { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  #root .fpChestLootItem { animation: none !important; transform: translateX(-50%); opacity: 1; }
+}

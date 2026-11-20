@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPackById } from "../data/packs";
 import { useGameStore } from "../useGameStore";
-import { useIdentity, type MusicTrack } from "./PlayerIdentity";
+
 
 type ItemTab = "all" | "packs" | "chests" | "books" | "relics" | "music";
 const CATEGORY:[ItemTab,string][]=[
@@ -23,17 +23,13 @@ export default function InventoryItems(){
   const navigate=useNavigate();
   const pending=useGameStore(s=>s.pendingPackPurchases);
   const ownedDiscs=useGameStore(s=>s.ownedMusicDiscs);
-  const settings=useGameStore(s=>s.settings);
-  const setSettings=useGameStore(s=>s.setSettings);
-  const musicTrack=useIdentity(s=>s.musicTrack);
-  const selectMusic=useIdentity(s=>s.setMusicTrack);
+  const openedChests=useGameStore(s=>s.battlePassChestDrops);
   const [tab,setTab]=useState<ItemTab>("all"),[openBook,setOpenBook]=useState(false);
   const packs=useMemo(()=>Object.entries(pending).sort((a,b)=>b[1].createdAt-a[1].createdAt),[pending]);
   const show=(id:ItemTab)=>tab==="all"||tab===id;
-  function chooseTrack(id:MusicTrack){selectMusic(id);setSettings({music:true});}
   return <section className="frItemsPage">
     <header className="frItemsHeading"><div><span>ХРАНИЛИЩЕ FRAKTUM</span><h2>МОИ ПРЕДМЕТЫ</h2>
-      <p>Паки, книги истории, коллекционные предметы и музыка — отдельно от игровых карт.</p></div>
+      <p>Паки из магазина и пасса, открытые сундуки и коллекционные предметы.</p></div>
       <div className="frItemsCount">{packs.length} <small>НЕОТКРЫТЫХ ПАКОВ</small></div>
     </header>
     <nav className="frItemsTabs" role="tablist" aria-label="Предметы">
@@ -43,7 +39,12 @@ export default function InventoryItems(){
     {show("packs")&&<section className="frItemsSection"><h3>НЕОТКРЫТЫЕ ПАКИ</h3>
       {packs.length?<div className="frItemGrid">{packs.map(([session,purchase])=>{
         const meta=getPackById(purchase.packId);
-        return <article key={session} className="frItemTile"><Art index={6}/><h4>{meta.title}</h4>
+        return <article key={session} className="frItemTile frItemTile--pack">
+          <img className="frItemPackImage" src={meta.artSrc} alt={meta.title} draggable={false}
+            onError={(event) => {
+              const img = event.currentTarget;
+              if (!img.src.endsWith(encodeURI(meta.fallbackArtSrc))) img.src = meta.fallbackArtSrc;
+            }} /><h4>{meta.title}</h4>
           <p>{session.startsWith("pass-") ? "Получен за уровень FRAKTUM PASS." : "Куплен и сохранён в инвентаре."}</p>
           <button type="button" onClick={()=>navigate("/pack?packId="+encodeURIComponent(purchase.packId),{
             state:{packId:purchase.packId,packTitle:meta.title,openSessionId:session}
@@ -52,11 +53,21 @@ export default function InventoryItems(){
         <p>Получай паки из FRAKTUM PASS или сохраняй покупки из магазина.</p>
         <button type="button" onClick={()=>navigate("/shop")}>В МАГАЗИН</button></div></div>}
     </section>}
-    {show("chests")&&<section className="frItemsSection"><h3>СУНДУКИ</h3>
-      <div className="frItemGrid frPreviewTiles">
-        {[["Обычный сундук",5],["Ледяной сундук",6],["Огненный сундук",7],["Легендарный сундук",8]].map(([label,index])=>
-          <div key={String(label)} className="frItemTile is-locked"><Art index={Number(index)}/><h4>{label}</h4><p>Система выпадения появится позже.</p><span>ЕЩЁ НЕ ДОСТУПНО</span></div>)}
-      </div>
+    {show("chests")&&<section className="frItemsSection"><h3>ОТКРЫТЫЕ СУНДУКИ ПАССА</h3>
+      {Object.entries(openedChests).length ? <div className="frItemGrid">
+        {Object.entries(openedChests).sort((a,b)=>Number(a[0])-Number(b[0])).map(([level, drop])=>
+          <article className="frItemTile frItemTile--chest" key={level}>
+            <span className="frItemPassChestArt" aria-hidden="true" />
+            <h4>Уровень {level}</h4>
+            <p>{drop.kind==="coins" ? "Получено монет: "+drop.amount :
+              drop.kind==="disc" ? "Пластинка "+String(drop.discId).padStart(2,"0") :
+              "Карта: "+drop.cardTitle}</p>
+            <span>СУНДУК ОТКРЫТ</span>
+          </article>)}
+      </div>:<div className="frItemEmpty"><div><strong>ПОКА НЕТ ОТКРЫТЫХ СУНДУКОВ</strong>
+        <p>Сундуки можно получать и открывать в FRAKTUM PASS.</p>
+        <button type="button" onClick={()=>navigate("/pass")}>ОТКРЫТЬ ПАСС</button>
+      </div></div>}
     </section>}
     {show("books")&&<section className="frItemsSection"><h3>БИБЛИОТЕКА ИСТОРИИ</h3>
       <div className="frItemGrid">
@@ -92,16 +103,6 @@ export default function InventoryItems(){
           </article>;
         })}
       </div> : <p className="frHint">Пластинки пока не найдены. Их можно получить из сундуков пасса.</p>}
-      <p className="frSectionSubtitle">Ниже — доступные фоновые композиции игры. Выбери, какая должна звучать.</p>
-      <div className="frItemGrid">
-        {[["Обе по очереди","cycle",11],["Главная тема FRAKTUM","main",4],["Fracture Crown","crown",10]].map(([label,id,index])=>
-          <article key={String(id)} className={"frItemTile"+(musicTrack===id?" is-selected":"")}>
-            <Art index={Number(index)}/><h4>{label}</h4>
-            <p>{musicTrack===id?"ВЫБРАНО":"Доступно"}</p>
-            <button type="button" onClick={()=>chooseTrack(id as MusicTrack)}>{musicTrack===id?"ИГРАЕТ В ФОНЕ":"ВЫБРАТЬ"}</button>
-          </article>)}
-      </div>
-      {!settings.music&&<p className="frHint">Музыка выключена в настройках. Выбор композиции включит её.</p>}
     </section>}
     {openBook&&<div className="frBookScrim" role="presentation" onClick={()=>setOpenBook(false)}>
       <section className="frBookDialog" role="dialog" aria-modal="true" aria-label="Летопись карт"

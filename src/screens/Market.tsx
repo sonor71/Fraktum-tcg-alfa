@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TiltCard from "../components/TiltCard";
 import { matchesMarketCardSearch } from "../game/marketCatalog";
 import {
   AUCTION_HOUSE_FEE_RATE,
@@ -111,18 +110,10 @@ function createPreviewCard(definition: CardDefinition, edition: CardEdition): Ow
   };
 }
 
+/** Show the original card PNG only. No extra 3D shell, gloss, mask or tilting frame. */
 function CardArtwork({ card, className = "" }: { card: OwnedCard; className?: string }) {
-  return (
-    <TiltCard
-      rarity={card.rarity}
-      isFoil={card.isFoil || card.edition === "foil_serial"}
-      maskSrc={card.frontSrc}
-      className={className}
-      maxTilt={10}
-    >
-      <img className="marketCardImage" src={card.frontSrc} alt={card.title} draggable={false} />
-    </TiltCard>
-  );
+  return <img className={`marketCardImage marketArtworkOnly ${className}`}
+    src={card.frontSrc || card.image} alt={card.title} draggable={false} />;
 }
 
 function AuctionRow({
