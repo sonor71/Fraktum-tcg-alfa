@@ -15,7 +15,10 @@ const PASS_LEVELS = BATTLE_PASS_MAX_LEVEL;
 const PASS_XP_STEP = BATTLE_PASS_XP_STEP;
 const TRACK_SCALE = 2;
 const TRACK_TOP = 192; // Room for larger standalone reward sprites, without reward boxes.
-const NOTCH_X = [44, 106, 160, 232] as const;
+// Exact centres of the connector stubs in the user's rail PNG (source 256px segments).
+// Native top stubs: x40..51 & x156..167; bottom: x104..115 & x228..239.
+const NOTCH_X = [46, 110, 162, 234] as const;
+const TRACK_HEIGHT = 44 * TRACK_SCALE; // Native bottom edge: includes the whole lower connector.
 // The original pixel segments are repeated without stretching any image.
 const TRACK_PARTS = ["track0", ...Array.from({ length: 6 }, () => "track1"), "track2"];
 const TRACK_WIDTHS = TRACK_PARTS.map((part) => (part === "track1" ? 256 : 252) * TRACK_SCALE);
@@ -251,10 +254,10 @@ export default function FraktumPass() {
               const active = selected === level;
               return <div key={level}>
                 <Sprite name="lvl" scale={3} className={`fpNotch ${locked ? "is-locked" : "is-unlocked"}`}
-                  style={{ position: "absolute", left: point - 6, top: top ? TRACK_TOP - 12 : TRACK_TOP + 77, zIndex: 4 }} />
+                  style={{ position: "absolute", left: point - 6, top: top ? TRACK_TOP - 12 : TRACK_TOP + TRACK_HEIGHT, zIndex: 4 }} />
                 <button type="button"
                   className={`fpRewardNode ${top ? "is-top" : "is-bottom"} ${active ? "is-selected" : ""} ${locked ? "is-locked" : ""} ${taken ? "is-taken" : ""}`}
-                  style={{ left: point - 79, top: top ? 0 : 290 }}
+                  style={{ left: point - 79, top: top ? 0 : 308 }}
                   onClick={() => { setSelected(level); setNotice(""); }}
                   aria-label={`Уровень ${level}: ${kindLabel(reward)}. ${taken ? "Получено" : locked ? "Закрыто" : "Доступно"}`} aria-pressed={active}>
                   <span className="fpRewardLevel">{String(level).padStart(2, "0")}</span>
