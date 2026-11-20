@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { CARDS, CARDS_BY_ID, getRandomCards } from "./game/cards";
 import { SEASON_CARD_ARTWORK } from "./data/seasonCardArtwork";
+import { PACKS, type PackId } from "./data/packs";
 import { createUniqueCardId, getDefinitionIdByUniqueId } from "./game/cardIdentity";
 import { getWillCostByRarity } from "./game/rarityWillCost";
 import { sanitizeDeckIds } from "./game/deckRules";
@@ -166,12 +167,23 @@ const FOIL_VALUE_MULTIPLIER: Record<CardRarity, number> = {
   archaic: 150,
 };
 
-export const BATTLE_PASS_REWARDS: Record<
-  number,
+export const BATTLE_PASS_MAX_LEVEL = 30;
+export const BATTLE_PASS_XP_STEP = 100;
+
+export type BattlePassReward =
   | { kind: "coins"; amount: number }
   | { kind: "premium"; amount: number }
   | { kind: "card"; rarity: CardRarity }
-> = {
+  | { kind: "pack"; packId: PackId }
+  | { kind: "chest" };
+
+export type BattlePassChestDrop =
+  | { kind: "coins"; amount: number }
+  | { kind: "card"; rarity: CardRarity; cardTitle: string; cardBaseId: string }
+  | { kind: "disc"; discId: number };
+
+/** The first ten rewards stay unchanged to preserve previously claimed prizes. */
+export const BATTLE_PASS_REWARDS: Record<number, BattlePassReward> = {
   1: { kind: "coins", amount: 100 },
   2: { kind: "coins", amount: 200 },
   3: { kind: "premium", amount: 25 },
@@ -182,7 +194,48 @@ export const BATTLE_PASS_REWARDS: Record<
   8: { kind: "coins", amount: 750 },
   9: { kind: "premium", amount: 75 },
   10: { kind: "card", rarity: "mythic" },
+  11: { kind: "pack", packId: "normal" },
+  12: { kind: "chest" },
+  13: { kind: "coins", amount: 300 },
+  14: { kind: "pack", packId: "ice" },
+  15: { kind: "card", rarity: "epic" },
+  16: { kind: "premium", amount: 100 },
+  17: { kind: "chest" },
+  18: { kind: "pack", packId: "flame" },
+  19: { kind: "coins", amount: 500 },
+  20: { kind: "pack", packId: "electric" },
+  21: { kind: "chest" },
+  22: { kind: "pack", packId: "void" },
+  23: { kind: "card", rarity: "legendary" },
+  24: { kind: "coins", amount: 750 },
+  25: { kind: "chest" },
+  26: { kind: "pack", packId: "egypt" },
+  27: { kind: "premium", amount: 125 },
+  28: { kind: "pack", packId: "normal" },
+  29: { kind: "chest" },
+  30: { kind: "card", rarity: "mythic" },
 };
+
+/** 40% coins, 35% a card, 25% an unowned disc.
+ * A disc roll becomes coins once the entire ten-disc collection is complete. */
+export function rollBattlePassChestReward(ownedDiscs: readonly number[], random: () => number = Math.random):
+  | { kind: "coins"; amount: number }
+  | { kind: "card"; rarity: CardRarity }
+  | { kind: "disc"; discId: number } {
+  const roll = random();
+  if (roll < 0.4) {
+    const amounts = [150, 250, 400, 600];
+    return { kind: "coins", amount: amounts[Math.floor(random() * amounts.length)] ?? 150 };
+  }
+  if (roll < 0.75) {
+    const rarities: CardRarity[] = ["rare", "epic", "mythic"];
+    return { kind: "card", rarity: rarities[Math.floor(random() * rarities.length)] ?? "rare" };
+  }
+  const unowned = Array.from({ length: 10 }, (_, index) => index + 1)
+    .filter((id) => !ownedDiscs.includes(id));
+  if (!unowned.length) return { kind: "coins", amount: 250 };
+  return { kind: "disc", discId: unowned[Math.floor(random() * unowned.length)] ?? unowned[0] };
+}
 
 type IncomingCardGrant = {
   baseId: string;
@@ -221,6 +274,8 @@ export type GameState = {
   friends: FriendEntry[];
   battlePassXp: number;
   claimedBattlePassRewards: number[];
+  battlePassChestDrops: Record<number, BattlePassChestDrop>;
+  ownedMusicDiscs: number[];
   claimedDailyQuestIds: string[];
   craftedCardsCount: number;
   wins: number;
@@ -677,6 +732,8 @@ function createInitialState() {
     friends: DEFAULT_FRIENDS.map((friend) => ({ ...friend })),
     battlePassXp: 0,
     claimedBattlePassRewards: [] as number[],
+    battlePassChestDrops: {} as Record<number, BattlePassChestDrop>,
+    ownedMusicDiscs: [] as number[],
     claimedDailyQuestIds: [] as string[],
     craftedCardsCount: 0,
     wins: 0,
@@ -860,6 +917,11 @@ function normalizePersistedState(persisted: unknown): ReturnType<typeof createIn
     claimedBattlePassRewards: Array.isArray(incoming.claimedBattlePassRewards)
       ? [...new Set(incoming.claimedBattlePassRewards.map((value) => toNonNegativeInteger(value)).filter(Boolean))]
       : [],
+    ownedMusicDiscs: Array.isArray(incoming.ownedMusicDiscs)
+      ? [...new Set(incoming.ownedMusicDiscs.map((id) => toNonNegativeInteger(id)).filter((id) => id >= 1 && id <= 10))].sort((a, b) => a - b)
+      : [],
+    battlePassChestDrops: incoming.battlePassChestDrops && typeof incoming.battlePassChestDrops === "object" &&
+      !Array.isArray(incoming.battlePassChestDrops) ? incoming.battlePassChestDrops : {},
     claimedDailyQuestIds: Array.isArray(incoming.claimedDailyQuestIds)
       ? [...new Set(incoming.claimedDailyQuestIds.map(String))]
       : [],
@@ -1337,16 +1399,50 @@ export const useGameStore = create<GameState>()(
 
       claimBattlePassReward: (level) => {
         const safeLevel = toNonNegativeInteger(level);
-        const currentLevel = Math.min(10, Math.floor(get().battlePassXp / 100) + 1);
+        const currentLevel = Math.min(BATTLE_PASS_MAX_LEVEL, Math.floor(get().battlePassXp / BATTLE_PASS_XP_STEP) + 1);
         const reward = BATTLE_PASS_REWARDS[safeLevel];
         if (!reward || safeLevel > currentLevel || get().claimedBattlePassRewards.includes(safeLevel)) return false;
 
+        // Check reward validity before changing any player balance/inventory.
+        const fixedCard = reward.kind === "card"
+          ? pickRandomCard(CARDS.filter((card) => card.rarity === reward.rarity))
+          : null;
+        if (reward.kind === "card" && !fixedCard) return false;
+        const pack = reward.kind === "pack" ? PACKS.find((item) => item.id === reward.packId) : null;
+        if (reward.kind === "pack" && !pack) return false;
+        const chestRoll = reward.kind === "chest" ? rollBattlePassChestReward(get().ownedMusicDiscs) : null;
+        const chestCard = chestRoll?.kind === "card"
+          ? pickRandomCard(CARDS.filter((card) => card.rarity === chestRoll.rarity))
+          : null;
+
         if (reward.kind === "coins") get().addCoins(reward.amount);
         if (reward.kind === "premium") get().addPremium(reward.amount);
-        if (reward.kind === "card") {
-          const definition = pickRandomCard(CARDS.filter((card) => card.rarity === reward.rarity));
-          if (!definition) return false;
-          get().addOwnedCards([{ baseId: definition.id, packId: "battle-pass", isNew: true }]);
+        if (reward.kind === "card" && fixedCard) {
+          get().addOwnedCards([{ baseId: fixedCard.id, packId: "battle-pass", isNew: true }]);
+        }
+        if (reward.kind === "pack" && pack) {
+          const sessionId = "pass-" + createPackSessionId(pack.id);
+          set({ pendingPackPurchases: {
+            ...prunePendingPurchases(get().pendingPackPurchases),
+            [sessionId]: { packId: pack.id, createdAt: Date.now() },
+          } });
+        }
+        if (reward.kind === "chest" && chestRoll) {
+          let drop: BattlePassChestDrop;
+          if (chestRoll.kind === "coins") {
+            get().addCoins(chestRoll.amount);
+            drop = chestRoll;
+          } else if (chestRoll.kind === "disc") {
+            set({ ownedMusicDiscs: [...new Set([...get().ownedMusicDiscs, chestRoll.discId])].sort((a, b) => a - b) });
+            drop = chestRoll;
+          } else if (chestCard) {
+            get().addOwnedCards([{ baseId: chestCard.id, packId: "battle-pass-chest", isNew: true }]);
+            drop = { kind: "card", rarity: chestCard.rarity, cardTitle: chestCard.title, cardBaseId: chestCard.id };
+          } else {
+            get().addCoins(250);
+            drop = { kind: "coins", amount: 250 };
+          }
+          set({ battlePassChestDrops: { ...get().battlePassChestDrops, [safeLevel]: drop } });
         }
 
         set({ claimedBattlePassRewards: [...get().claimedBattlePassRewards, safeLevel].sort((a, b) => a - b) });
